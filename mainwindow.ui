@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>908</width>
-    <height>2968</height>
+    <height>3203</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1505,7 +1505,7 @@
                    <item>
                     <widget class="QFrame" name="frame_68">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -6091,7 +6091,7 @@
      <x>0</x>
      <y>0</y>
      <width>908</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

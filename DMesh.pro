@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui opengl network webkit
+unix:LIBS += -lGLU
 
 TARGET = DMesh
 TEMPLATE = app

@@ -142,6 +142,7 @@ private slots:
     void on_btn_Mesh_clicked();
     void on_btn_Geometry_clicked();
     void Thread_Changed(QString value);
+    void on_actionQuit_triggered();
 };
 
 #endif // MAINWINDOW_H

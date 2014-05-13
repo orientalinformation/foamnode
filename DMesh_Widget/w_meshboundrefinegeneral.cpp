@@ -1,5 +1,5 @@
-#include "W_MeshBoundRefineGeneral.h"
-#include "ui_W_MeshBoundRefineGeneral.h"
+#include "w_meshboundrefinegeneral.h"
+#include "ui_w_meshboundrefinegeneral.h"
 
 W_MeshBoundRefineGeneral::W_MeshBoundRefineGeneral(DMesh *d, QWidget *parent) :
     QDialog(parent),

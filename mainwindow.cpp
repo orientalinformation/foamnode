@@ -1199,8 +1199,8 @@ void MainWindow::on_btn_Surface_clicked()
     flag_btnSurface_Click = false;
     flag_btnVolume_Click = false;
     flag_btn_MeshLayer_Click =false;
-    ui->frame_GeometrySurface->show();
     ui->frame_GeometryBounding->hide();
+    ui->frame_GeometrySurface->show();
     ui->btn_DeleteSurface->setEnabled(true);
     //reset all textbox
     ui->txt_GeometrySurfaceFileStl->setText("");
@@ -1244,9 +1244,9 @@ void MainWindow::on_btn_Surface_clicked()
 }
 void MainWindow::on_btn_Bounding_clicked()
 {
-    ui->frame_GeometryBounding->show();
     ui->frame_GeometrySurface->hide();
     ui->frame_BoundingGeometryType->hide();
+    ui->frame_GeometryBounding->show();
     ui->btn_DeleteSurface->setEnabled(false);
     Remove_All_Face();
     if(mesh->blockd->boundMesh.n  > 0 && !mesh->blockd->isAutomatic)
@@ -1834,15 +1834,15 @@ void MainWindow::on_cb_SurfaceType_currentIndexChanged(QString )
 {
     if(ui->cb_SurfaceType->currentText() == "Box")
     {
-        ui->frame_DefineSurfaceBox->show();
         ui->frame_DefineSurfaceCylinder->hide();
         ui->frame_DefineSurfaceSphere->hide();
+        ui->frame_DefineSurfaceBox->show();
     }
     else if(ui->cb_SurfaceType->currentText() == "Cylinder")
     {
         ui->frame_DefineSurfaceBox->hide();
-        ui->frame_DefineSurfaceCylinder->show();
         ui->frame_DefineSurfaceSphere->hide();
+        ui->frame_DefineSurfaceCylinder->show();
     }
     else if(ui->cb_SurfaceType->currentText() == "Sphere")
     {
@@ -1923,15 +1923,15 @@ void MainWindow::on_cb_BoundingType_currentIndexChanged(QString )
             ui->txt_Max_Y_Bounding->setText("0");
             ui->txt_Max_Z_Bounding->setText("0");
         }
-        ui->groupBox_GeometryBoundingDefine->show();
         ui->groupBox_GeometryBoundingDistance->hide();
+        ui->groupBox_GeometryBoundingDefine->show();
     }
 }
 void MainWindow::on_cb_BoundingGeometryType_currentIndexChanged(QString )
 {
     if(ui->cb_BoundingGeometryType->currentText() == "Box"){
-        ui->frame_GeometryBoundingBox->show();
         ui->frame_GeometryBoundingCylinder->hide();
+        ui->frame_GeometryBoundingBox->show();
     }
     else if(ui->cb_BoundingGeometryType->currentText() == "Cylinder"){
         ui->frame_GeometryBoundingBox->hide();
@@ -2083,10 +2083,10 @@ void MainWindow::on_btn_MeshBounding_clicked()
     flag_btn_MeshLayer_Click =false;
     //hide frame Specific
 
-    ui->frame_MeshBounding->show();
     ui->frame_MeshRefinement->hide();
     ui->frame_MeshVolume->hide();
     ui->frame_MeshLayer->hide();
+    ui->frame_MeshBounding->show();
 
     //remove first
     Remove_All_Face();
@@ -2108,8 +2108,8 @@ void MainWindow::on_btn_MeshSurface_clicked()
     flag_btnSurGeometry_Click =false;
     flag_Item_Face_Click = false;
     flag_btn_MeshLayer_Click =false;
-    ui->frame_MeshSurface->show();
     ui->frame_MeshVolume->hide();
+    ui->frame_MeshSurface->show();
     Remove_All_Face();
     for(int i=0; i< mesh->snappyd->gBox.n; i++)
     {
@@ -2450,8 +2450,8 @@ void MainWindow::on_btn_MeshLayer_clicked()
     flag_btnSpecific_Click =false;
     ui->frame_MeshBounding->hide();
     ui->frame_MeshRefinement->hide();
-    ui->frame_MeshLayer->show();
     ui->frame_MeshVolume->hide();
+    ui->frame_MeshLayer->show();
 
     //Cong edit: add layer to suraces
     Remove_All_Face();
@@ -2835,23 +2835,23 @@ void MainWindow::on_tb_boundary_clicked(QModelIndex index)
 void MainWindow::on_btn_MeshRefinement_clicked()
 {
     ui->frame_MeshBounding->hide();
-    ui->frame_MeshRefinement->show();
     ui->frame_MeshLayer->hide();
     ui->frame_MeshVolume->hide();
+    ui->frame_MeshRefinement->show();
 }
 void MainWindow::on_cb_VolumeType_currentIndexChanged(QString )
 {
     if(ui->cb_VolumeType->currentText() == "Box")
     {
-        ui->frame_DefineVolumeBox->show();
         ui->frame_DefineVolumeCylinder->hide();
         ui->frame_DefineVolumeSphere->hide();
+        ui->frame_DefineVolumeBox->show();
     }
     else if(ui->cb_VolumeType->currentText() == "Cylinder")
     {
         ui->frame_DefineVolumeBox->hide();
-        ui->frame_DefineVolumeCylinder->show();
         ui->frame_DefineVolumeSphere->hide();
+        ui->frame_DefineVolumeCylinder->show();
     }
     else if(ui->cb_VolumeType->currentText() == "Sphere")
     {
@@ -4748,4 +4748,9 @@ void MainWindow::SetButtonEnable(bool value)
     ui->btn_Mesh->setEnabled(value);
     ui->btn_Generate->setEnabled(value);
     ui->btn_Geometry->setEnabled(value);
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    this->close();
 }
