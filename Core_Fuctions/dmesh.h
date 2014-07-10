@@ -29,6 +29,8 @@ public:
 
 
 private:
+    QVector<float> radiusCaculationMax;
+    QVector<float> radiusCaculationMin;
     int screenWidth,screenHeight;
     int radian_Rotate;
 
@@ -88,6 +90,9 @@ private:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent * event);
+
+    float minValue(QVector<float> values);
+    float maxValue(QVector<float> values);
 signals:
 
 public slots:

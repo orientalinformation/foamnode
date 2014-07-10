@@ -277,6 +277,8 @@ void DMesh::ShowHeighWidthGreen()
         y2 = -1000000;
         z2 = -1000000;
         QList<Surface_Min_Max> l = snappyd->list_Surface_Min_Max;
+        this->radiusCaculationMax.clear();
+        this->radiusCaculationMin.clear();
         for(int i= 0; i <l.length(); i++)
         {
                 //x
@@ -295,7 +297,7 @@ void DMesh::ShowHeighWidthGreen()
                 if(x2 < l[i].min.x)
                 {
                     x2 = l[i].min.x;
-                }
+                }                                
                 //y
                 if(y1 > l[i].min.y)
                 {
@@ -330,6 +332,13 @@ void DMesh::ShowHeighWidthGreen()
                 {
                     z2 = l[i].min.z;
                 }
+                radiusCaculationMax.append(l[i].max.x);
+                radiusCaculationMax.append(l[i].max.y);
+                radiusCaculationMax.append(l[i].max.z);
+
+                radiusCaculationMin.append(l[i].min.x);
+                radiusCaculationMin.append(l[i].min.y);
+                radiusCaculationMin.append(l[i].min.z);
         }
         textshow = "Min(" + QString::number(x1);
         textshow += ", " + QString::number(y1);
@@ -338,6 +347,7 @@ void DMesh::ShowHeighWidthGreen()
         textshow += ", " + QString::number(y2);
         textshow += ", " + QString::number(z2);
         textshow += ")";
+
     }
     else
     {
@@ -477,13 +487,15 @@ void DMesh::DrawLocationPoint()
         glTranslatef(snappyd->locationInMesh.x,snappyd->locationInMesh.y,snappyd->locationInMesh.z);
         glColor3f(0.0,1.0,0.0);
         GLUquadric *myQuad;
-        GLdouble radius = 0.03;
-        //if(radius < vMax/5000)
-        //    radius = vMax/5000;
+        GLdouble radius = this->minValue(this->radiusCaculationMax)/80.0;
+//        if(radius < 0)
+//            radius = radius * -1.0;
         GLint slices, stacks;
         myQuad=gluNewQuadric();
-        slices = stacks = 10;
+        slices = stacks = 20;
         gluSphere( myQuad , radius , slices , stacks  );
+        float a= snappyd->locationInMesh.x;
+        a= a+1.0;
     glPopMatrix();
 }
 void DMesh::DrawEdges()
@@ -744,5 +756,33 @@ void DMesh::wheelEvent(QWheelEvent * event)
     else
         zoomScale = 1;
     updateGL();
+}
+
+float DMesh::minValue(QVector<float> values)
+{
+    float min = 0.0;
+    if(values.count()>0){
+        min = values[0];
+        for(int i=1;i<values.count();++i){
+            if(values[i] <min){
+                min = values[i];
+            }
+        }
+    }
+    return min;
+}
+
+float DMesh::maxValue(QVector<float> values)
+{
+    float max = 0.0;
+    if(values.count()>0){
+        max = values[0];
+        for(int i=1;i<values.count();++i){
+            if(values[i] > max){
+                max = values[i];
+            }
+        }
+    }
+    return max;
 }
 
