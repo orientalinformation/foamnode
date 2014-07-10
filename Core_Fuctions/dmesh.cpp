@@ -1,5 +1,6 @@
 #include "dmesh.h"
 
+
 DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
 {
     is_DrawCenterCoordinate = true;
@@ -85,6 +86,7 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     //Declare Patch Dict
     patchDict = new PatchDict();
     this->isCtrlPress=false;
+
 }
 
 void DMesh::SetHomeView()
@@ -187,7 +189,7 @@ void DMesh::initializeGL()
     qglClearColor(QColor(82,87,110));
     glClearDepth(1.0);
     glShadeModel(GL_FLAT);
-    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);   
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable (GL_LINE_SMOOTH);
@@ -239,7 +241,7 @@ void DMesh::FindVMax()
 void DMesh::paintGL()
 {
     FindVMax();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    
     glLoadIdentity();
     glTranslatef(0,0,-6);
     //glTranslatef(xTranslate,yTranslate,zTranslate);
@@ -251,6 +253,7 @@ void DMesh::paintGL()
         glRotatef(xRot,1,0,0);
         glRotatef(yRot,0,1,0);
         glRotatef(zRot,0,0,1);
+
         glTranslatef(-xCenter/4,-yCenter/4,-zCenter/4);
         DrawEdges();
         DrawLocationPoint();

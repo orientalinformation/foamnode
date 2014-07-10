@@ -30,6 +30,7 @@ public:
 
     bool isCtrlPress;
 private:
+
     QVector<float> radiusCaculationMax;
     QVector<float> radiusCaculationMin;
     int screenWidth,screenHeight;
