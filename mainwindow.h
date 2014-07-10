@@ -21,7 +21,9 @@ namespace Ui {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+protected:
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -83,6 +85,7 @@ private:
     //reset draw boxs
     void ResetDrawBoxs();
     void LoadRefineDistanceSurface(QString currentSurface, int type);
+
 private slots:
     void on_actionOpen_triggered();
     void on_txt_Level_Volume_editingFinished();

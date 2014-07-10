@@ -154,6 +154,7 @@ void Snappy_Dmesh::FindMinMax(QList<Surface_Min_Max> l)
 bool Snappy_Dmesh::ReadSTLFile(QString path_car)
 {
     //read file
+
     QString file1;
     QFile file(path_car);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -167,7 +168,7 @@ bool Snappy_Dmesh::ReadSTLFile(QString path_car)
     }
     QStringList lines = file1.split("\n",QString::SkipEmptyParts);
 
-    //create STL
+    //create STL    
     QStringList file_name = path_car.split("/");
     if(file_name.length()==1)
         file_name = path_car.split("\\");
@@ -175,12 +176,11 @@ bool Snappy_Dmesh::ReadSTLFile(QString path_car)
     int size_sTL =  sTL.size()+1;
     sTL.resize(size_sTL);
     sTL[size_sTL -1].n =0;
-    sTL[size_sTL -1].name = name;
-
+    sTL[size_sTL -1].name = name;    
     for(int i=0; i< lines.length(); i++)
     {
         if(lines[i].trimmed().left(5)=="solid")
-        {
+        {            
             QString name_re = lines[i].split(" ")[1];
             sTL[size_sTL -1].n = sTL[size_sTL -1].n + 1;
             sTL[size_sTL -1].solids.resize(sTL[size_sTL -1].n);
@@ -194,8 +194,9 @@ bool Snappy_Dmesh::ReadSTLFile(QString path_car)
             sTemp->color.y = 1.0;
             sTemp->color.z = 1.0;
             //Loop for Normal vector and Vertexs
+
             while(lines[i].trimmed().left(8) != "endsolid")
-            {
+            {               
                 QStringList line = lines[i].split(" ",QString::SkipEmptyParts);
                 if(line.size() > 0)
                 {
@@ -234,7 +235,7 @@ bool Snappy_Dmesh::ReadSTLFile(QString path_car)
                                             vTemp.x = line[1].toFloat();
                                             vTemp.y = line[2].toFloat();
                                             vTemp.z = line[3].toFloat();
-                                            //find min max default bounding
+                                            //find min max default bounding                                            
                                             FindMinMaxDefaultBounding(line[1].toFloat(), line[2].toFloat(), line[3].toFloat());
 
                                             fTemp->vertexs.append(vTemp);

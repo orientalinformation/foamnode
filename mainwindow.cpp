@@ -1307,6 +1307,7 @@ void MainWindow::on_btn_GeoImportSurface_clicked()
             return;
         }
 
+
         mesh->snappyd->gUserDefine.n= mesh->snappyd->gUserDefine.n+1;
         mesh->snappyd->gUserDefine.user_Defines.resize(mesh->snappyd->gUserDefine.n);
         mesh->snappyd->gUserDefine.user_Defines[mesh->snappyd->gUserDefine.n-1].direction= file_name_STL;
@@ -1346,6 +1347,13 @@ void MainWindow::on_btn_GeoImportSurface_clicked()
         }
         mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].n=index;
 
+        mesh->snappyd->min_Max.max.x=-1000000.0;
+        mesh->snappyd->min_Max.max.y=-1000000.0;
+        mesh->snappyd->min_Max.max.z=-1000000.0;
+
+        mesh->snappyd->min_Max.min.x=1000000.0;
+        mesh->snappyd->min_Max.min.y=1000000.0;
+        mesh->snappyd->min_Max.min.z=1000000.0;
         //Read file STL
         if(mesh->snappyd->ReadSTLFile(file_name_STL))
         {
@@ -3542,6 +3550,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
             }
 
         }
+
         //Delete simple region - Box
         n = mesh->snappyd->gBoxRegion.n;
         for(int i=0; i < n; i++)
@@ -4754,3 +4763,43 @@ void MainWindow::on_actionQuit_triggered()
 {
     this->close();
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->isAutoRepeat() ) {
+        if(event->key() == Qt::Key_Control){
+            mesh->isCtrlPress=false;
+            event->ignore();
+        }
+
+    } else {
+        if(event->key() == Qt::Key_Control){
+            mesh->isCtrlPress=true;
+            event->accept();
+        }
+
+    }
+//    if(event->key() == Qt::Key_Control){
+//        mesh->isCtrlPress=true;
+//    }
+//    else
+//        mesh->isCtrlPress=false;
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->isAutoRepeat() ) {
+        if(event->key() == Qt::Key_Control){
+            mesh->isCtrlPress=true;
+            event->ignore();
+        }
+
+    } else {
+        if(event->key() == Qt::Key_Control){
+            mesh->isCtrlPress=false;
+            event->accept();
+        }
+    }
+}
+
+

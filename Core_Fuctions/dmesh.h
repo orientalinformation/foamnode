@@ -16,6 +16,7 @@
 class DMesh : public QGLWidget
 {
     Q_OBJECT
+
 public:
     explicit DMesh(QGLWidget *parent = 0);
     Block_Dmesh *blockd;
@@ -27,7 +28,7 @@ public:
     void SetViewList(QStringList views);
     QStringList GetViewList();
 
-
+    bool isCtrlPress;
 private:
     QVector<float> radiusCaculationMax;
     QVector<float> radiusCaculationMin;

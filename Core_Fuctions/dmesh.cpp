@@ -84,6 +84,7 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     snappyd->min_Max.max.z=-1000000;
     //Declare Patch Dict
     patchDict = new PatchDict();
+    this->isCtrlPress=false;
 }
 
 void DMesh::SetHomeView()
@@ -387,7 +388,7 @@ void DMesh::DrawCenterCoordinate()
 
         //Draw the center coordinate
         glPushMatrix();
-            glViewport(xMove,yMove, screenWidth , screenHeight);
+            glViewport(xMove,yMove, screenWidth, screenHeight);
             glTranslatef(0,0,zMove);
             glRotatef(xRot,1,0,0);
             glRotatef(yRot,0,1,0);
@@ -747,9 +748,9 @@ void DMesh::wheelEvent(QWheelEvent * event)
     }
     if(zoomScale > 0)
     {
-        //if(vMax/100 > 120)
-        //    zMove += f*vMax/100/zoomScale;
-        //else
+        if(this->isCtrlPress)//vMax/100 > 120
+            zMove += f*12000.0/zoomScale;
+        else
             zMove += f*120.0/zoomScale;
         zoomScale += zoomScale*0.025;
     }
@@ -757,6 +758,7 @@ void DMesh::wheelEvent(QWheelEvent * event)
         zoomScale = 1;
     updateGL();
 }
+
 
 float DMesh::minValue(QVector<float> values)
 {
@@ -785,4 +787,6 @@ float DMesh::maxValue(QVector<float> values)
     }
     return max;
 }
+
+
 
