@@ -72,7 +72,6 @@ bool clsEncryption::checkKey(QString fileName)
     QString strActiveKey;
     QString strResult;
 
-
     //get MAC address
     foreach (const QNetworkInterface &ni, QNetworkInterface::allInterfaces())
     {

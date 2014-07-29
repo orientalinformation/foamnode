@@ -1,6 +1,7 @@
 #ifndef MYTHREAD_H
 #define MYTHREAD_H
 
+#include <QApplication>
 #include <QThread>
 #include <QWidget>
 #include <QProcess>

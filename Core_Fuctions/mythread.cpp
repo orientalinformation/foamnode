@@ -6,7 +6,9 @@ MyThread::MyThread(QObject *parent) :
     #if defined(Q_OS_WIN)
         this->sourceOF = "DOFICore\\setvars.bat";
     #else
-        this->sourceOF = ". ./DOFICore/openfoam211/etc/bashrc";
+    QString dofidir = "/home/longlp/Desktop/DOFI_Working/OpenFoamGUI-build-desktop";
+    this->sourceOF = "DOFIDIR=" + QApplication::applicationDirPath() + " && source "  + QApplication::applicationDirPath() +  "/DOFICore/openfoam211/etc/bashrc";
+//    this->sourceOF = "DOFIDIR=" + dofidir + " && source "  + dofidir +  "/DOFICore/openfoam211/etc/bashrc";
     #endif
     this->command = "";
     this->subCommand_1 = "";
@@ -30,9 +32,9 @@ void MyThread::SetCommand(QString command)
     #if defined(Q_OS_WIN)
         this->command = sourceOF + " \"" + OpenFoam::OpenFOAMPath() + "\" && " + subCommand_1 + " " + command + " " + subCommand_2 + " 2>&1";
     #else
-        if(temp_Command.indexOf("-case") == -1)
-            this->command = sourceOF + " && " + subCommand_1 + " " + command + " -case \"" + OpenFoam::OpenFOAMPath() + "\" " + subCommand_2 + " 2>&1";
-        else
+//        if(temp_Command.indexOf("-case") == -1)
+//            this->command = sourceOF + " && " + subCommand_1 + " " + command + " -case \"" + OpenFoam::OpenFOAMPath() + "\" " + subCommand_2 + " 2>&1";
+//        else
             this->command = sourceOF + " && " + subCommand_1 + " " + command + " " + subCommand_2 + " 2>&1";
     #endif
 }
@@ -54,10 +56,12 @@ void MyThread::SetSubCommand(QString command, int index)
 }
 void MyThread::run()
 {
+    emit changed(command);
     #if defined(Q_OS_WIN)
     {
         process = new QProcess();
         process->setProcessChannelMode(QProcess::MergedChannels);
+        process->setWorkingDirectory(OpenFoam::OpenFOAMPath());
         process->start(command,QIODevice::ReadOnly);
         while(process->waitForReadyRead(-1))
             while(process->canReadLine())
@@ -65,16 +69,16 @@ void MyThread::run()
     }
     #else
     {
-        FILE *pipe;
-        pipe = popen(this->command.toAscii().data(),"r");
-        char buffer[128];
-        while(!feof(pipe))
-        {
-            if(fgets(buffer, 128, pipe) != NULL)
-            {
-                emit changed(buffer);
-            }
-    	}
+        QStringList commands;
+        commands.append("-c");
+        commands.append(command);
+        process = new QProcess();
+        process->setProcessChannelMode(QProcess::MergedChannels);
+        process->setWorkingDirectory(OpenFoam::OpenFOAMPath());
+        process->start("/bin/bash",commands,QIODevice::ReadOnly);
+        while(process->waitForReadyRead(-1))
+            while(process->canReadLine())
+                emit changed(process->readLine());
     }
     #endif
     this->exit();
