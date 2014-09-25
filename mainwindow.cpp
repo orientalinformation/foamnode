@@ -4744,9 +4744,8 @@ void MainWindow::SetButtonDisplayEnable(bool value)
 
 void MainWindow::SetButtonDefault()
 {
-    //SetButtonDisplayEnable(false);
-    SetButtonDisplayEnable(true);
-    //ui->actionOpen->setEnabled(false);
+    SetButtonDisplayEnable(false);
+    ui->actionOpen->setEnabled(false);
 }
 
 void MainWindow::SetButtonEnable(bool value)
