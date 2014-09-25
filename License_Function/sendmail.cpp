@@ -25,6 +25,7 @@ SendMail::SendMail(QWidget *parent)
         connect (ui.txt_Phone, SIGNAL(textChanged(QString)), this, SLOT(enableButtons(QString)));
         connect (ui.txt_Email, SIGNAL(textChanged(QString)), this, SLOT(enableButtons(QString)));
         connect (ui.txt_City, SIGNAL(textChanged(QString)), this, SLOT(enableButtons(QString)));
+        connect(ui.txt_Fax,SIGNAL(textChanged(QString)),this,SLOT(enableButtons(QString)));
         ui.frame_Web->hide();
         this->setMaximumSize(260,260);
 }
@@ -96,8 +97,28 @@ void SendMail::enableButtons(QString value)
         (ui.txt_City->text() != QString("")) &&
         (ui.txt_Phone->text() != QString("")))
     {
-        ui.sendButton->setEnabled(true);
-        ui.previewButton->setEnabled(true);
+        checkValidForMail();
+        checkValidForName();
+        checkValidForFirstName();
+        checkValidForPhone();
+        if(checkValidForMail() == true &&
+           checkValidForName() == true &&
+           checkValidForFirstName() == true &&
+           checkValidForPhone() == true){
+            if(ui.txt_Fax->text() != ""){
+                checkValidForFax();
+                if(checkValidForFax() == true) {
+                    ui.sendButton->setEnabled(true);
+                    ui.previewButton->setEnabled(true);
+                }else {
+                    ui.sendButton->setEnabled(false);
+                    ui.previewButton->setEnabled(false);
+                }
+            }else{
+                ui.sendButton->setEnabled(true);
+                ui.previewButton->setEnabled(true);
+            }
+        }
     }
     else
     {
@@ -201,7 +222,92 @@ QList<QString> SendMail::createList(QString str)
 		
 	}
 	
-	return list;
+    return list;
+}
+
+bool SendMail::checkValidForMail()
+{
+    QRegExp mailREX("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b");
+    mailREX.setCaseSensitivity(Qt::CaseInsensitive);
+    mailREX.setPatternSyntax(QRegExp::RegExp);
+    if(mailREX.exactMatch(ui.txt_Email->text()) == false) {
+        //ui.txt_Email->undo();
+        //ui.txt_Email->setPlaceholderText("Format email false!");
+        return false;
+    }else{
+        //ui.txt_Email->setStyleSheet("");
+        //ui.txt_Email->setPlaceholderText("");
+        //checkMail=true;
+        return true;
+    }
+}
+
+bool SendMail::checkValidForName()
+{
+    bool icheck;
+    QString temp = ui.txtContactName->text();
+    for(int i = 0; i< temp.length();i++) {
+        QString check = temp.at(i);
+        check.toInt(&icheck);
+        if(icheck){
+            //ui.txtContactName->undo();
+            //ui.txtContactName->setPlaceholderText("No number.");
+            return false;
+            break;
+        }
+    }
+    return true;
+}
+
+bool SendMail::checkValidForFirstName()
+{
+    bool icheck;
+    QString temp = ui.txt_FirstName->text();
+    for(int i = 0; i< temp.length();i++) {
+        QString check = temp.at(i);
+        check.toInt(&icheck);
+        if(icheck){
+            //ui.txt_FirstName->undo();
+            //ui.txt_FirstName->setPlaceholderText("No number.");
+            return false;
+            break;
+        }
+    }
+    return true;
+}
+
+bool SendMail::checkValidForPhone()
+{
+    bool icheck;
+    QString temp = ui.txt_Phone->text();
+    for(int i = 0; i< temp.length();i++) {
+        QString check = temp.at(i);
+        check.toInt(&icheck);
+        if(!icheck){
+            //ui.txt_Phone->undo();
+            //ui.txt_Phone->setPlaceholderText("(0-9)");
+            return false;
+            break;
+        }
+    }
+    return true;
+}
+
+bool SendMail::checkValidForFax()
+{
+    bool icheck;
+    QString temp = ui.txt_Fax->text();
+    for(int i = 0; i< temp.length();i++) {
+        QString check = temp.at(i);
+        check.toInt(&icheck);
+        if(!icheck){
+            //ui.txt_FirstName->undo();
+            //ui.txt_FirstName->setPlaceholderText("(0-9)");
+            return false;
+            break;
+        }
+    }
+    return true;
 }
 
 void SendMail::on_cancelButton_clicked()
@@ -279,4 +385,107 @@ void SendMail::serviceRequestFinished(QNetworkReply* n)
         QMessageBox::about(this,"Error",QString::number(n->error()) + ": " + n->errorString());
     }
     this->close();
+}
+
+void SendMail::on_txt_Email_editingFinished()
+{
+    if(checkValidForMail() == false) {
+        ui.txt_Email->setStyleSheet("border:2px solid red;border-radius:5px;");
+        ui.sendButton->setEnabled(false);
+        ui.previewButton->setEnabled(false);
+    }else {
+        ui.txt_Email->setStyleSheet("");
+    }
+
+}
+
+void SendMail::on_txt_Email_textEdited(const QString &arg1)
+{
+    ui.txt_Email->setStyleSheet("");
+    ui.sendButton->setEnabled(false);
+    ui.previewButton->setEnabled(false);
+}
+
+void SendMail::on_txtContactName_textEdited(const QString &arg1)
+{
+    ui.txtContactName->setStyleSheet("");
+    ui.sendButton->setEnabled(false);
+    ui.previewButton->setEnabled(false);
+}
+
+void SendMail::on_txtContactName_editingFinished()
+{
+    if(checkValidForName() == false) {
+        ui.txtContactName->setStyleSheet("border:2px solid red;border-radius:5px;");
+        ui.sendButton->setEnabled(false);
+        ui.previewButton->setEnabled(false);
+    }
+    else {
+       ui.txtContactName->setStyleSheet("");
+    }
+}
+
+void SendMail::on_txt_FirstName_editingFinished()
+{
+    if(checkValidForFirstName() == false) {
+        ui.txt_FirstName->setStyleSheet("border:2px solid red;border-radius:5px;");
+        ui.sendButton->setEnabled(false);
+        ui.previewButton->setEnabled(false);
+    }
+    else {
+       ui.txt_FirstName->setStyleSheet("");
+    }
+}
+
+void SendMail::on_txt_FirstName_textEdited(const QString &arg1)
+{
+    ui.txt_FirstName->setStyleSheet("");
+    ui.sendButton->setEnabled(false);
+    ui.previewButton->setEnabled(false);
+}
+
+void SendMail::on_txt_Phone_editingFinished()
+{
+    if(checkValidForPhone() == false) {
+        ui.txt_Phone->setStyleSheet("border:2px solid red;border-radius:5px;");
+        ui.sendButton->setEnabled(false);
+        ui.previewButton->setEnabled(false);
+    }
+    else {
+       ui.txt_Phone->setStyleSheet("");
+    }
+}
+
+void SendMail::on_txt_Phone_textEdited(const QString &arg1)
+{
+    ui.txt_Phone->setStyleSheet("");
+    ui.sendButton->setEnabled(false);
+    ui.previewButton->setEnabled(false);
+}
+
+void SendMail::on_txt_Fax_textEdited(const QString &arg1)
+{
+    if(ui.txt_Fax->text() != "") {
+        ui.txt_Fax->setStyleSheet("");
+        ui.sendButton->setEnabled(false);
+        ui.previewButton->setEnabled(false);
+    }else {
+        ui.txt_Fax->setStyleSheet("");
+    }
+}
+
+void SendMail::on_txt_Fax_editingFinished()
+{
+    if(ui.txt_Fax->text() != "") {
+        if(checkValidForFax() == false) {
+            ui.txt_Fax->setStyleSheet("border:2px solid red;border-radius:5px;");
+            ui.sendButton->setEnabled(false);
+            ui.previewButton->setEnabled(false);
+        }
+        else {
+           ui.txt_Fax->setStyleSheet("");
+        }
+    }else {
+        ui.txt_Fax->setStyleSheet("");
+    }
 }
