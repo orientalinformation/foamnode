@@ -1736,7 +1736,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
 
             AddFaceToList(surfaceName);
             listSurfaces.append(surfaceName);
-            ui->txt_Log->appendPlainText("Defining of "+ surfaceName +" box has been done");
+            ui->txt_Log->appendPlainText("Successfully create "+ surfaceName +" box");
         }
 
     }
@@ -3225,7 +3225,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                 }
 
                 //remove row on table
-                ui->txt_Log->appendPlainText("Delete "+ name +" box successfully");
+                ui->txt_Log->appendPlainText("Successfully delete "+ name +" box");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -3309,7 +3309,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                 }
 
                 //remove row on table
-                ui->txt_Log->appendPlainText("Delete "+ name +" box successfully");
+                ui->txt_Log->appendPlainText("Successfully delete "+ name +" box");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -3394,7 +3394,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                 }
 
                 //remove row on table
-                ui->txt_Log->appendPlainText("Delete "+ name +" box successfully");
+                ui->txt_Log->appendPlainText("Successfully delete "+ name +" box");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -3485,7 +3485,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                     }
                 }
                 //remove row on table
-                ui->txt_Log->appendPlainText("Delete "+ name +" STL successfully");
+                ui->txt_Log->appendPlainText("Successfully delete "+ name +" STL");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {

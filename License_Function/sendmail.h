@@ -53,6 +53,12 @@ private:
     QProgressDialog* progressDialog;
     bool isBuy;
     QList<QString> createList(QString str);
+    bool checkMail;
+    bool checkValidForMail();
+    bool checkValidForName();
+    bool checkValidForFirstName();
+    bool checkValidForPhone();
+    bool checkValidForFax();
     
 private slots:
     void on_pushButton_clicked();
@@ -64,6 +70,16 @@ private slots:
     void populateJavaScriptWindowObject();
     void serviceRequestFinished(QNetworkReply* n);
     void sendData();
+    void on_txt_Email_editingFinished();
+    void on_txt_Email_textEdited(const QString &arg1);
+    void on_txtContactName_textEdited(const QString &arg1);
+    void on_txtContactName_editingFinished();
+    void on_txt_FirstName_editingFinished();
+    void on_txt_FirstName_textEdited(const QString &arg1);
+    void on_txt_Phone_editingFinished();
+    void on_txt_Phone_textEdited(const QString &arg1);
+    void on_txt_Fax_textEdited(const QString &arg1);
+    void on_txt_Fax_editingFinished();
 };
 
 #endif // SENDMAIL_H
