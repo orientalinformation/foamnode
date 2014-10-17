@@ -81,10 +81,12 @@ private:
     void SetButtonEnable(bool value);
     void SetButtonDisplayEnable(bool value);
     bool SetBoundingDistance(float dMinX = 0, float dMaxX = 0, float dMinY = 0, float dMaxY = 0, float dMinZ = 0, float dMaxZ = 0);
+    bool isOpen;
 
     //reset draw boxs
     void ResetDrawBoxs();
     void LoadRefineDistanceSurface(QString currentSurface, int type);
+    void loadData();
 
 private slots:
     void on_actionOpen_triggered();
@@ -122,7 +124,6 @@ private slots:
     void on_btn_MeshRefinement_clicked();
     void on_btn_Boundary_clicked();
     void on_tb_boundary_clicked(QModelIndex index);
-    void on_tb_boundary_itemSelectionChanged();
     void on_txt_Max_Z_Bounding_editingFinished();
     void on_txt_Max_Y_Bounding_editingFinished();
     void on_txt_Max_X_Bounding_editingFinished();
@@ -146,6 +147,7 @@ private slots:
     void on_btn_Geometry_clicked();
     void Thread_Changed(QString value);
     void on_actionQuit_triggered();
+    void on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 };
 
 #endif // MAINWINDOW_H
