@@ -1605,7 +1605,7 @@
              <item>
               <widget class="QPushButton" name="btn_Bounding">
                <property name="text">
-                <string>Bounding</string>
+                <string>Domain</string>
                </property>
               </widget>
              </item>
@@ -1639,7 +1639,7 @@
                    <item>
                     <widget class="QLabel" name="label_21">
                      <property name="text">
-                      <string>Bounding type:</string>
+                      <string>Domain type:</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -6587,7 +6587,7 @@
      <x>0</x>
      <y>0</y>
      <width>908</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
