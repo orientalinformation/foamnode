@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
 
-    //SetButtonDefault();
-    //CheckLicense();
+    SetButtonDefault();
+    CheckLicense();
 }
 void MainWindow::CheckLicense()
 {
@@ -241,7 +241,7 @@ bool MainWindow::AddFaceToList(QString name)
     ui->tb_boundary->setItem(listFaces.size()-1,0,temp);
     ui->tb_boundary->setEditTriggers(QTableWidget::NoEditTriggers);
     ui->tb_boundary->setCurrentCell(0,0);
-    loadData();
+    //loadData();
     return true;
 }
 void MainWindow::Thread_Changed(QString value)
