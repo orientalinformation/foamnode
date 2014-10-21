@@ -34,6 +34,7 @@ private:
     MyThread *createrThread;
     QStringList listFaces;
     QStringList listSurfaces;
+    QStringList listSurfacesDefault;
     //declare file name import *STL
     QString file_name_STL;
     //declare path Open
@@ -81,12 +82,12 @@ private:
     void SetButtonEnable(bool value);
     void SetButtonDisplayEnable(bool value);
     bool SetBoundingDistance(float dMinX = 0, float dMaxX = 0, float dMinY = 0, float dMaxY = 0, float dMinZ = 0, float dMaxZ = 0);
-    bool isOpen;
 
     //reset draw boxs
     void ResetDrawBoxs();
     void LoadRefineDistanceSurface(QString currentSurface, int type);
     void loadData();
+    void boundaryDefault();
 
 private slots:
     void on_actionOpen_triggered();
@@ -148,6 +149,8 @@ private slots:
     void Thread_Changed(QString value);
     void on_actionQuit_triggered();
     void on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
+    void on_tb_MeshSurface_itemSelectionChanged();
+    //void on_tb_boundary_itemSelectionChanged();
 };
 
 #endif // MAINWINDOW_H

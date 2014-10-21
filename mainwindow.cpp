@@ -873,6 +873,7 @@ bool MainWindow::SetBoundingDistance(float dMinX, float dMaxX, float dMinY, floa
         listSurfaces.removeOne("MinX");
         listSurfaces.removeOne("MaxX");
     }
+    listSurfacesDefault = listSurfaces;
     mesh->updateGL();    
     return true;
 }
@@ -1193,17 +1194,9 @@ void MainWindow::LoadRefineDistanceSurface(QString currentSurface, int type)
 
 void MainWindow::loadData()
 {
-    flag_Item_Face_Click = true;
     QString currentSurface = ui->tb_boundary->currentItem()->text();
     if(flag_btnSurface_Click == true)
     {
-//        ui->txt_Level_Min_Surface_Refine->setText("0");
-//        ui->txt_Level_Max_Surface_Refine->setText("0");
-//        ui->txt_Level_Min_Surface_Refine_STL->setText("0");
-//        ui->txt_Level_Max_Surface_Refine_STL->setText("0");
-//        ui->txt_Distance_Surface->setText("0");
-//        ui->txt_Level_Surface->setText("0");
-        //snappy box
         for(int i = 0; i< mesh->snappyd->gBox.refi_Sur.n; i++)
         {
             if(mesh->snappyd->gBox.refi_Sur.surfaces[i].name == currentSurface)
@@ -1269,9 +1262,6 @@ void MainWindow::loadData()
     }
     if(flag_btnVolume_Click == true)
     {
-        ui->txt_Level_Volume->setText("0");
-        ui->cb_MeshVolumeMode->setCurrentIndex(0);
-        ui->txt_GeometryVolumeName->setText(currentSurface);
         RefinementRegions *refi_Reg = &mesh->snappyd->gBoxRegion.refi_Reg;
         for(int i = 0; i < refi_Reg->region.size(); i++)
         {
@@ -1281,7 +1271,7 @@ void MainWindow::loadData()
                     ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
-                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].distances[0].lv2));
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
         GeomeBoxRegion *gBoxRegion = &mesh->snappyd->gBoxRegion;
@@ -1308,7 +1298,7 @@ void MainWindow::loadData()
                     ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
-                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].distances[0].lv2));
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
         GeomeCylinderRegion *gCylinRegion = &mesh->snappyd->gCylinRegion;
@@ -1457,37 +1447,20 @@ void MainWindow::loadData()
         }
         ui->txt_Layer_Bounding_2->setText("0");
     }
-    //    if(flag_btnBounding_Click == true)
-    //    {
-    //        if(flag_btnSpecific_Click ==false)
-    //            return;
-    //        for(int i = 0; i< mesh->blockd->boundMesh.n; i++)
-    //        {
-    //            if(mesh->blockd->boundMesh.bounsType[i].name == currentSurface)
-    //            {
-    //                ui->txt_Name_Boundin_Type->setText(mesh->blockd->boundMesh.bounsType[i].name);
-    //                if(mesh->blockd->boundMesh.bounsType[i].type =="patch")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(1);
-    //                }
-    //                else if(mesh->blockd->boundMesh.bounsType[i].type =="empty")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(2);
-    //                }
-    //                else if(mesh->blockd->boundMesh.bounsType[i].type =="symmetryPlane")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(3);
-    //                }
-    //                else if(mesh->blockd->boundMesh.bounsType[i].type =="wall")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(4);
-    //                }
-    //                else
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(0);
-    //                return;
-    //            }
-    //        }
-    //    }
+}
+
+void MainWindow::boundaryDefault()
+{
+    if(listSurfacesDefault.size() == 0)
+        return;
+    int n = listSurfacesDefault.size();
+    for(int i = 0;i< n; i++){
+        Boundary b;
+        b.name = listSurfacesDefault[i];
+        b.patchInfo.type="patch";
+        b.patches.surfaces.append(listSurfacesDefault[i]);
+        mesh->patchDict->boundaries.append(b);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4044,7 +4017,6 @@ void MainWindow::on_actionOpen_triggered()
                 QMessageBox::information(
                         this,
                         tr("DMESH"), "blockMeshDict file is not found.");
-                isOpen = false;
                 return;
             }
             bool temp2 = mesh->snappyd->Read_Snappy(dir + "/system/snappyHexMeshDict");
@@ -4053,7 +4025,6 @@ void MainWindow::on_actionOpen_triggered()
                 QMessageBox::information(
                         this,
                         tr("DMESH"), "snappyHexMeshDict file is not found.");
-                isOpen = false;
                 return;
             }
             //read patch file
@@ -4103,7 +4074,6 @@ void MainWindow::on_actionOpen_triggered()
         else
         {
             this->setWindowTitle("DMesh");
-            isOpen = false;
             return;
         }
 
@@ -4733,7 +4703,6 @@ void MainWindow::on_actionOpen_triggered()
 
         mesh->SetViewList(views);
         mesh->updateGL();
-        isOpen = true;
 }
 
 void MainWindow::SetButtonDisplayEnable(bool value)
@@ -4818,13 +4787,6 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
     QString currentSurface = ui->tb_boundary->currentItem()->text();
     if(flag_btnSurface_Click == true)
     {
-//        ui->txt_Level_Min_Surface_Refine->setText("0");
-//        ui->txt_Level_Max_Surface_Refine->setText("0");
-//        ui->txt_Level_Min_Surface_Refine_STL->setText("0");
-//        ui->txt_Level_Max_Surface_Refine_STL->setText("0");
-//        ui->txt_Distance_Surface->setText("0");
-//        ui->txt_Level_Surface->setText("0");
-        //snappy box
         for(int i = 0; i< mesh->snappyd->gBox.refi_Sur.n; i++)
         {
             if(mesh->snappyd->gBox.refi_Sur.surfaces[i].name == currentSurface)
@@ -4890,8 +4852,8 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
     }
     if(flag_btnVolume_Click == true)
     {
-        ui->txt_Level_Volume->setText("0");
-        ui->cb_MeshVolumeMode->setCurrentIndex(0);
+        //ui->txt_Level_Volume->setText("0");
+        //ui->cb_MeshVolumeMode->setCurrentIndex(0);
         ui->txt_GeometryVolumeName->setText(currentSurface);
         RefinementRegions *refi_Reg = &mesh->snappyd->gBoxRegion.refi_Reg;
         for(int i = 0; i < refi_Reg->region.size(); i++)
@@ -4902,7 +4864,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                     ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
-                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].distances[0].lv2));
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
         GeomeBoxRegion *gBoxRegion = &mesh->snappyd->gBoxRegion;
@@ -4929,7 +4891,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                     ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
-                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].distances[0].lv2));
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
         GeomeCylinderRegion *gCylinRegion = &mesh->snappyd->gCylinRegion;
@@ -4957,7 +4919,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                     ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
-                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].distances[0].lv2));
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
         GeomeSphereRegion *gSphereRegion = &mesh->snappyd->gSphereRegion;
@@ -5078,35 +5040,11 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
         }
         ui->txt_Layer_Bounding_2->setText("0");
     }
-    //    if(flag_btnBounding_Click == true)
-    //    {
-    //        if(flag_btnSpecific_Click ==false)
-    //            return;
-    //        for(int i = 0; i< mesh->blockd->boundMesh.n; i++)
-    //        {
-    //            if(mesh->blockd->boundMesh.bounsType[i].name == currentSurface)
-    //            {
-    //                ui->txt_Name_Boundin_Type->setText(mesh->blockd->boundMesh.bounsType[i].name);
-    //                if(mesh->blockd->boundMesh.bounsType[i].type =="patch")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(1);
-    //                }
-    //                else if(mesh->blockd->boundMesh.bounsType[i].type =="empty")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(2);
-    //                }
-    //                else if(mesh->blockd->boundMesh.bounsType[i].type =="symmetryPlane")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(3);
-    //                }
-    //                else if(mesh->blockd->boundMesh.bounsType[i].type =="wall")
-    //                {
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(4);
-    //                }
-    //                else
-    //                    ui->cb_MeshBoundingType->setCurrentIndex(0);
-    //                return;
-    //            }
-    //        }
-    //    }
+}
+
+void MainWindow::on_tb_MeshSurface_itemSelectionChanged()
+{
+    if(ui->tb_MeshSurface->selectedItems().size() == 1){
+        ui->txt_BoundaryName->setText(ui->tb_MeshSurface->currentItem()->text());
+    }
 }
