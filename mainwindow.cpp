@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    loaded = true;
+    licenseOK = true;
     mesh = new DMesh();
     ui->layout_Mesh->addWidget(mesh);
     ui->txt_Log->setMaximumBlockCount(300);
@@ -17,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     SetButtonDefault();
     CheckLicense();
+    if(licenseOK){
+        checkDFC();
+    }
 }
 void MainWindow::CheckLicense()
 {
@@ -39,6 +44,7 @@ void MainWindow::CheckLicense()
                 sendMail = new SendMail();
                 sendMail->SetMode(true);
                 sendMail->exec();
+                licenseOK = false;
             }
             if(a.result() == QMessageBox::Abort)
             {
@@ -47,7 +53,10 @@ void MainWindow::CheckLicense()
                 rg->exec();
                 if(rg->result())
                 {
-                    ui->actionOpen->setEnabled(true);
+//                    ui->actionOpen->setEnabled(true);
+                    licenseOK = true;
+                    SetButtonEnable(true);
+                    SetButtonDisplayEnable(true);
                 }
             }
             if(a.result() == QMessageBox::Yes)
@@ -56,18 +65,21 @@ void MainWindow::CheckLicense()
                 sendMail = new SendMail();
                 sendMail->SetMode(false);
                 sendMail->exec();
+                licenseOK = false;
             }
         }
         else
         {
             SetButtonEnable(true);
             SetButtonDisplayEnable(true);
+            licenseOK = true;
         }
     }
     else
     {
         SetButtonEnable(false);
         SetButtonDisplayEnable(false);
+        licenseOK = false;
         QMessageBox a("License","Please contact DFM-Engineering for license key...!",QMessageBox::Warning,QMessageBox::Yes,QMessageBox::Ok,QMessageBox::Abort);
         a.setButtonText(QMessageBox::Ok,"Buy License");
         a.setButtonText(QMessageBox::Yes,"Trial");
@@ -80,6 +92,7 @@ void MainWindow::CheckLicense()
             sendMail = new SendMail();
             sendMail->SetMode(true);
             sendMail->exec();
+            licenseOK = false;
         }
         if(a.result() == QMessageBox::Abort)
         {
@@ -88,7 +101,10 @@ void MainWindow::CheckLicense()
             rg->exec();
             if(rg->result())
             {
-                ui->actionOpen->setEnabled(true);
+//                ui->actionOpen->setEnabled(true);
+                SetButtonEnable(true);
+                SetButtonDisplayEnable(true);
+                licenseOK = true;
             }
         }
         if(a.result() == QMessageBox::Yes)
@@ -97,6 +113,7 @@ void MainWindow::CheckLicense()
             sendMail = new SendMail();
             sendMail->SetMode(false);
             sendMail->exec();
+            licenseOK = false;
         }
     }
 }
@@ -1460,6 +1477,31 @@ void MainWindow::boundaryDefault()
         b.patchInfo.type="patch";
         b.patches.surfaces.append(listSurfacesDefault[i]);
         mesh->patchDict->boundaries.append(b);
+    }
+}
+
+void MainWindow::checkDFC()
+{
+    if(!QFile("DOFICore").exists()){
+        QMessageBox *messDFC = new QMessageBox("DOFI","DOFI needs OpenFOAM solvers for running. Please install it!",QMessageBox::Question,QMessageBox::Yes,QMessageBox::No,QMessageBox::NoButton);
+        messDFC->activateWindow();
+        messDFC->raise();
+//          messDFC->setFocus(Qt::ActiveWindowFocusReason);
+        if(messDFC->exec() == QMessageBox::Yes){
+            #if defined(Q_OS_WIN)
+                QDesktopServices::openUrl(QUrl("http://dofilink.com/files/DOFICore/OpenFOAM_2.1.0_Win_64bits.exe"));
+//                    this->close();
+            #else
+                QDesktopServices::openUrl(QUrl("http://dofilink.com/files/DOFICore/OpenFOAM.tar.gz"));
+//                    this->close();
+            #endif
+            loaded = false;
+        }else{
+            loaded = true;
+        }
+        CheckDFC = false;
+    }else {
+        CheckDFC = true;
     }
 }
 
@@ -2923,6 +2965,10 @@ void MainWindow::on_btn_DeleteBoundary_clicked()
 
 void MainWindow::on_btn_CreateMesh_clicked()
 {
+    checkDFC();
+    if(!CheckDFC){
+        return;
+    }
     bool flag_YesNo = false;
     if(path_Open != "")
     {
@@ -4700,7 +4746,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->min_Max.name_Surface = "";
             mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
         }
-
+        ui->actionClose->setEnabled(true);
         mesh->SetViewList(views);
         mesh->updateGL();
 }
@@ -4723,6 +4769,7 @@ void MainWindow::SetButtonDefault()
 {
     SetButtonDisplayEnable(false);
     ui->actionOpen->setEnabled(false);
+    ui->actionClose->setEnabled(false);
 }
 
 void MainWindow::SetButtonEnable(bool value)
@@ -5047,4 +5094,51 @@ void MainWindow::on_tb_MeshSurface_itemSelectionChanged()
     if(ui->tb_MeshSurface->selectedItems().size() == 1){
         ui->txt_BoundaryName->setText(ui->tb_MeshSurface->currentItem()->text());
     }
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+//    on_actionSave_triggered();
+    ui->layout_Mesh->removeWidget(mesh);
+    mesh = new DMesh();
+    ui->layout_Mesh->addWidget(mesh);
+    ui->tb_MeshSurface->clear();
+    ui->tb_boundary->clear();
+//    ui->cb_BoundingType->clear();
+//    ui->cb_MeshVolumeMode->clear();
+//    ui->cb_VolumeType->clear();
+//    LoadControlItems();
+//    LoadControlsVisible();
+//    LoadLocationInMesh();
+//    ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
+    ui->actionClose->setEnabled(false);
+}
+
+void MainWindow::on_actionCapture_triggered()
+{
+    W_Capture *w_cap = new W_Capture();
+    QString CapName;
+    if(w_cap->exec()){
+        CapName = w_cap->saveFileName;
+    }
+    if(w_cap->result() == 0)
+        return;
+    QString iPath = w_cap->GetFilePath();
+    QString iFormat = w_cap->GetFormat();
+    QString image = iPath+iFormat;
+    QPixmap *pixmap;
+    if (mesh != NULL && mesh->isVisible())
+    {
+        pixmap = new QPixmap(mesh->renderPixmap(mesh->width(),mesh->height()));
+//        vtkMesh->render(pixmap);
+        image = CapName + iFormat;
+    }
+//    if(isCreated == true && frm_ChartResidual->isVisible())
+//    {
+//        pixmap = new QPixmap(frm_ChartResidual->size());
+//        frm_ChartResidual->render(pixmap);
+//        image = iPath + "_Residual_" + iFormat;
+//    }
+    if(pixmap->save(image,0,100))
+        QMessageBox::information(this,"Save picture","The picture " + image + " has been save.",QMessageBox::Ok,QMessageBox::NoButton);
 }

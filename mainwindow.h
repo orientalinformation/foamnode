@@ -13,6 +13,7 @@
 #include "License_Function/sendmail.h"
 #include "License_Function/registerdialog.h"
 #include "License_Function/clsencryption.h"
+#include "Function_Widget/w_capture.h"
 
 namespace Ui {
     class MainWindow;
@@ -27,7 +28,7 @@ protected:
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    bool loaded;
 private:
     Ui::MainWindow *ui;
     DMesh *mesh;
@@ -56,6 +57,12 @@ private:
     bool flag_btnSpecific_Click;
     //flag button btn_MeshLayer click
     bool flag_btn_MeshLayer_Click;
+    //check DofiCore
+    bool CheckDFC;
+    //check License
+    bool licenseOK;
+    //enable Close trigger
+    bool isOpen;
 
     void LoadLocationInMesh();
     void LoadControlItems();
@@ -88,6 +95,7 @@ private:
     void LoadRefineDistanceSurface(QString currentSurface, int type);
     void loadData();
     void boundaryDefault();
+    void checkDFC();
 
 private slots:
     void on_actionOpen_triggered();
@@ -151,6 +159,8 @@ private slots:
     void on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_tb_MeshSurface_itemSelectionChanged();
     //void on_tb_boundary_itemSelectionChanged();
+    void on_actionClose_triggered();
+    void on_actionCapture_triggered();
 };
 
 #endif // MAINWINDOW_H
