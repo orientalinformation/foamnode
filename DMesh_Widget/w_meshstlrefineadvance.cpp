@@ -1,7 +1,7 @@
 #include "w_meshstlrefineadvance.h"
 #include "ui_w_meshstlrefineadvance.h"
 
-W_MeshSTLRefineAdvance::W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface, RefinementFeaturesSTL *rFeature,int resolveFeatureAngle, QWidget *parent) :
+W_MeshSTLRefineAdvance::W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface, RefinementFeaturesSTL *rFeature, float *resolveFeatureAngle, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::W_MeshSTLRefineAdvance)
 {
@@ -17,6 +17,8 @@ W_MeshSTLRefineAdvance::W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface, R
     }
     ui->txt_Level_Min_Surface_Refine_STL->setText(QString::number(rSurface->regionSTLs[0].lv1));
     ui->txt_Level_Max_Surface_Refine_STL->setText(QString::number(rSurface->regionSTLs[0].lv2));
+    //Resolve angle
+    ui->txt_ResolveFeatureAngle->setText(QString::number(*this->resolveFeatureAngle));
 
     //Feature
     ui->ckb_MeshSurfaceFeatures->setChecked(false);
@@ -51,6 +53,7 @@ bool W_MeshSTLRefineAdvance::SetDefine()
         QMessageBox::critical(this,"Error","Please input all values in this form...!");
         return false;
     }    
+    *this->resolveFeatureAngle = resoleAngle;
     QString currentSurface = rSurface->name;
     //Set Feature Settings
     bool isFeatureExisted = false;

@@ -6751,10 +6751,10 @@
      <normaloff>:/resource/images/pqShowCenterAxes24.png</normaloff>:/resource/images/pqShowCenterAxes24.png</iconset>
    </property>
    <property name="text">
-    <string>Show/Hide_Center_Coordinate</string>
+    <string>Show/Hide center</string>
    </property>
    <property name="toolTip">
-    <string>Show/Hide Center Coordinates</string>
+    <string>Show/Hide center</string>
    </property>
   </action>
   <action name="actionShow_Hide_Note_Coordinate">
@@ -6772,7 +6772,7 @@
     <string>Show/Hide_Note_Coordinate</string>
    </property>
    <property name="toolTip">
-    <string>Show/Hide Corner Coordinates</string>
+    <string>Show/Hide orientation axes</string>
    </property>
   </action>
   <action name="actionCapture">

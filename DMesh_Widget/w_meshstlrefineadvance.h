@@ -14,14 +14,14 @@ class W_MeshSTLRefineAdvance : public QDialog
     Q_OBJECT
 
 public:
-    explicit W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface,RefinementFeaturesSTL *rFeature,int resolveFeatureAngle,QWidget *parent = 0);
+    explicit W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface, RefinementFeaturesSTL *rFeature, float *resolveFeatureAngle, QWidget *parent = 0);
     ~W_MeshSTLRefineAdvance();
 
 private:
     Ui::W_MeshSTLRefineAdvance *ui;
     RefinementSurfaceSTL *rSurface;
     RefinementFeaturesSTL *rFeature;
-    int resolveFeatureAngle;
+    float * resolveFeatureAngle;
     bool SetDefine();
 
 private slots:

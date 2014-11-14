@@ -3741,7 +3741,7 @@ void MainWindow::on_btn_MeshRefineAdvance_clicked()
             rSurface = &mesh->snappyd->gUserDefine.refi_Sur.surfaces[i];
     }
 
-    W_MeshSTLRefineAdvance *w = new W_MeshSTLRefineAdvance(rSurface,rFeature,mesh->snappyd->resolveFeatureAngle);
+    W_MeshSTLRefineAdvance *w = new W_MeshSTLRefineAdvance(rSurface,rFeature,&mesh->snappyd->resolveFeatureAngle);
     if(w->exec())
     {
         ui->txt_Log->appendPlainText("Defining of advance values for "+ ui->tb_boundary->currentItem()->text() +" surface has been done");
