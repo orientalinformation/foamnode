@@ -371,6 +371,7 @@ void DMesh::ShowHeighWidthGreen()
 
 void DMesh::DrawCenterCoordinate()
 {
+    qDebug()<<"is_DrawCenterCoordinate"<<is_DrawCenterCoordinate;
     if(!is_DrawCenterCoordinate)
         return;
     QVector <float*> coordinate;

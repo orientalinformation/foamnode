@@ -5100,17 +5100,19 @@ void MainWindow::on_actionClose_triggered()
 {
 //    on_actionSave_triggered();
     ui->layout_Mesh->removeWidget(mesh);
+    listSurfaces.clear();
     mesh = new DMesh();
     ui->layout_Mesh->addWidget(mesh);
-    ui->tb_MeshSurface->clear();
-    ui->tb_boundary->clear();
+    LoadControlsVisible();
+//    ui->tb_MeshSurface->clear();
+//    ui->tb_boundary->viewport()->update();
+//    ui->tb_MeshSurface->viewport()->update();
 //    ui->cb_BoundingType->clear();
 //    ui->cb_MeshVolumeMode->clear();
 //    ui->cb_VolumeType->clear();
 //    LoadControlItems();
-//    LoadControlsVisible();
-//    LoadLocationInMesh();
-//    ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
+    LoadLocationInMesh();
+    ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
     ui->actionClose->setEnabled(false);
 }
 
