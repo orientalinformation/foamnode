@@ -1,13 +1,14 @@
 #include "w_meshstlrefineadvance.h"
 #include "ui_w_meshstlrefineadvance.h"
 
-W_MeshSTLRefineAdvance::W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface, RefinementFeaturesSTL *rFeature, QWidget *parent) :
+W_MeshSTLRefineAdvance::W_MeshSTLRefineAdvance(RefinementSurfaceSTL *rSurface, RefinementFeaturesSTL *rFeature,int resolveFeatureAngle, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::W_MeshSTLRefineAdvance)
 {
     ui->setupUi(this);
     this->rSurface = rSurface;
     this->rFeature = rFeature;
+    this->resolveFeatureAngle = resolveFeatureAngle;
     ui->frame_MeshSurfaceFeatures->hide();
 
     for(int j = 0; j< rSurface->n; j++)
@@ -41,14 +42,15 @@ W_MeshSTLRefineAdvance::~W_MeshSTLRefineAdvance()
 }
 bool W_MeshSTLRefineAdvance::SetDefine()
 {
-    bool g,h;
+    bool g,h,t;
     float angle = ui->txt_Angle_Features_STL->text().toFloat(&g);
     float feaLv = ui->txt_Level_Features_STL->text().toFloat(&h);
-    if(ui->ckb_MeshSurfaceFeatures->isChecked() && (!g || !h))
+    float resoleAngle = ui->txt_ResolveFeatureAngle->text().toFloat(&t);
+    if(ui->ckb_MeshSurfaceFeatures->isChecked() && (!g || !h || !t))
     {
         QMessageBox::critical(this,"Error","Please input all values in this form...!");
         return false;
-    }
+    }    
     QString currentSurface = rSurface->name;
     //Set Feature Settings
     bool isFeatureExisted = false;

@@ -204,6 +204,7 @@ public:
     Snappy_Dmesh();
     //point location in mesh
     PointDmesh locationInMesh;
+    float resolveFeatureAngle;
     //declare general surface
     AddLayersControls add_Layers_Controls;
     //Geometry Surface

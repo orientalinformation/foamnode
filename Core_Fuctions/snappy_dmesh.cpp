@@ -391,7 +391,7 @@ void Snappy_Dmesh::Write_Snappy(QString path)
         str_File_New +="	     level " + QString::number(gUserDefine.refi_Fea.feature[i].lv) + ";\n";
         str_File_New +="	}\n";
     }
-    str_File_New +="        );\n";
+    str_File_New +="	);\n";
     str_File_New +="\n";
     str_File_New +="	refinementSurfaces\n";
     str_File_New +="	{\n";
@@ -459,27 +459,27 @@ void Snappy_Dmesh::Write_Snappy(QString path)
         }
         str_File_New +="            }\n";
     }
-    str_File_New +="        }\n";
-    str_File_New +="	resolveFeatureAngle 180;\n";
+    str_File_New +="    }\n";
+    str_File_New +="	resolveFeatureAngle " + QString::number(resolveFeatureAngle) + ";\n";
     str_File_New +="\n";
-    str_File_New +="        refinementRegions\n";
-    str_File_New +="        {\n";
+    str_File_New +="    refinementRegions\n";
+    str_File_New +="    {\n";
 
     //add refinementRegions
     for(int i=0; i< gBox.refi_Reg.n; i++)
     {
         if(gBox.refi_Reg.region[i].distances.size() > 0)
         {
-            str_File_New +="            "+gBox.refi_Reg.region[i].name+"\n";
-            str_File_New +="            {\n";
-            str_File_New +="                mode "+gBox.refi_Reg.region[i].mode+";\n";
-            str_File_New +="                levels (";
+            str_File_New +="		"+gBox.refi_Reg.region[i].name+"\n";
+            str_File_New +="		{\n";
+            str_File_New +="			mode "+gBox.refi_Reg.region[i].mode+";\n";
+            str_File_New +="			levels (";
             foreach(RefinementDistance r,gBox.refi_Reg.region[i].distances)
             {
                 str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
             }
             str_File_New += " );\n";
-            str_File_New +="            }\n";
+            str_File_New +="		}\n";
             str_File_New +="\n";
         }
     }
@@ -487,16 +487,16 @@ void Snappy_Dmesh::Write_Snappy(QString path)
     {
         if(gCylin.refi_Reg.region[i].distances.size() > 0)
         {
-            str_File_New +="            "+gCylin.refi_Reg.region[i].name+"\n";
-            str_File_New +="            {\n";
-            str_File_New +="                mode "+gCylin.refi_Reg.region[i].mode+";\n";
-            str_File_New +="                levels (";
+            str_File_New +="		"+gCylin.refi_Reg.region[i].name+"\n";
+            str_File_New +="		{\n";
+            str_File_New +="			mode "+gCylin.refi_Reg.region[i].mode+";\n";
+            str_File_New +="			levels (";
             foreach(RefinementDistance r,gCylin.refi_Reg.region[i].distances)
             {
                 str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
             }
             str_File_New += " );\n";
-            str_File_New +="            }\n";
+            str_File_New +="		}\n";
             str_File_New +="\n";
         }
     }
@@ -504,16 +504,16 @@ void Snappy_Dmesh::Write_Snappy(QString path)
     {
         if(gSphere.refi_Reg.region[i].distances.size() > 0)
         {
-            str_File_New +="            "+gSphere.refi_Reg.region[i].name+"\n";
-            str_File_New +="            {\n";
-            str_File_New +="                mode "+gSphere.refi_Reg.region[i].mode+";\n";
-            str_File_New +="                levels (";
+            str_File_New +="		"+gSphere.refi_Reg.region[i].name+"\n";
+            str_File_New +="		{\n";
+            str_File_New +="			mode "+gSphere.refi_Reg.region[i].mode+";\n";
+            str_File_New +="			levels (";
             foreach(RefinementDistance r,gSphere.refi_Reg.region[i].distances)
             {
                 str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
             }
             str_File_New += " );\n";
-            str_File_New +="            }\n";
+            str_File_New +="		}\n";
             str_File_New +="\n";
         }
     }
@@ -521,52 +521,52 @@ void Snappy_Dmesh::Write_Snappy(QString path)
     {
         if(gUserDefine.refi_Reg.region[i].distances.size() > 0)
         {
-            str_File_New +="            "+gUserDefine.refi_Reg.region[i].name+"\n";
-            str_File_New +="            {\n";
-            str_File_New +="                mode "+gUserDefine.refi_Reg.region[i].mode+";\n";
-            str_File_New +="                levels (";
+            str_File_New +="		"+gUserDefine.refi_Reg.region[i].name+"\n";
+            str_File_New +="		{\n";
+            str_File_New +="			mode "+gUserDefine.refi_Reg.region[i].mode+";\n";
+            str_File_New +="			levels (";
             foreach(RefinementDistance r,gUserDefine.refi_Reg.region[i].distances)
             {
                 str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
             }
             str_File_New += " );\n";
-            str_File_New +="            }\n";
+            str_File_New +="		}\n";
             str_File_New +="\n";
         }
     }
 
     for(int i=0; i< gBoxRegion.refi_Reg.n; i++)
     {
-        str_File_New +="            "+gBoxRegion.refi_Reg.region[i].name+"\n";
-        str_File_New +="            {\n";
-        str_File_New +="                mode "+gBoxRegion.refi_Reg.region[i].mode+";\n";
-        str_File_New +="                levels (("+ QString::number(gBoxRegion.refi_Reg.region[i].lv1)
+        str_File_New +="		"+gBoxRegion.refi_Reg.region[i].name+"\n";
+        str_File_New +="		{\n";
+        str_File_New +="			mode "+gBoxRegion.refi_Reg.region[i].mode+";\n";
+        str_File_New +="			levels (("+ QString::number(gBoxRegion.refi_Reg.region[i].lv1)
                                                     +" "+ QString::number(gBoxRegion.refi_Reg.region[i].lv2)+"));\n";
-        str_File_New +="            }\n";
+        str_File_New +="		}\n";
         str_File_New +="\n";
     }
     for(int i=0; i< gCylinRegion.refi_Reg.n; i++)
     {
-        str_File_New +="            "+gCylinRegion.refi_Reg.region[i].name+"\n";
-        str_File_New +="            {\n";
-        str_File_New +="                mode "+gCylinRegion.refi_Reg.region[i].mode+";\n";
-        str_File_New +="                levels (("+ QString::number(gCylinRegion.refi_Reg.region[i].lv1)
+        str_File_New +="		"+gCylinRegion.refi_Reg.region[i].name+"\n";
+        str_File_New +="		{\n";
+        str_File_New +="			mode "+gCylinRegion.refi_Reg.region[i].mode+";\n";
+        str_File_New +="			levels (("+ QString::number(gCylinRegion.refi_Reg.region[i].lv1)
                                                     +" "+ QString::number(gCylinRegion.refi_Reg.region[i].lv2)+"));\n";
-        str_File_New +="            }\n";
+        str_File_New +="		}\n";
         str_File_New +="\n";
     }
     for(int i=0; i< gSphereRegion.refi_Reg.n; i++)
     {
-        str_File_New +="            "+gSphereRegion.refi_Reg.region[i].name+"\n";
-        str_File_New +="            {\n";
-        str_File_New +="                mode "+gSphereRegion.refi_Reg.region[i].mode+";\n";
-        str_File_New +="                levels (("+ QString::number(gSphereRegion.refi_Reg.region[i].lv1)
+        str_File_New +="		"+gSphereRegion.refi_Reg.region[i].name+"\n";
+        str_File_New +="		{\n";
+        str_File_New +="			mode "+gSphereRegion.refi_Reg.region[i].mode+";\n";
+        str_File_New +="			levels (("+ QString::number(gSphereRegion.refi_Reg.region[i].lv1)
                                                     +" "+ QString::number(gSphereRegion.refi_Reg.region[i].lv2)+"));\n";
-        str_File_New +="            }\n";
+        str_File_New +="		}\n";
         str_File_New +="\n";
     }
 
-    str_File_New +="        }\n";
+    str_File_New +="    }\n";
     str_File_New +="\n";
     str_File_New +="	locationInMesh (";
     str_File_New += QString::number(locationInMesh.x) +" ";
@@ -883,6 +883,12 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
 
                 i = i+5;
             }
+        }
+        else if(lines[i].contains("resolveFeatureAngle"))
+        {
+            QString angle = lines[i].trimmed().split(" ")[1];
+            angle = angle.remove(";");
+            resolveFeatureAngle = angle.toFloat();
         }
         else if(lines[i].contains("locationInMesh"))
         {
