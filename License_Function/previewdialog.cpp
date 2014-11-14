@@ -31,7 +31,7 @@ previewDialog::previewDialog(QString message, QWidget *parent)
     : QDialog(parent)
 {
 	ui.setupUi(this);
-	ui.webView->setHtml(message);
+    ui.textBrowser->setHtml(message);
 
 }
 

@@ -26,7 +26,9 @@ SOURCES += main.cpp \
     License_Function/sendmail.cpp \
     License_Function/registerdialog.cpp \
     License_Function/previewdialog.cpp \
-    License_Function/clsencryption.cpp
+    License_Function/clsencryption.cpp \
+    License_Function/authdialog.cpp \
+    License_Function/downloader.cpp
 
 HEADERS  += \
     Core_Fuctions/snappy_dmesh.h \
@@ -43,7 +45,9 @@ HEADERS  += \
     License_Function/sendmail.h \
     License_Function/registerdialog.h \
     License_Function/previewdialog.h \
-    License_Function/clsencryption.h
+    License_Function/clsencryption.h \
+    License_Function/authdialog.h \
+    License_Function/downloader.h
 
 FORMS += \
     DMesh_Widget/w_meshsurfacerefinegeneral.ui \
@@ -52,7 +56,8 @@ FORMS += \
     DMesh_Widget/w_meshstlrefineadvance.ui \
     License_Function/sendmail.ui \
     License_Function/registerdialog.ui \
-    License_Function/previewdialog.ui
+    License_Function/previewdialog.ui \
+    License_Function/authdialog.ui
 
 RESOURCES += \
     resource.qrc

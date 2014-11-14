@@ -31,7 +31,6 @@ freely, subject to the following restrictions:
 #include <QtGui/QDialog>
 #include <QString>
 #include <QUrl>
-#include <QWebView>
 #include "ui_previewdialog.h"
 
 class previewDialog : public QDialog

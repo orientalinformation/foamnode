@@ -38,6 +38,7 @@ freely, subject to the following restrictions:
 #include <QInputDialog>
 #include "previewdialog.h"
 #include "ui_sendmail.h"
+#include "downloader.h"
 
 class SendMail : public QDialog
 {
@@ -51,6 +52,7 @@ public:
 private:
     Ui::SendMailClass ui;
     QProgressDialog* progressDialog;
+    Downloader *sendPost;
     bool isBuy;
     QList<QString> createList(QString str);
     bool checkMail;
@@ -59,6 +61,8 @@ private:
     bool checkValidForFirstName();
     bool checkValidForPhone();
     bool checkValidForFax();
+
+    void AddPostData(QString,QString,QString,QString);
     
 private slots:
     void on_pushButton_clicked();
@@ -67,7 +71,6 @@ private slots:
     void on_previewButton_clicked();
     void enableButtons(QString value);
     void updateProgress(int state);
-    void populateJavaScriptWindowObject();
     void serviceRequestFinished(QNetworkReply* n);
     void sendData();
     void on_txt_Email_editingFinished();
@@ -80,6 +83,12 @@ private slots:
     void on_txt_Phone_textEdited(const QString &arg1);
     void on_txt_Fax_textEdited(const QString &arg1);
     void on_txt_Fax_editingFinished();
+    void on_txt_Company_editingFinished();
+    void on_txt_Address_editingFinished();
+    void on_txt_City_editingFinished();
+    void on_txt_Company_textEdited(const QString &arg1);
+    void on_txt_Address_textEdited(const QString &arg1);
+    void on_txt_City_textEdited(const QString &arg1);
 };
 
 #endif // SENDMAIL_H

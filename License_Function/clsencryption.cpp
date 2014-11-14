@@ -63,7 +63,6 @@ void clsEncryption::reserveArray(QByteArray arr){
 
 bool clsEncryption::checkKey(QString fileName)
 {
-    return true;
     QString strEmail;
     QString strLicence;
     QString strExpiration;
@@ -72,6 +71,7 @@ bool clsEncryption::checkKey(QString fileName)
     QString strActiveKey;
     QString strResult;
 
+//    return true;
     //get MAC address
     foreach (const QNetworkInterface &ni, QNetworkInterface::allInterfaces())
     {
@@ -101,72 +101,20 @@ bool clsEncryption::checkKey(QString fileName)
             strLicence=line.replace("Licence=","");
         }else if(line.contains("Expiration=",Qt::CaseInsensitive)==true){
             strExpiration = line.replace("Expiration=","");
-            if(strExpiration=="7ff10abb653dead4186089acbd2b7891"){
-                nday=1;
-            }else if(strExpiration=="7fe8e836921493cba9afc767c65c7233"){
-                nday=2;
-            }else if(strExpiration=="2ca7631b9e4cf31b33d513d03a9bb5b4"){
-                nday=3;
-            }else if(strExpiration=="74b6aef81ed70658c01a3d76333f79eb"){
-                nday=4;
-            }else if(strExpiration=="6219026c9be0964064381537e2f0eb97"){
-                nday=5;
-            }else if(strExpiration=="026ec4bdc15038dd2dd6e8ce7072c322"){
-                nday=6;
-            }else if(strExpiration=="9f18f7b13efc41a7eebfe7f20295041f"){
-                nday=7;
-            }else if(strExpiration=="0832fa99e53d4b60d9b348c0af6a63b8"){
-                nday=8;
-            }else if(strExpiration=="4900d63bb2dc12c85703724f8d7af816"){
-                nday=9;
-            }else if(strExpiration=="5b5260163423e92708f42159ca373484"){
-                nday=10;
-            }else if(strExpiration=="7577bb1e8e1252e490f1c1c1d533cdd1"){
-                nday=11;
-            }else if(strExpiration=="3efd339ffe54f9214e2a9c0bd7f2126e"){
-                nday=12;
-            }else if(strExpiration=="4ba6436461b2fde84e93eea448547a74"){
-                nday=13;
-            }else if(strExpiration=="0006ffa48e2629176dd247c164d77d74"){
-                nday=14;
-            }else if(strExpiration=="7a79846295930e03b404801d73c4ad2c"){
-                nday=15;
-            }else if(strExpiration=="2816aa5f1d4f09527ecc8a2b7202730e"){
-                nday=16;
-            }else if(strExpiration=="39c999661811a24ac6eda5464d9033e7"){
-                nday=17;
-            }else if(strExpiration=="cbc8e1026e948748a68564c9c0d57fd5"){
-                nday=18;
-            }else if(strExpiration=="fe4efcbb726800c2431ab74b6e228d5b"){
-                nday=19;
-            }else if(strExpiration=="1752594fe2868affd4f2a51c8ab7354c"){
-                nday=20;
-            }else if(strExpiration=="3f1dcad1dc4ba0c984cb9f52b8252af3"){
-                nday=21;
-            }else if(strExpiration=="fe1af588515420f171096a297cc1ed5f"){
-                nday=22;
-            }else if(strExpiration=="a46a0ac969a27fe0382b16f5dfafdf83"){
-                nday=23;
-            }else if(strExpiration=="98706e32de22c7d1c14618898915546a"){
-                nday=24;
-            }else if(strExpiration=="d7f227a486ef0ebea55684289fd12bcb"){
-                nday=25;
-            }else if(strExpiration=="1538817d51664c0556c3176c694809be"){
-                nday=26;
-            }else if(strExpiration=="846267063f24c4609079bcb843deb58c"){
-                nday=27;
-            }else if(strExpiration=="c4878204908a8251ea7ddc35f9880a39"){
-                nday=28;
-            }else if(strExpiration=="27dc6747f4c6db079facf44bd8ce1528"){
-                nday=29;
-            }else if(strExpiration=="914c3d96b420b7cc43e6f580331b1343"){
+            if(strExpiration=="914c3d96b420b7cc43e6f580331b1343"){
                 nday=30;
-            }else if(strExpiration=="914c3d96b420b7cc43e6f580331b1343"){
-                nday=31;
-            }else if(strExpiration=="54ff85e3adef130d97bb4eb3c6db530c"){
-                nday=45;
             }else if(strExpiration=="5f785990b92c053f9a37418205c9bd06"){
                 nday=60;
+            }else if(strExpiration=="260261a5bdd468d9b1e8a9c4f474d97d"){
+                nday=90;
+            }else if(strExpiration=="6149b7e6e4cc56e3cbf592bdf8a99eb7"){
+                nday=120;
+            }else if(strExpiration=="4346fda2a08651636023da9bb3713512"){
+                nday=150;
+            }else if(strExpiration=="b7bd0f07ffbe9b8092d66cb507f97a37"){
+                nday=180;
+            }else if(strExpiration=="513673e86d3dc6f49ac011f451b0a697"){
+                nday=365;
             }else{
                 nday=0;
             }

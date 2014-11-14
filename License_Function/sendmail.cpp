@@ -8,7 +8,6 @@
 #include "smtp.h"
 #include "registerdialog.h"
 #include <QDesktopServices>
-#include <QWebFrame>
 #include <QNetworkProxyFactory>
 #include <QtNetwork>
 SendMail::SendMail(QWidget *parent)
@@ -42,10 +41,6 @@ void SendMail::SetMode(bool isBuy)
 void SendMail::on_sendButton_clicked()
 {
         this->sendData();
-}
-void SendMail::populateJavaScriptWindowObject()
-{
-    ui.webView->page()->mainFrame()->addToJavaScriptWindowObject("formExtractor", this);
 }
 
 void SendMail::on_previewButton_clicked()
@@ -114,7 +109,7 @@ void SendMail::enableButtons(QString value)
                     ui.sendButton->setEnabled(false);
                     ui.previewButton->setEnabled(false);
                 }
-            }else{
+            }else {
                 ui.sendButton->setEnabled(true);
                 ui.previewButton->setEnabled(true);
             }
@@ -310,6 +305,25 @@ bool SendMail::checkValidForFax()
     return true;
 }
 
+void SendMail::AddPostData(QString mac_vl,QString key_vl,QString code_postal_vl, QString isTrial_vl)
+{
+    sendPost->addPostParameter("company",ui.txt_Company->text());
+    sendPost->addPostParameter("address",ui.txt_Address->text());
+    sendPost->addPostParameter("phone",ui.txt_Phone->text());
+    sendPost->addPostParameter("firstname",ui.txt_FirstName->text());
+    sendPost->addPostParameter("lastname",ui.txtContactName->text());
+    sendPost->addPostParameter("email",ui.txt_Email->text());
+    sendPost->addPostParameter("message",ui.txt_Messages->toPlainText());
+    sendPost->addPostParameter("fax",ui.txt_Fax->text());
+    sendPost->addPostParameter("city",ui.txt_City->text());
+    sendPost->addPostParameter("country",ui.txt_Country->text());
+    sendPost->addPostParameter("zipcode",ui.txt_ZipCode->text());
+    sendPost->addPostParameter("mac",mac_vl);
+    sendPost->addPostParameter("key",key_vl);
+    sendPost->addPostParameter("code_postal",code_postal_vl);
+    sendPost->addPostParameter("isTrial",isTrial_vl);
+}
+
 void SendMail::on_cancelButton_clicked()
 {
     this->close();
@@ -321,17 +335,6 @@ void SendMail::on_pushButton_clicked()
 }
 void SendMail::sendData()
 {
-    QString company=ui.txt_Company->text();
-    QString address=ui.txt_Address->text();
-    QString phone=ui.txt_Phone->text();
-    QString firstname= ui.txt_FirstName->text() ;
-    QString lastname=  ui.txtContactName->text();
-    QString email = ui.txt_Email->text();
-    QString message = ui.txt_Messages->toPlainText();
-    QString fax = ui.txt_Fax->text();
-    QString city = ui.txt_City->text();
-    QString country = ui.txt_Country->text();
-    QString zipcode = ui.txt_ZipCode->text();
     QString mac;
     QString key="key";
     QString code_postal="code";
@@ -349,29 +352,32 @@ void SendMail::sendData()
     }
     if(isBuy)
         isTrial = "0";
-    ui.webView->setUrl(QUrl("http://client.dofilink.com/bugreport/add?firstname=" + firstname +
-                                       "&lastname=" + lastname +
-                                       "&email=" + email +
-                                       "&phone=" + phone +
-                                       "&fax=" + fax +
-                                       "&company=" + company  +
-                                       "&address=" + address +
-                                       "&zipcode=" + zipcode +
-                                       "&city=" + city +
-                                       "&country=" + country +
-                                       "&key=" + key +
-                                       "&trial=" + isTrial +
-                                       "&mac=" + mac +
-                                       "&message=" + message +
-                                       "&code=" + code_postal));
-
-        connect(ui.webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),
-                this, SLOT(populateJavaScriptWindowObject()));
+    sendPost = new Downloader("http://client.dofilink.com/bugreport/add",Downloader::POST_REQUEST);
+    AddPostData(mac,key,code_postal,isTrial);
+    sendPost->start();
+    while (sendPost->status()==Downloader::DOWNLOADING) {
+        QApplication::processEvents();
+    }
+    if (sendPost->status() == Downloader::SUCCESS) {
         ui.frame_Info->hide();
         ui.frame_Button->hide();
         ui.frame_Web->show();
+        QString Reply(sendPost->getNetworkReply()->readAll());
+        ui.ReplyBrowser->setStyleSheet("text-align:center");
+        ui.ReplyBrowser->setText("<p align=\"center\" style=\"top:100px \"><b>Register successfully!</b></p>");
+        //ui.ReplyBrowser->setText(Reply);
         this->setMinimumSize(260,260);
         this->resize(260,260);
+        qDebug()<<"Successful!";
+    } else {
+        ui.frame_Info->hide();
+        ui.frame_Button->hide();
+        ui.frame_Web->show();
+        ui.ReplyBrowser->setText("Please! Check internet connection!");
+        this->setMinimumSize(260,260);
+        this->resize(260,260);
+        qDebug()<<"Error!. Check internet connection !";
+    }
 }
 
 void SendMail::serviceRequestFinished(QNetworkReply* n)
@@ -415,7 +421,7 @@ void SendMail::on_txtContactName_textEdited(const QString &arg1)
 
 void SendMail::on_txtContactName_editingFinished()
 {
-    if(checkValidForName() == false) {
+    if(checkValidForName() == false || ui.txtContactName->text() == "") {
         ui.txtContactName->setStyleSheet("border:2px solid red;border-radius:5px;");
         ui.sendButton->setEnabled(false);
         ui.previewButton->setEnabled(false);
@@ -427,7 +433,7 @@ void SendMail::on_txtContactName_editingFinished()
 
 void SendMail::on_txt_FirstName_editingFinished()
 {
-    if(checkValidForFirstName() == false) {
+    if(checkValidForFirstName() == false || ui.txt_FirstName->text() == "") {
         ui.txt_FirstName->setStyleSheet("border:2px solid red;border-radius:5px;");
         ui.sendButton->setEnabled(false);
         ui.previewButton->setEnabled(false);
@@ -446,7 +452,7 @@ void SendMail::on_txt_FirstName_textEdited(const QString &arg1)
 
 void SendMail::on_txt_Phone_editingFinished()
 {
-    if(checkValidForPhone() == false) {
+    if(checkValidForPhone() == false || ui.txt_Phone->text() == "") {
         ui.txt_Phone->setStyleSheet("border:2px solid red;border-radius:5px;");
         ui.sendButton->setEnabled(false);
         ui.previewButton->setEnabled(false);
@@ -488,4 +494,40 @@ void SendMail::on_txt_Fax_editingFinished()
     }else {
         ui.txt_Fax->setStyleSheet("");
     }
+}
+
+void SendMail::on_txt_Company_editingFinished()
+{
+    if(ui.txt_Company->text() == ""){
+        ui.txt_Company->setStyleSheet("border:2px solid red;border-radius:5px;");
+    }
+}
+
+void SendMail::on_txt_Address_editingFinished()
+{
+    if(ui.txt_Address->text() == ""){
+        ui.txt_Address->setStyleSheet("border:2px solid red;border-radius:5px;");
+    }
+}
+
+void SendMail::on_txt_City_editingFinished()
+{
+    if(ui.txt_City->text() == ""){
+        ui.txt_City->setStyleSheet("border:2px solid red;border-radius:5px;");
+    }
+}
+
+void SendMail::on_txt_Company_textEdited(const QString &arg1)
+{
+    ui.txt_Company->setStyleSheet("");
+}
+
+void SendMail::on_txt_Address_textEdited(const QString &arg1)
+{
+    ui.txt_Address->setStyleSheet("");
+}
+
+void SendMail::on_txt_City_textEdited(const QString &arg1)
+{
+    ui.txt_City->setStyleSheet("");
 }
