@@ -37,6 +37,7 @@ void MainWindow::CheckLicense()
             a.setButtonText(QMessageBox::Abort,tr("Register"));
             a.setButtonText(QMessageBox::Yes,tr("Trial"));
             a.addButton(QMessageBox::Cancel);
+            a.setWindowFlags( this->windowFlags() | Qt::WindowStaysOnTopHint);
             a.exec();
             if(a.result() == QMessageBox::Ok)
             {
@@ -392,7 +393,7 @@ bool MainWindow::CheckNameValid(QString value)
 {
     if(value =="" || value.contains(" "))
     {
-        QMessageBox::critical(this,"Error","Please input a valid name!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input a valid name!"));
         return false;
     }
     //check name valid
@@ -400,7 +401,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gBox.boxes[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -408,7 +409,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gBoxRegion.boxes[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -416,7 +417,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gCylin.cylins[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -424,7 +425,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gCylinRegion.cylins[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -432,7 +433,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gSphere.sphere[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -440,7 +441,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gSphereRegion.sphere[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -448,7 +449,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(value==  mesh->snappyd->gUserDefine.user_Defines[i].name)
         {
-            QMessageBox::critical(this,"Error","This name is already existed, this will be replaced by new values (Coming soon)...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
         }
     }
@@ -456,7 +457,7 @@ bool MainWindow::CheckNameValid(QString value)
     {
         if(b.name == value)
         {
-            QMessageBox::critical(this,"Error","This name is already existed in boundaries...!");
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed in boundaries...!"));
             return false;
         }
     }
@@ -479,7 +480,7 @@ bool MainWindow::SetLocation()
     }
     else
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");        
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return false;
     }
 
@@ -618,7 +619,7 @@ bool MainWindow::CheckAndSaveBoundingBoxInput()
     }
     else
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return false;
     }
     return true;
@@ -638,7 +639,7 @@ bool MainWindow::CheckAndSaveBoundingDistance()
     }
     else
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return false;
     }    
     return true;
@@ -654,7 +655,7 @@ bool MainWindow::AddSurfaceRegionBox()
 
     if(a== false || b==false)
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return false;
     }
     //snappy box
@@ -714,7 +715,7 @@ bool MainWindow::AddUserDefine()
         }
         else
         {
-            QMessageBox::critical(this,"Error","Please input all values in this form...!");
+            QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
             return false;
         }
     }    
@@ -1484,9 +1485,7 @@ void MainWindow::checkDFC()
 {
     if(!QFile("DOFICore").exists()){
         QMessageBox *messDFC = new QMessageBox(tr("DMesh"),tr("DMesh needs OpenFOAM solvers for running. Please install it!"),QMessageBox::Question,QMessageBox::Yes,QMessageBox::No,QMessageBox::NoButton);
-        messDFC->activateWindow();
-        messDFC->raise();
-//          messDFC->setFocus(Qt::ActiveWindowFocusReason);
+        messDFC->setWindowFlags( this->windowFlags() | Qt::WindowStaysOnTopHint);
         if(messDFC->exec() == QMessageBox::Yes){
             #if defined(Q_OS_WIN)
                 QDesktopServices::openUrl(QUrl("http://dofilink.com/files/DOFICore/OpenFOAM_2.1.0_Win_64bits.exe"));
@@ -2340,7 +2339,7 @@ void MainWindow::on_txt_X_textChanged(QString value)
     if(!a)
     {
         ui->txt_X->undo();
-        QMessageBox::critical(this,("Error"),tr("Please input a valid value!"));
+        QMessageBox::critical(this,tr("Error"),tr("Please input a valid value!"));
         return;
     }
     if(mesh->blockd->vertice.n > 5)
@@ -5142,5 +5141,5 @@ void MainWindow::on_actionCapture_triggered()
 //        image = iPath + "_Residual_" + iFormat;
 //    }
     if(pixmap->save(image,0,100))
-        QMessageBox::information(this,tr("Save picture"),tr("The picture ") + image + tr(" has been saved."),QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::information(this,tr("Save picture"),tr("The picture %1 has been saved.").arg(image),QMessageBox::Ok,QMessageBox::NoButton);
 }

@@ -50,7 +50,7 @@ bool W_MeshSTLRefineAdvance::SetDefine()
     float resoleAngle = ui->txt_ResolveFeatureAngle->text().toFloat(&t);
     if(ui->ckb_MeshSurfaceFeatures->isChecked() && (!g || !h || !t))
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return false;
     }    
     *this->resolveFeatureAngle = resoleAngle;
@@ -128,7 +128,7 @@ void W_MeshSTLRefineAdvance::on_btn_Apply_clicked()
     float d = ui->txt_Level_Max_Surface_Refine_STL->text().toFloat(&b);
     if(!c || !d)
     {
-        QMessageBox::critical(this,"Error","Please input the valid values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input the valid values in this form...!"));
         return;
     }
     for(int j = 0; j< rSurface->n; j++)

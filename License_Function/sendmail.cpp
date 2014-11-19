@@ -388,7 +388,7 @@ void SendMail::serviceRequestFinished(QNetworkReply* n)
     }
     else
     {
-        QMessageBox::about(this,tr("Error"),QString::number(n->error()) + ": " + n->errorString());
+        QMessageBox::about(this,tr("Error"),tr("%1: %2").arg(QString::number(n->error())).arg(n->errorString()));
     }
     this->close();
 }

@@ -37,7 +37,7 @@ void W_MeshSurfaceRefineGeneral::on_buttonBox_accepted()
 
     if(a== false || b==false || c==false || d==false || e==false)
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return;
     }
     if(ui->cbx_Relative_Surface_General->currentIndex()==0)

@@ -20,15 +20,15 @@ Smtp::Smtp( const QString &server, const QString &from, const QString &to, const
 	date += myLocal.toString(myTime, "hh:mm:ss");
 	date += " +0000 (UTC)";
 	
-	message = "To: " + to + "\n";
-	message.append("From: " + from + "\n");
-	message.append("Subject: " + subject + "\n");
-	message.append("Date: " + date + "\n");
+    message = tr("To: %1\n").arg(to);
+    message.append(tr("From: %1\n").arg(from));
+    message.append(tr("Subject: %1\n").arg(subject));
+    message.append(tr("Date: %1\n").arg(date));
 	
 	if(html)
 	{
-		message.append("MIME-Version: 1.0 \n");
-		message.append("Content-Type: text/html; charset=\"iso-8859-1\"; format=flowed \n");
+        message.append(tr("MIME-Version: 1.0 \n"));
+        message.append(tr("Content-Type: text/html; charset=\"iso-8859-1\"; format=flowed \n"));
 	}
  	message.append(body);
 	message.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );

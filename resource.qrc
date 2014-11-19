@@ -16,7 +16,6 @@
         <file>resource/images/init.png</file>
         <file>resource/images/loading.gif</file>
         <file>resource/images/new.png</file>
-        <file>resource/images/open.png</file>
         <file>resource/images/parafoam.png</file>
         <file>resource/images/pqRotate32.png</file>
         <file>resource/images/pqShowCenterAxes24.png</file>
@@ -37,5 +36,6 @@
         <file>resource/images/add-icon.png</file>
         <file>resource/images/delete-icon.png</file>
         <file>resource/images/tick.png</file>
+        <file>resource/images/open.png</file>
     </qresource>
 </RCC>

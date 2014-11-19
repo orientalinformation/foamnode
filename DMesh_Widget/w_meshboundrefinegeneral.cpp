@@ -29,7 +29,7 @@ void W_MeshBoundRefineGeneral::on_buttonBox_accepted()
 
     if(a== false || b==false || c==false || d==false)
     {
-        QMessageBox::critical(this,"Error","Please input all values in this form...!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
         return;
     }
     mesh->blockd->gen_Bounding.Layers = v;
