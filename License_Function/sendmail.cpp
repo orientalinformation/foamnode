@@ -127,7 +127,7 @@ void SendMail::updateProgress(int state)
 	qDebug() << state;
 	if (state == -1)
 	{
-		QMessageBox::critical(this, "Error while sending mail", "Error while sending mail.");
+        QMessageBox::critical(this,tr("Error while sending mail"),tr("Error while sending mail."));
 		progressDialog->hide();
 	}
 	progressDialog->setValue(state);
@@ -373,7 +373,7 @@ void SendMail::sendData()
         ui.frame_Info->hide();
         ui.frame_Button->hide();
         ui.frame_Web->show();
-        ui.ReplyBrowser->setText("Please! Check internet connection!");
+        ui.ReplyBrowser->setText("Please check internet connection!");
         this->setMinimumSize(260,260);
         this->resize(260,260);
         qDebug()<<"Error!. Check internet connection !";
@@ -384,11 +384,11 @@ void SendMail::serviceRequestFinished(QNetworkReply* n)
 {
     if(n->error() == 0)
     {
-        QMessageBox::about(this,"Success","Send complete data..!");
+        QMessageBox::about(this,tr("Success"),tr("Send data completed..!"));
     }
     else
     {
-        QMessageBox::about(this,"Error",QString::number(n->error()) + ": " + n->errorString());
+        QMessageBox::about(this,tr("Error"),QString::number(n->error()) + ": " + n->errorString());
     }
     this->close();
 }

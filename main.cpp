@@ -1,5 +1,6 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
+#include <QObject>
 
 int main(int argc, char *argv[])
 {
@@ -10,7 +11,7 @@ int main(int argc, char *argv[])
     //check one instance of DMesh may be run
     QSharedMemory memInstanceLock("8Wb5631F");
     if ( memInstanceLock.attach() ) {
-        QMessageBox::information(0,"DMesh","Only one DMesh can run on this computer...!");
+        QMessageBox::information(0,QObject::tr("DMesh"),QObject::tr("Only one DMesh can run on this computer...!"));
         return 1;
     } else {
         if (!memInstanceLock.create(512, QSharedMemory::ReadWrite)) {

@@ -32,10 +32,10 @@ void MainWindow::CheckLicense()
         {
             SetButtonEnable(false);
             SetButtonDisplayEnable(false);
-            QMessageBox a("License","License has expired...!",QMessageBox::Warning,QMessageBox::Yes,QMessageBox::Ok,QMessageBox::Abort);
-            a.setButtonText(QMessageBox::Ok,"Buy License");
-            a.setButtonText(QMessageBox::Abort,"Register");
-            a.setButtonText(QMessageBox::Yes,"Trial");
+            QMessageBox a(tr("License"),tr("The license has expired...!"),QMessageBox::Warning,QMessageBox::Yes,QMessageBox::Ok,QMessageBox::Abort);
+            a.setButtonText(QMessageBox::Ok,tr("Buy License"));
+            a.setButtonText(QMessageBox::Abort,tr("Register"));
+            a.setButtonText(QMessageBox::Yes,tr("Trial"));
             a.addButton(QMessageBox::Cancel);
             a.exec();
             if(a.result() == QMessageBox::Ok)
@@ -80,10 +80,10 @@ void MainWindow::CheckLicense()
         SetButtonEnable(false);
         SetButtonDisplayEnable(false);
         licenseOK = false;
-        QMessageBox a("License","Please contact DFM-Engineering for license key...!",QMessageBox::Warning,QMessageBox::Yes,QMessageBox::Ok,QMessageBox::Abort);
-        a.setButtonText(QMessageBox::Ok,"Buy License");
-        a.setButtonText(QMessageBox::Yes,"Trial");
-        a.setButtonText(QMessageBox::Abort,"Register");
+        QMessageBox a(tr("License"),tr("Please contact DFM-Europe for license key...!"),QMessageBox::Warning,QMessageBox::Yes,QMessageBox::Ok,QMessageBox::Abort);
+        a.setButtonText(QMessageBox::Ok,tr("Buy License"));
+        a.setButtonText(QMessageBox::Yes,tr("Trial"));
+        a.setButtonText(QMessageBox::Abort,tr("Register"));
         a.addButton(QMessageBox::Cancel);
         a.exec();
         if(a.result() == QMessageBox::Ok)
@@ -1483,7 +1483,7 @@ void MainWindow::boundaryDefault()
 void MainWindow::checkDFC()
 {
     if(!QFile("DOFICore").exists()){
-        QMessageBox *messDFC = new QMessageBox("DOFI","DOFI needs OpenFOAM solvers for running. Please install it!",QMessageBox::Question,QMessageBox::Yes,QMessageBox::No,QMessageBox::NoButton);
+        QMessageBox *messDFC = new QMessageBox(tr("DMesh"),tr("DMesh needs OpenFOAM solvers for running. Please install it!"),QMessageBox::Question,QMessageBox::Yes,QMessageBox::No,QMessageBox::NoButton);
         messDFC->activateWindow();
         messDFC->raise();
 //          messDFC->setFocus(Qt::ActiveWindowFocusReason);
@@ -1589,7 +1589,7 @@ void MainWindow::on_btn_GeoImportSurface_clicked()
 {
     if(ui->txt_GeometrySurfaceFileStl->text()=="")
     {
-        QMessageBox::information(this,"Error","Please select a STL file!");
+        QMessageBox::information(this,tr("Error"),tr("Please select a STL file!"));
         return;
     }
     else
@@ -1606,7 +1606,7 @@ void MainWindow::on_btn_GeoImportSurface_clicked()
         {
             if(name==  mesh->snappyd->gUserDefine.user_Defines[i].name_file)
             {
-                QMessageBox::information(this,"Error","This name is already exists");
+                QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
                 return;
             }
         }
@@ -1620,7 +1620,7 @@ void MainWindow::on_btn_GeoImportSurface_clicked()
         }
         if(file1 == "")
         {
-            QMessageBox::information(this,"Error","File is empty!");
+            QMessageBox::information(this,tr("Error"),tr("File is empty!"));
             return;
         }
 
@@ -1697,7 +1697,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
         if(ui->txt_P1_Cyl_Sur_X->text()=="" || ui->txt_P1_Cyl_Sur_Y->text()=="" || ui->txt_P1_Cyl_Sur_Z->text()=="" || ui->txt_P2_Cyl_Sur_X->text()==""
            ||ui->txt_P2_Cyl_Sur_Y->text()=="" || ui->txt_P2_Cyl_Sur_Z->text()=="" || ui->txt_Radius_Cyl_Sur->text()=="")
         {
-            QMessageBox::information(this,"Error","Values are incorrect!");
+            QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
             return;
         }
         else
@@ -1713,7 +1713,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
             float radius_cyl = ui->txt_Radius_Cyl_Sur->text().toFloat(&l);
             if(!a || !b || !c || !d ||!d || !e || !k || !l)
             {
-                QMessageBox::information(this,"Error","Values are incorrect!");
+                QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
                 return;
             }
             //find min max default bouding
@@ -1883,7 +1883,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
         if(ui->txt_Max_Box_Sur_X->text()=="" || ui->txt_Max_Box_Sur_Y->text()=="" || ui->txt_Max_Box_Sur_Z->text()=="" ||
            ui->txt_Min_Box_Sur_X->text()=="" || ui->txt_Min_Box_Sur_Y->text()=="" || ui->txt_Min_Box_Sur_Z->text()=="")
         {
-            QMessageBox::information(this,"Error","Values are incorrect!");
+            QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
             return;
         }
         else
@@ -1898,7 +1898,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
 
             if(!a || !b || !c || !d ||!d || !e || !k)
             {
-                QMessageBox::information(this,"Error","Values are incorrect!");
+                QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
                 return;
             }
             //find min max default bouding
@@ -2062,7 +2062,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
         //define cylinder type
          if(ui->txt_P_Sphe_Sur_X->text()=="" || ui->txt_P_Sphe_Sur_Y->text()=="" || ui->txt_P_Sphe_Sur_Z->text()=="" || ui->txt_Radius_Sphe_Sur->text()=="")
          {
-             QMessageBox::information(this,"Error","Values are incorrect!");
+             QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
              return;
          }
          else
@@ -2076,7 +2076,7 @@ void MainWindow::on_btn_GeoDefineSurface_clicked()
 
              if(!a || !b || !c || !d  )
              {
-                 QMessageBox::information(this,"Error","Values are incorrect!");
+                 QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
                  return;
              }
              //find min max default bouding
@@ -2340,7 +2340,7 @@ void MainWindow::on_txt_X_textChanged(QString value)
     if(!a)
     {
         ui->txt_X->undo();
-        QMessageBox::critical(this,"Error","Please input a valid value!");
+        QMessageBox::critical(this,("Error"),tr("Please input a valid value!"));
         return;
     }
     if(mesh->blockd->vertice.n > 5)
@@ -2359,7 +2359,7 @@ void MainWindow::on_txt_Y_textChanged(QString value)
     if(!a)
     {
         ui->txt_Y->undo();
-        QMessageBox::critical(this,"Error","Please input a valid value!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input a valid value!"));
         return;
     }
     if(mesh->blockd->vertice.n > 5)
@@ -2378,7 +2378,7 @@ void MainWindow::on_txt_Z_textChanged(QString value)
     if(!a)
     {
         ui->txt_Z->undo();
-        QMessageBox::critical(this,"Error","Please input a valid value!");
+        QMessageBox::critical(this,tr("Error"),tr("Please input a valid value!"));
         return;
     }
     if(mesh->blockd->vertice.n > 5)
@@ -2501,7 +2501,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
         if(ui->txt_Max_Box_Vol_X->text()=="" || ui->txt_Max_Box_Vol_Y->text()=="" || ui->txt_Max_Box_Vol_Z->text()=="" ||
            ui->txt_Min_Box_Vol_X->text()=="" || ui->txt_Min_Box_Vol_Y->text()=="" || ui->txt_Min_Box_Vol_Z->text()=="")
         {
-            QMessageBox::information(this,"Error","Values are incorrect!");
+            QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
             return;
         }
         else
@@ -2516,7 +2516,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
 
             if(!a || !b || !c || !d ||!d || !e || !k)
             {
-                QMessageBox::information(this,"Error","Values are incorrect!");
+                QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
                 return;
             }
 
@@ -2655,7 +2655,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
         if(ui->txt_P1_Cyl_Vol_X->text()=="" || ui->txt_P1_Cyl_Vol_Y->text()=="" || ui->txt_P1_Cyl_Vol_Z->text()=="" || ui->txt_P2_Cyl_Vol_X->text()==""
            ||ui->txt_P2_Cyl_Vol_Y->text()=="" || ui->txt_P2_Cyl_Vol_Z->text()=="" || ui->txt_Radius_Cyl_Vol->text()=="")
         {
-            QMessageBox::information(this,"Error","Values are invalid!");
+            QMessageBox::information(this,tr("Error"),tr("Values are invalid!"));
             return;
         }
         else
@@ -2671,7 +2671,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
             float radius_cyl = ui->txt_Radius_Cyl_Vol->text().toFloat(&l);
             if(!a || !b || !c || !d ||!d || !e || !k || !l)
             {
-                QMessageBox::information(this,"Error","Values are invalid!");
+                QMessageBox::information(this,tr("Error"),tr("Values are invalid!"));
                 return;
             }
             GeomeCylinderRegion *gCylinRegion = &mesh->snappyd->gCylinRegion;
@@ -2714,7 +2714,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
        //define sphere type
         if(ui->txt_P_Sphe_Vol_X->text()=="" || ui->txt_P_Sphe_Vol_Y->text()=="" || ui->txt_P_Sphe_Vol_Z->text()=="" || ui->txt_Radius_Sphe_Vol->text()=="")
         {
-            QMessageBox::information(this,"Error","Values are invalid!");
+            QMessageBox::information(this,tr("Error"),tr("Values are invalid!"));
             return;
         }
         else
@@ -2817,7 +2817,7 @@ void MainWindow::on_btn_RefineLayer_clicked()
     int layer = ui->txt_Layer_Bounding_2->text().toInt(&is_Number);
     if(is_Number==false)
     {
-        QMessageBox::information(this,"Error","Values are incorrect!");
+        QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
         return;
     }
     int n = mesh->snappyd->add_Layers_Controls.nLayer;
@@ -2898,14 +2898,14 @@ void MainWindow::on_btn_CreateBoundary_clicked()
     {
         if(ui->cb_BoundaryType->currentIndex() == 0)
         {
-            QMessageBox::critical(this,"Error","Please select type of boundary!");
+            QMessageBox::critical(this,tr("Error"),tr("Please select type of boundary!"));
             return;
         }
         foreach(Boundary b,mesh->patchDict->boundaries)
         {
             if(b.name == ui->txt_BoundaryName->text())
             {
-                QMessageBox::critical(this,"Error","This name is already existed...!");
+                QMessageBox::critical(this,tr("Error"),tr("This name is already existed...!"));
                 return;
             }
         }
@@ -2929,7 +2929,7 @@ void MainWindow::on_btn_CreateBoundary_clicked()
         ui->txt_Log->appendPlainText("These surfaces have been merged to boundary " + b.name);
     }
     else
-        QMessageBox::critical(this,"Error","Please select as least as once surface!");
+        QMessageBox::critical(this,tr("Error"),tr("Please select as least as once surface!"));
 }
 void MainWindow::on_btn_DeleteBoundary_clicked()
 {
@@ -2956,7 +2956,7 @@ void MainWindow::on_btn_DeleteBoundary_clicked()
             ui->txt_Log->appendPlainText("This boundary have been deleted");
     }
     else
-        QMessageBox::critical(this,"Error","Please select as least as once boundary!");
+        QMessageBox::critical(this,tr("Error"),tr("Please select as least as once boundary!"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2972,7 +2972,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
     bool flag_YesNo = false;
     if(path_Open != "")
     {
-        switch(QMessageBox::question(this,"IAE Bresil","Do you want to ovewrite this case?",QMessageBox::Yes |
+        switch(QMessageBox::question(this,"IAE Bresil",tr("Do you want to ovewrite this case?"),QMessageBox::Yes |
                                       QMessageBox::No, QMessageBox::NoButton))
         {
             case QMessageBox::Yes:
@@ -3803,7 +3803,7 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
     {
         if(row < ui->tb_MeshRefineAroundSurface->rowCount() - 1)
         {
-            if(QMessageBox::warning(this,"Warning","Do you want to delete this field"))
+            if(QMessageBox::warning(this,tr("Warning"),tr("Do you want to delete this field")))
             {
                 float lv = ui->tb_MeshRefineAroundSurface->item(row,0)->text().toFloat();
                 //Foreach Box
@@ -3886,7 +3886,7 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
             r.lv2 = d.toFloat(&b);
             if(!a || !b)
             {
-                QMessageBox::warning(this,"Error","Please input all field...!");
+                QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
                 return;
             }
             ui->tb_MeshRefineAroundSurface->insertRow(ui->tb_MeshRefineAroundSurface->rowCount()-1);
@@ -3984,14 +3984,14 @@ void MainWindow::on_txt_Level_Min_Surface_Refine_editingFinished()
     int temp = ui->txt_Level_Min_Surface_Refine->text().toInt(&a);
     if(a ==false)
     {
-        QMessageBox::warning(this,"Error","Please enter a number greater than or equal 0!");
+        QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
         ui->txt_Level_Min_Surface_Refine->undo();
     }
     else
     {
         if(temp<0)
         {
-            QMessageBox::warning(this,"Error","Please enter a number greater than or equal 0");
+            QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
             ui->txt_Level_Min_Surface_Refine->undo();
         }
     }
@@ -4009,14 +4009,14 @@ void MainWindow::on_txt_Level_Max_Surface_Refine_editingFinished()
     int temp = ui->txt_Level_Max_Surface_Refine->text().toInt(&a);
     if(a ==false)
     {
-        QMessageBox::warning(this,"Error","Please enter a number greater than or equal 0!");
+        QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
         ui->txt_Level_Max_Surface_Refine->undo();
     }
     else
     {
         if(temp<0)
         {
-            QMessageBox::warning(this,"Error","Please enter a number greater than or equal 0");
+            QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
             ui->txt_Level_Max_Surface_Refine->undo();
         }
     }
@@ -4033,14 +4033,14 @@ void MainWindow::on_txt_Level_Volume_editingFinished()
     int temp = ui->txt_Level_Volume->text().toInt(&a);
     if(a ==false)
     {
-        QMessageBox::warning(this,"Error","Please enter a number greater than or equal 0!");
+        QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
         ui->txt_Level_Volume->undo();
     }
     else
     {
         if(temp<0)
         {
-            QMessageBox::warning(this,"Error","Please enter a number greater than or equal 0");
+            QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0"));
             ui->txt_Level_Volume->undo();
         }
     }
@@ -5142,5 +5142,5 @@ void MainWindow::on_actionCapture_triggered()
 //        image = iPath + "_Residual_" + iFormat;
 //    }
     if(pixmap->save(image,0,100))
-        QMessageBox::information(this,"Save picture","The picture " + image + " has been save.",QMessageBox::Ok,QMessageBox::NoButton);
+        QMessageBox::information(this,tr("Save picture"),tr("The picture ") + image + tr(" has been saved."),QMessageBox::Ok,QMessageBox::NoButton);
 }
