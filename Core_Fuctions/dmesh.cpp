@@ -21,6 +21,9 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     blockd->gen_Bounding.element.z = 10;
 
     snappyd = new Snappy_Dmesh();
+
+    snappyd->resolveFeatureAngle = 90;
+
     //creator defaut general and layers
     snappyd->add_Layers_Controls.nLayer =0;
     snappyd->add_Layers_Controls.relativeSizes= true;
@@ -46,6 +49,23 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     snappyd->gUserDefine.refi_Sur.n=0;
     snappyd->gUserDefine.refi_Reg.n=0;
     snappyd->gUserDefine.refi_Fea.n=0;
+
+    snappyd->gBoxCellZone.n =0;
+    snappyd->gBoxCellZone.refi_Sur.n=0;
+    snappyd->gBoxCellZone.refi_Reg.n=0;
+
+    snappyd->gCylinCellZone.n =0;
+    snappyd->gCylinCellZone.refi_Sur.n=0;
+    snappyd->gCylinCellZone.refi_Reg.n=0;
+
+    snappyd->gSphereCellZone.n =0;
+    snappyd->gSphereCellZone.refi_Sur.n=0;
+    snappyd->gSphereCellZone.refi_Reg.n=0;
+
+    snappyd->gUserDefineCellZone.n =0;
+    snappyd->gUserDefineCellZone.refi_Sur.n=0;
+    snappyd->gUserDefineCellZone.refi_Reg.n=0;
+    snappyd->gUserDefineCellZone.refi_Fea.n=0;
 
     //Region for refine
     snappyd->gBoxRegion.n =0;
@@ -75,7 +95,6 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     snappyd->defaultBounding.maxBouDef.y = -1000000;
     snappyd->defaultBounding.maxBouDef.z = -1000000;    
 	
-	//
     snappyd->min_Max.name_Surface="";
     snappyd->min_Max.min.x=1000000;
     snappyd->min_Max.min.y=1000000;
@@ -371,7 +390,6 @@ void DMesh::ShowHeighWidthGreen()
 
 void DMesh::DrawCenterCoordinate()
 {
-    qDebug()<<"is_DrawCenterCoordinate"<<is_DrawCenterCoordinate;
     if(!is_DrawCenterCoordinate)
         return;
     QVector <float*> coordinate;

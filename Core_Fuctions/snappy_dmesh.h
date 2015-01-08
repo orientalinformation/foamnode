@@ -2,6 +2,7 @@
 #define SNAPPY_DMESH_H
 #include <Core_Fuctions/block_dmesh.h>
 #include <QString>
+#include <math.h>
 #include <QVector>
 struct Surface_Min_Max
 {
@@ -118,6 +119,8 @@ struct RefinementRegions
     int n;
     QVector<RefinementRegion> region;
 };
+
+// Geometry Box
 struct GeomeBoxSurface
 {
     int n;
@@ -133,6 +136,8 @@ struct GeomeBoxRegion
     RefinementRegions refi_Reg;
 
 };
+
+// Geometry Cylinder
 struct GeomeCylinderSurface
 {
     int n;
@@ -146,6 +151,8 @@ struct GeomeCylinderRegion
     QVector<GeomeCylinTypeDmesh> cylins;
     RefinementRegions refi_Reg;
 };
+
+// Geometry Sphere
 struct GeomeSphereSurface
 {
     int n;
@@ -159,6 +166,8 @@ struct GeomeSphereRegion
     QVector<GeomeSphereTypeDmesh> sphere;
     RefinementRegions refi_Reg;
 };
+
+// Geometry UserDefine (STL)
 struct GeomeUserDefine
 {
     int n;
@@ -167,6 +176,7 @@ struct GeomeUserDefine
     RefinementRegions refi_Reg;
     RefinementFeaturesSTL refi_Fea;
 };
+
 struct Facet
 {
     PointDmesh normal;
@@ -202,36 +212,29 @@ class Snappy_Dmesh
 {
 public:
     Snappy_Dmesh();
+
+    QVector<STL> sTL;
     //point location in mesh
     PointDmesh locationInMesh;
     float resolveFeatureAngle;
     //declare general surface
     AddLayersControls add_Layers_Controls;
+
     //Geometry Surface
-
     GeomeBoxSurface gBox;
-    void Set(GeomeBoxSurface b);
-    GeomeBoxSurface Get_G_Box();
-
     GeomeCylinderSurface gCylin;
-    void Set(GeomeCylinderSurface c);
-    GeomeCylinderSurface Get_G_Cyli();
-
     GeomeSphereSurface gSphere;
-    void Set(GeomeSphereSurface s);
-    GeomeSphereSurface Get_G_Sphe();
-
     GeomeUserDefine gUserDefine;
-    void Set(GeomeUserDefine u);
-    GeomeUserDefine Get_G_User();
 
-    QVector<STL> sTL;
+    //Geometry Cellzone
+    GeomeBoxSurface gBoxCellZone;
+    GeomeCylinderSurface gCylinCellZone;
+    GeomeSphereSurface gSphereCellZone;
+    GeomeUserDefine gUserDefineCellZone;
 
     //Geometry Region
     GeomeBoxRegion gBoxRegion;
-
     GeomeCylinderRegion gCylinRegion;
-
     GeomeSphereRegion gSphereRegion;
 
     //Default Bounding
@@ -251,9 +254,21 @@ public:
     QVector <int> facetype;
     QStringList facename;
 
+    PointDmesh deltaBaseMesh;
     //declare surface min max
     QList<Surface_Min_Max> list_Surface_Min_Max;
     Surface_Min_Max min_Max;
+private:
+    QString CreateHeader();
+    QString CreateGeometry();
+    QString CreateCastellatedMeshControls();
+    QString CreateSnapControls();
+    QString CreateAddLayersControls();
+    QString CreateMeshQualityControls();
+
+    QString CreateMeshRefinementRegions(RefinementRegions ref);
+    QString FormatSnappyFile(QString value);
+    int FinMaxLevel();
 };
 
 #endif // Snappy_Dmesh_H

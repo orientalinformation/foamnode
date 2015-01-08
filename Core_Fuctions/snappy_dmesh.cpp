@@ -3,45 +3,6 @@
 Snappy_Dmesh::Snappy_Dmesh()
 {
 }
-void Snappy_Dmesh::Set(GeomeBoxSurface b)
-{
-    gBox = b;
-}
-
-GeomeBoxSurface Snappy_Dmesh::Get_G_Box()
-{
-    return gBox;
-}
-
-void Snappy_Dmesh::Set(GeomeCylinderSurface c)
-{
-    gCylin =c;
-}
-
-GeomeCylinderSurface Snappy_Dmesh::Get_G_Cyli()
-{
-    return gCylin;
-}
-
-void Snappy_Dmesh::Set(GeomeSphereSurface s)
-{
-    gSphere = s;
-}
-
-GeomeSphereSurface Snappy_Dmesh::Get_G_Sphe()
-{
-    return gSphere;
-}
-
-void Snappy_Dmesh::Set(GeomeUserDefine u)
-{
-    gUserDefine = u;
-}
-
-GeomeUserDefine Snappy_Dmesh::Get_G_User()
-{
-    return gUserDefine;
-}
 
 void Snappy_Dmesh::FindMinMaxDefaultBounding(float x, float y, float z)
 {
@@ -151,12 +112,631 @@ void Snappy_Dmesh::FindMinMax(QList<Surface_Min_Max> l)
     defaultBounding.maxBouDef.z = defaultBounding.maxBouDef.z +lz;
     defaultBounding.minBouDef.z = defaultBounding.minBouDef.z -lz;
 }
-bool Snappy_Dmesh::ReadSTLFile(QString path_car)
+
+QString Snappy_Dmesh::CreateHeader()
+{
+    QString str_File_New  = "/*--------------------------------*- C++ -*----------------------------------*\\\n";
+    str_File_New += "| =========                 |                                                 |\n";
+    str_File_New += "| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |\n";
+    str_File_New += "|  \\\\    /   O peration     | Version:  2.2.0                                 |\n";
+    str_File_New += "|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |\n";
+    str_File_New += "|    \\\\/     M anipulation  |                                                 |\n";
+    str_File_New += "\\*---------------------------------------------------------------------------*/\n";
+    str_File_New += "FoamFile\n";
+
+    str_File_New += "{\n";
+    str_File_New += "version 2.0;\n";
+    str_File_New += "format ascii;\n";
+    str_File_New += "class dictionary;\n";
+    str_File_New += "location system;\n";
+    str_File_New += "object snappyHexMeshDict;\n";
+    str_File_New += "}\n";
+    str_File_New += "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //\n";
+    str_File_New += "castellatedMesh     true;\n";
+    str_File_New += "snap        true;\n";
+    str_File_New += "addLayers	true;\n";
+    return str_File_New;
+}
+QString Snappy_Dmesh::CreateGeometry()
+{
+    QString str_File_New = "geometry\n";
+
+    str_File_New += "{\n";
+    for(int i=0; i< gBox.n; i++)
+    {
+        str_File_New += gBox.boxes[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableBox;\n";
+        str_File_New += "min ("+QString::number(gBox.boxes[i].min.x)+" "+QString::number(gBox.boxes[i].min.y)
+                                                +" "+QString::number(gBox.boxes[i].min.z)+");\n";
+        str_File_New += "max ("+QString::number(gBox.boxes[i].max.x)+" "+QString::number(gBox.boxes[i].max.y)
+                                                +" "+QString::number(gBox.boxes[i].max.z)+");\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gCylin.n; i++)
+    {
+        str_File_New += gCylin.cylins[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableCylinder;\n";
+        str_File_New += "point1 ("+QString::number(gCylin.cylins[i].point1.x)+" "+QString::number(gCylin.cylins[i].point1.y)
+                                                +" "+QString::number(gCylin.cylins[i].point1.z)+");\n";
+        str_File_New += "point2 ("+QString::number(gCylin.cylins[i].point2.x)+" "+QString::number(gCylin.cylins[i].point2.y)
+                                                +" "+QString::number(gCylin.cylins[i].point2.z)+");\n";
+        str_File_New += "radius "+QString::number(gCylin.cylins[i].radius)+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gSphere.n; i++)
+    {
+        str_File_New += gSphere.sphere[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableSphere;\n";
+        str_File_New += "centre ("+QString::number(gSphere.sphere[i].centre.x)+" "+QString::number(gSphere.sphere[i].centre.y)
+                                                +" "+QString::number(gSphere.sphere[i].centre.z)+");\n";
+        str_File_New += "radius "+QString::number(gSphere.sphere[i].radius)+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gUserDefine.n; i++)
+    {
+        str_File_New += gUserDefine.user_Defines[i].name_file + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type triSurfaceMesh;\n";
+        str_File_New += "name "+gUserDefine.user_Defines[i].name+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gBoxCellZone.n; i++)
+    {
+        str_File_New += gBoxCellZone.boxes[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableBox;\n";
+        str_File_New += "min ("+QString::number(gBoxCellZone.boxes[i].min.x)+" "+QString::number(gBoxCellZone.boxes[i].min.y)
+                                                +" "+QString::number(gBoxCellZone.boxes[i].min.z)+");\n";
+        str_File_New += "max ("+QString::number(gBoxCellZone.boxes[i].max.x)+" "+QString::number(gBoxCellZone.boxes[i].max.y)
+                                                +" "+QString::number(gBoxCellZone.boxes[i].max.z)+");\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gCylinCellZone.n; i++)
+    {
+        str_File_New += gCylinCellZone.cylins[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableCylinder;\n";
+        str_File_New += "point1 ("+QString::number(gCylinCellZone.cylins[i].point1.x)+" "+QString::number(gCylinCellZone.cylins[i].point1.y)
+                                                +" "+QString::number(gCylinCellZone.cylins[i].point1.z)+");\n";
+        str_File_New += "point2 ("+QString::number(gCylinCellZone.cylins[i].point2.x)+" "+QString::number(gCylinCellZone.cylins[i].point2.y)
+                                                +" "+QString::number(gCylinCellZone.cylins[i].point2.z)+");\n";
+        str_File_New += "radius "+QString::number(gCylinCellZone.cylins[i].radius)+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gSphereCellZone.n; i++)
+    {
+        str_File_New += gSphereCellZone.sphere[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableSphere;\n";
+        str_File_New += "centre ("+QString::number(gSphereCellZone.sphere[i].centre.x)+" "+QString::number(gSphereCellZone.sphere[i].centre.y)
+                                                +" "+QString::number(gSphereCellZone.sphere[i].centre.z)+");\n";
+        str_File_New += "radius "+QString::number(gSphereCellZone.sphere[i].radius)+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gUserDefineCellZone.n; i++)
+    {
+        str_File_New += gUserDefineCellZone.user_Defines[i].name_file + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type triSurfaceMesh;\n";
+        str_File_New += "name "+gUserDefineCellZone.user_Defines[i].name+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gBoxRegion.n; i++)
+    {
+        str_File_New += gBoxRegion.boxes[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableBox;\n";
+        str_File_New += "min ("+QString::number(gBoxRegion.boxes[i].min.x)+" "+QString::number(gBoxRegion.boxes[i].min.y)
+                                                +" "+QString::number(gBoxRegion.boxes[i].min.z)+");\n";
+        str_File_New += "max ("+QString::number(gBoxRegion.boxes[i].max.x)+" "+QString::number(gBoxRegion.boxes[i].max.y)
+                                                +" "+QString::number(gBoxRegion.boxes[i].max.z)+");\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gCylinRegion.n; i++)
+    {
+        str_File_New += gCylinRegion.cylins[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableCylinder;\n";
+        str_File_New += "point1 ("+QString::number(gCylinRegion.cylins[i].point1.x)+" "+QString::number(gCylinRegion.cylins[i].point1.y)
+                                                +" "+QString::number(gCylinRegion.cylins[i].point1.z)+");\n";
+        str_File_New += "point2 ("+QString::number(gCylinRegion.cylins[i].point2.x)+" "+QString::number(gCylinRegion.cylins[i].point2.y)
+                                                +" "+QString::number(gCylinRegion.cylins[i].point2.z)+");\n";
+        str_File_New += "radius "+QString::number(gCylinRegion.cylins[i].radius)+";\n";
+        str_File_New += "}\n";
+    }
+    for(int i=0; i< gSphereRegion.n; i++)
+    {
+        str_File_New += gSphereRegion.sphere[i].name + "\n";
+        str_File_New += "{\n";
+        str_File_New += "type searchableSphere;\n";
+        str_File_New += "centre ("+QString::number(gSphereRegion.sphere[i].centre.x)+" "+QString::number(gSphereRegion.sphere[i].centre.y)
+                                                +" "+QString::number(gSphereRegion.sphere[i].centre.z)+");\n";
+        str_File_New += "radius "+QString::number(gSphereRegion.sphere[i].radius)+";\n";
+        str_File_New += "}\n";
+    }
+    str_File_New += "}\n";
+    str_File_New += "\n";
+    return str_File_New;
+}
+QString Snappy_Dmesh::CreateCastellatedMeshControls()
+{
+    QString str_File_New = "castellatedMeshControls\n";
+    str_File_New +="{\n";
+    str_File_New +="maxLocalCells 1000000;\n";
+    str_File_New +="maxGlobalCells 2000000;\n";
+    str_File_New +="minRefinementCells 2;\n";
+    str_File_New +="nCellsBetweenLevels 3;\n";
+    str_File_New +="\n";
+    str_File_New +="features";
+    str_File_New +="(";
+    for(int i=0; i<gUserDefine.refi_Fea.n; i++)
+    {
+        str_File_New +="{";
+        str_File_New +="file \"" + gUserDefine.refi_Fea.feature[i].name + ".eMesh\";";
+        str_File_New +="level " + QString::number(gUserDefine.refi_Fea.feature[i].lv) + ";";
+        str_File_New +="}";
+    }
+    for(int i=0; i<gUserDefineCellZone.refi_Fea.n; i++)
+    {
+        str_File_New +="{";
+        str_File_New +="file \"" + gUserDefineCellZone.refi_Fea.feature[i].name + ".eMesh\";";
+        str_File_New +="level " + QString::number(gUserDefineCellZone.refi_Fea.feature[i].lv) + ";";
+        str_File_New +="}";
+    }
+    str_File_New +=");\n";
+    str_File_New +="refinementSurfaces\n";
+    str_File_New +="{\n";
+
+    //Add refinementSurfaces
+    for(int i=0; i< gBox.refi_Sur.n; i++)
+    {
+        if(gBox.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=gBox.refi_Sur.surfaces[i].name + "\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gBox.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gBox.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="}\n";
+        }
+    }
+    for(int i=0; i< gCylin.refi_Sur.n; i++)
+    {
+        if(gCylin.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=gCylin.refi_Sur.surfaces[i].name + "\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gCylin.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gCylin.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="}\n";
+        }
+    }
+    for(int i=0; i< gSphere.refi_Sur.n; i++)
+    {
+        if(gSphere.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=gSphere.refi_Sur.surfaces[i].name + "\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gSphere.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gSphere.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="}\n";
+        }
+    }
+    for(int i=0; i< gUserDefine.refi_Sur.n; i++)
+    {
+        str_File_New +=gUserDefine.refi_Sur.surfaces[i].name + "\n";
+        str_File_New +="{\n";
+//        if(gUserDefine.refi_Sur.surfaces[i].lv2 > 0)
+//        {
+            str_File_New +="level ("+QString::number(gUserDefine.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gUserDefine.refi_Sur.surfaces[i].lv2)+");\n";
+//        }
+        if(gUserDefine.refi_Sur.surfaces[i].n > 0)
+        {
+            //add regions
+            str_File_New +="regions\n";
+            str_File_New +="{\n";
+            for(int j=0; j< gUserDefine.refi_Sur.surfaces[i].n; j++)
+            {
+                if(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv1 > 0)
+                {
+                    str_File_New +=gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].name + "\n";
+                    str_File_New +="{\n";
+                    str_File_New +="level ("+QString::number(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv1)
+                                                            +" "+QString::number(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv2)+");\n";
+                    str_File_New +="}\n";
+                }
+            }
+            str_File_New +="}\n";
+        }
+        str_File_New +="}\n";
+    }
+    //Add refinement cell zone
+    for(int i=0; i < gBoxCellZone.refi_Sur.n; i++)
+    {
+        if(gBoxCellZone.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=gBoxCellZone.refi_Sur.surfaces[i].name + "\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gBoxCellZone.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gBoxCellZone.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="cellZone " + gBoxCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="faceZone " + gBoxCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="celZoneInside inside;\n";
+            str_File_New +="}\n";
+        }
+    }
+    for(int i=0; i < gCylinCellZone.refi_Sur.n; i++)
+    {
+        if(gCylinCellZone.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +="" + gCylinCellZone.refi_Sur.surfaces[i].name+"\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gCylinCellZone.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gCylinCellZone.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="cellZone " + gCylinCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="faceZone " + gCylinCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="celZoneInside inside;\n";
+            str_File_New +="}\n";
+        }
+    }
+    for(int i=0; i < gSphereCellZone.refi_Sur.n; i++)
+    {
+        if(gSphereCellZone.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=gSphereCellZone.refi_Sur.surfaces[i].name+"\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gSphereCellZone.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gSphereCellZone.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="cellZone " + gSphereCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="faceZone " + gSphereCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="celZoneInside inside;\n";
+            str_File_New +="}\n";
+        }
+    }
+    for(int i=0; i < gUserDefineCellZone.refi_Sur.n; i++)
+    {
+        if(gUserDefineCellZone.refi_Sur.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=gUserDefineCellZone.refi_Sur.surfaces[i].name+"\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(gUserDefineCellZone.refi_Sur.surfaces[i].lv1)
+                                                    +" "+QString::number(gUserDefineCellZone.refi_Sur.surfaces[i].lv2)+");\n";
+            str_File_New +="cellZone " + gUserDefineCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="faceZone " + gUserDefineCellZone.refi_Sur.surfaces[i].name + ";\n";
+            str_File_New +="celZoneInside inside;\n";
+            str_File_New +="}\n";
+        }
+    }
+
+    str_File_New +="}\n";
+    str_File_New +="resolveFeatureAngle " + QString::number(resolveFeatureAngle) + ";\n";
+    str_File_New +="\n";
+    str_File_New +="refinementRegions\n";
+    str_File_New +="{\n";
+
+    //add refinementRegions
+    str_File_New.append(CreateMeshRefinementRegions(gBox.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gCylin.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gSphere.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gUserDefine.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gBoxCellZone.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gCylinCellZone.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gSphereCellZone.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gUserDefineCellZone.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gBoxRegion.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gCylinRegion.refi_Reg));
+    str_File_New.append(CreateMeshRefinementRegions(gSphereRegion.refi_Reg));
+
+    str_File_New +="}\n";
+    str_File_New +="\n";
+    str_File_New +="locationInMesh (";
+    str_File_New += QString::number(locationInMesh.x) +" ";
+    str_File_New += QString::number(locationInMesh.y) +" ";
+    str_File_New += QString::number(locationInMesh.z);
+    str_File_New +=");\n";
+    str_File_New +="allowFreeStandingZoneFaces true;\n";
+    str_File_New +="}\n";
+    str_File_New +="\n";
+    return str_File_New;
+}
+QString Snappy_Dmesh::CreateSnapControls()
+{
+    QString str_File_New ="snapControls\n";
+    str_File_New +="{\n";
+    str_File_New +="nSolveIter 30;\n";
+    str_File_New +="nSmoothPatch 3;\n";
+    str_File_New +="tolerance 4.0;\n";
+    str_File_New +="nRelaxIter 5;\n";
+    str_File_New +="nFeatureSnapIter 20;\n";
+    str_File_New +="implicitFeatureSnap true;\n";
+    str_File_New +="explicitFeatureSnap true;\n";
+    str_File_New +="multiRegionFeatureSnap true;\n";
+    str_File_New +="}\n";
+    str_File_New +="\n";
+    return str_File_New;
+}
+QString Snappy_Dmesh::CreateAddLayersControls()
+{
+    QString str_File_New ="addLayersControls\n";
+    str_File_New +="{\n";
+    str_File_New +="layers\n";
+    str_File_New +="{\n";
+//Add layer
+    for (int i = 0; i < add_Layers_Controls.nLayer; i++)
+    {
+        if(add_Layers_Controls.layers[i].nSurfaceLayers > 0)
+        {
+            str_File_New +="\"" + add_Layers_Controls.layers[i].name + ".*\"\n";
+            str_File_New +="{\n";
+            str_File_New +="nSurfaceLayers " + QString::number(add_Layers_Controls.layers[i].nSurfaceLayers) + ";\n";
+            str_File_New +="}\n";
+        }
+    }
+    str_File_New +="}\n";
+    str_File_New +="\n";
+    if(add_Layers_Controls.relativeSizes == true)
+        str_File_New +="relativeSizes true;\n";
+    else
+        str_File_New +="relativeSizes false;\n";
+    str_File_New +="expansionRatio " + QString::number(add_Layers_Controls.expansionRatio) + ";\n";
+    str_File_New +="finalLayerThickness " + QString::number(add_Layers_Controls.finalLayerThickness) + ";\n";
+    str_File_New +="minThickness " + QString::number(add_Layers_Controls.minThickness) + ";\n";
+    str_File_New +="nGrow 0;\n";
+    str_File_New +="featureAngle " + QString::number(add_Layers_Controls.featureAngle) + ";\n";
+    str_File_New +="slipFeatureAngle " + QString::number(add_Layers_Controls.slipFeatureAngle) + ";\n";
+    str_File_New +="nRelaxIter 5;\n";
+    str_File_New +="nSmoothSurfaceNormals 3;\n";
+    str_File_New +="nSmoothNormals 5;\n";
+    str_File_New +="nSmoothThickness 10;\n";
+    str_File_New +="maxFaceThicknessRatio 0.9;\n";
+    str_File_New +="maxThicknessToMedialRatio 0.9;\n";
+    str_File_New +="minMedianAxisAngle 90;\n";
+    str_File_New +="nBufferCellsNoExtrude 0;\n";
+    str_File_New +="nLayerIter 50;\n";
+    str_File_New +="nRelaxedIter 20;\n";
+    str_File_New +="}\n";
+    str_File_New +="\n";
+    return str_File_New;
+}
+float MinIn(float a, float b, float c)
+{
+    if(a < b && a < c)
+        return a;
+    if(b < a && b < c)
+        return b;
+    if(c < a && c < b)
+        return b;
+    return a;
+}
+int Snappy_Dmesh::FinMaxLevel()
+{
+    int result = 0;
+    //Find in box surface
+    foreach(RefinementSurface r,gBox.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in box surface region
+    foreach(RefinementRegion r,gBox.refi_Reg.region){
+            foreach(RefinementDistance rD, r.distances)
+                if(result < rD.lv2)
+                    result = rD.lv2;
+    }
+    //Find in cylinder surface
+    foreach(RefinementSurface r,gCylin.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in cylinder surface region
+    foreach(RefinementRegion r,gCylin.refi_Reg.region){
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+    //Find in sphere surface
+    foreach(RefinementSurface r,gSphere.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in sphere surface region
+    foreach(RefinementRegion r,gSphere.refi_Reg.region){
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+    //Find in STL surface
+    foreach(RefinementSurfaceSTL r,gUserDefine.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+        foreach(regionSTL rS,r.regionSTLs)
+            if(result < rS.lv2)
+                result = rS.lv2;
+    }
+    //Find in STL surface region
+    foreach(RefinementRegion r,gUserDefine.refi_Reg.region){
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+    //Find in STL surface feature
+    foreach(FeatureSLT r,gUserDefine.refi_Fea.feature){
+            if(result < r.lv)
+                result = r.lv;
+    }
+    //Find in box surface cell zone
+    foreach(RefinementSurface r,gBoxCellZone.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in box surface region cell zone
+    foreach(RefinementRegion r,gBoxCellZone.refi_Reg.region){
+        if(result < r.lv2)
+            result = r.lv2;
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+    //Find in cylinder surface cell zone
+    foreach(RefinementSurface r,gCylinCellZone.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in cylinder surface region cell zone
+    foreach(RefinementRegion r,gCylinCellZone.refi_Reg.region){
+        if(result < r.lv2)
+            result = r.lv2;
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+    //Find in sphere surface cell zone
+    foreach(RefinementSurface r,gSphereCellZone.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in sphere surface region cell zone
+    foreach(RefinementRegion r,gSphereCellZone.refi_Reg.region){
+        if(result < r.lv2)
+            result = r.lv2;
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+
+    //Find in STL surface cell zone
+    foreach(RefinementSurfaceSTL r,gUserDefineCellZone.refi_Sur.surfaces){
+        if(result < r.lv2)
+            result = r.lv2;
+        foreach(regionSTL rS,r.regionSTLs)
+            if(result < rS.lv2)
+                result = rS.lv2;
+    }
+    //Find in STL surface region cell zone
+    foreach(RefinementRegion r,gUserDefineCellZone.refi_Reg.region){
+        foreach(RefinementDistance rD, r.distances)
+            if(result < rD.lv2)
+                result = rD.lv2;
+    }
+    //Find in STL surface feature cell zone
+    foreach(FeatureSLT r,gUserDefineCellZone.refi_Fea.feature){
+        if(result < r.lv)
+            result = r.lv;
+    }
+
+    //Find in box volume region
+    foreach(RefinementRegion r,gBoxRegion.refi_Reg.region){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in cylinder volume region
+    foreach(RefinementRegion r,gCylinRegion.refi_Reg.region){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    //Find in sphere volume region
+    foreach(RefinementRegion r,gSphereRegion.refi_Reg.region){
+        if(result < r.lv2)
+            result = r.lv2;
+    }
+    return result;
+}
+
+QString Snappy_Dmesh::CreateMeshQualityControls()
+{
+    QString str_File_New = "meshQualityControls\n";
+    str_File_New +="{\n";
+    str_File_New +="maxNonOrtho 65;\n";
+    str_File_New +="maxBoundarySkewness 20;\n";
+    str_File_New +="maxInternalSkewness 4;\n";
+    str_File_New +="maxConcave 80;\n";
+    str_File_New +="minFlatness 0.5;\n";
+    int maxLevel = FinMaxLevel();
+    if (maxLevel == 0)
+        maxLevel = 1;
+    float minVol = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),3)/100;
+
+    str_File_New +="minVol " + QString::number(minVol) + ";\n";
+    str_File_New +="minTetQuality -1e30;\n";
+    float minArea = pow(minVol,3)/10;
+    str_File_New +="minArea " + QString::number(minArea) + ";\n";
+    str_File_New +="minTwist 0.01;\n";
+    str_File_New +="minDeterminant 0.001;\n";
+    str_File_New +="minFaceWeight 0.02;\n";
+    str_File_New +="minVolRatio 0.02;\n";
+    str_File_New +="minTriangleTwist -1;\n";
+    str_File_New +="nSmoothScale 4;\n";
+    str_File_New +="errorReduction 0.75;\n";
+    str_File_New +="relaxed\n";
+    str_File_New +="{\n";
+    str_File_New +=" maxNonOrtho 40;\n";
+    str_File_New +="}\n";
+    str_File_New +="}\n";
+    str_File_New +="\n";
+    return str_File_New;
+}
+
+QString Snappy_Dmesh::CreateMeshRefinementRegions(RefinementRegions ref)
+{
+    QString str_File_New = "";
+    for(int i=0; i< ref.n; i++)
+    {
+        if(ref.region[i].distances.size() > 0)
+        {
+            str_File_New += ref.region[i].name + "\n";
+            str_File_New += "{\n";
+            str_File_New += "mode distance;\n";
+            str_File_New += "levels (";
+            foreach(RefinementDistance r,ref.region[i].distances)
+            {
+                str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
+            }
+            str_File_New += " );\n";
+            str_File_New +="}\n";
+        }
+        if(ref.region[i].lv1 > 0 && ref.region[i].lv2 > 0) {
+            str_File_New += ref.region[i].name + "\n";
+            str_File_New += "{\n";
+            str_File_New += "mode " + ref.region[i].mode + ";\n";
+            str_File_New += "levels (("+ QString::number(ref.region[i].lv1)
+                                                        +" "+ QString::number(ref.region[i].lv2)+"));\n";
+            str_File_New +="}\n";
+
+        }
+    }
+    return str_File_New;
+}
+
+QString Snappy_Dmesh::FormatSnappyFile(QString value)
+{
+    QStringList lines = value.split("\n",QString::SkipEmptyParts);
+    int i = 0;
+    int lv = 0;
+    int n = lines.size();
+    while (i < n){
+        if(lines[i].contains("}") && !lines[i].contains("{")) {
+            if(i +1 < n & !lines[i + 1].contains("}"))
+                lines[i].append("\n");
+            lv -= 1;
+        }
+        for(int j = 0; j < lv; j++){
+            lines[i] = "\t" + lines[i];
+        }
+        if(lines[i].contains("{") && !lines[i].contains("}"))
+            lv += 1;
+        i += 1;
+    }
+    return lines.join("\n");
+}
+
+bool Snappy_Dmesh::ReadSTLFile(QString path)
 {
     //read file
 
     QString file1;
-    QFile file(path_car);
+    QFile file(path);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
          file1= file.readAll();
@@ -169,9 +749,9 @@ bool Snappy_Dmesh::ReadSTLFile(QString path_car)
     QStringList lines = file1.split("\n",QString::SkipEmptyParts);
 
     //create STL    
-    QStringList file_name = path_car.split("/");
+    QStringList file_name = path.split("/");
     if(file_name.length()==1)
-        file_name = path_car.split("\\");
+        file_name = path.split("\\");
     QString name = file_name[file_name.length()-1].split(".")[0];
     int size_sTL =  sTL.size()+1;
     sTL.resize(size_sTL);
@@ -269,397 +849,24 @@ void Snappy_Dmesh::Write_Snappy(QString path)
     QFile file(QDir::toNativeSeparators(path));
     file.open(QIODevice::WriteOnly);
     QString str_File_New;
-    str_File_New  = "/*--------------------------------*- C++ -*----------------------------------*\\\n";
-    str_File_New += "| =========                 |                                                 |\n";
-    str_File_New += "| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |\n";
-    str_File_New += "|  \\\\    /   O peration     | Version:  2.2.0                                 |\n";
-    str_File_New += "|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |\n";
-    str_File_New += "|    \\\\/     M anipulation  |                                                 |\n";
-    str_File_New += "\\*---------------------------------------------------------------------------*/\n";
-    str_File_New += "FoamFile\n";
 
-    str_File_New += "{\n";
-    str_File_New += "    version 2.0;\n";
-    str_File_New += "    format ascii;\n";
-    str_File_New += "    class dictionary;\n";
-    str_File_New += "    location system;\n";
-    str_File_New += "    object snappyHexMeshDict;\n";
-    str_File_New += "}\n";
-    str_File_New += "\n";
-    str_File_New += "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //\n";
-    str_File_New += "\n";
-    str_File_New +="    castellatedMesh     true;\n";
-    str_File_New +="    snap        true;\n";
-    str_File_New +="    addLayers	true;\n";
-    str_File_New +="\n";
-    str_File_New += "geometry\n";
+    str_File_New.append(CreateHeader());
+    str_File_New.append(CreateGeometry());
+    str_File_New.append(CreateCastellatedMeshControls());
+    str_File_New.append(CreateSnapControls());
+    str_File_New.append(CreateAddLayersControls());
+    str_File_New.append(CreateMeshQualityControls());
 
-    str_File_New += "{\n";
-    for(int i=0; i< gBox.n; i++)
-    {
-        str_File_New += "        "+gBox.boxes[i].name+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type searchableBox;\n";
-        str_File_New +="            min ("+QString::number(gBox.boxes[i].min.x)+" "+QString::number(gBox.boxes[i].min.y)
-                                                +" "+QString::number(gBox.boxes[i].min.z)+");\n";
-        str_File_New +="            max ("+QString::number(gBox.boxes[i].max.x)+" "+QString::number(gBox.boxes[i].max.y)
-                                                +" "+QString::number(gBox.boxes[i].max.z)+");\n";
-        str_File_New += "        }\n";
-    }
-    for(int i=0; i< gCylin.n; i++)
-    {
-        str_File_New += "        "+gCylin.cylins[i].name+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type searchableCylinder;\n";
-        str_File_New +="            point1 ("+QString::number(gCylin.cylins[i].point1.x)+" "+QString::number(gCylin.cylins[i].point1.y)
-                                                +" "+QString::number(gCylin.cylins[i].point1.z)+");\n";
-        str_File_New +="            point2 ("+QString::number(gCylin.cylins[i].point2.x)+" "+QString::number(gCylin.cylins[i].point2.y)
-                                                +" "+QString::number(gCylin.cylins[i].point2.z)+");\n";
-        str_File_New +="            radius "+QString::number(gCylin.cylins[i].radius)+";\n";
-        str_File_New += "        }\n";
-    }
-    for(int i=0; i< gSphere.n; i++)
-    {
-        str_File_New += "        "+gSphere.sphere[i].name+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type searchableSphere;\n";
-        str_File_New +="            centre ("+QString::number(gSphere.sphere[i].centre.x)+" "+QString::number(gSphere.sphere[i].centre.y)
-                                                +" "+QString::number(gSphere.sphere[i].centre.z)+");\n";
-        str_File_New +="            radius "+QString::number(gSphere.sphere[i].radius)+";\n";
-        str_File_New += "        }\n";
-    }
-    for(int i=0; i< gUserDefine.n; i++)
-    {
-        str_File_New += "        "+gUserDefine.user_Defines[i].name_file+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type triSurfaceMesh;\n";
-        str_File_New +="            name "+gUserDefine.user_Defines[i].name+";\n";
-        str_File_New += "        }\n";
-    }
-    for(int i=0; i< gBoxRegion.n; i++)
-    {
-        str_File_New += "        "+gBoxRegion.boxes[i].name+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type searchableBox;\n";
-        str_File_New +="            min ("+QString::number(gBoxRegion.boxes[i].min.x)+" "+QString::number(gBoxRegion.boxes[i].min.y)
-                                                +" "+QString::number(gBoxRegion.boxes[i].min.z)+");\n";
-        str_File_New +="            max ("+QString::number(gBoxRegion.boxes[i].max.x)+" "+QString::number(gBoxRegion.boxes[i].max.y)
-                                                +" "+QString::number(gBoxRegion.boxes[i].max.z)+");\n";
-        str_File_New += "        }\n";
-    }
-    for(int i=0; i< gCylinRegion.n; i++)
-    {
-        str_File_New += "        "+gCylinRegion.cylins[i].name+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type searchableCylinder;\n";
-        str_File_New +="            point1 ("+QString::number(gCylinRegion.cylins[i].point1.x)+" "+QString::number(gCylinRegion.cylins[i].point1.y)
-                                                +" "+QString::number(gCylinRegion.cylins[i].point1.z)+");\n";
-        str_File_New +="            point2 ("+QString::number(gCylinRegion.cylins[i].point2.x)+" "+QString::number(gCylinRegion.cylins[i].point2.y)
-                                                +" "+QString::number(gCylinRegion.cylins[i].point2.z)+");\n";
-        str_File_New +="            radius "+QString::number(gCylinRegion.cylins[i].radius)+";\n";
-        str_File_New += "        }\n";
-    }
-    for(int i=0; i< gSphereRegion.n; i++)
-    {
-        str_File_New += "        "+gSphereRegion.sphere[i].name+"\n";
-        str_File_New += "        {\n";
-        str_File_New +="            type searchableSphere;\n";
-        str_File_New +="            centre ("+QString::number(gSphereRegion.sphere[i].centre.x)+" "+QString::number(gSphereRegion.sphere[i].centre.y)
-                                                +" "+QString::number(gSphereRegion.sphere[i].centre.z)+");\n";
-        str_File_New +="            radius "+QString::number(gSphereRegion.sphere[i].radius)+";\n";
-        str_File_New += "        }\n";
-    }
-//    str_File_New += "   refinementBox\n";
-//    str_File_New += "   {\n";
-//    str_File_New += "   }\n";
-    str_File_New += "}\n";
-
-    str_File_New +="\n";
-    str_File_New +="castellatedMeshControls\n";
-    str_File_New +="{\n";
-    str_File_New +="	maxLocalCells 1000000;\n";
-    str_File_New +="	maxGlobalCells 2000000;\n";
-    str_File_New +="	minRefinementCells 2;\n";
-    str_File_New +="	nCellsBetweenLevels 3;\n";
-    str_File_New +="\n";
-    str_File_New +="	features\n";
-    str_File_New +="	(\n";
-    for(int i=0; i<gUserDefine.refi_Fea.n; i++)
-    {
-        str_File_New +="	{\n";
-        str_File_New +="	     file \"" + gUserDefine.refi_Fea.feature[i].name + ".eMesh\";\n";
-        str_File_New +="	     level " + QString::number(gUserDefine.refi_Fea.feature[i].lv) + ";\n";
-        str_File_New +="	}\n";
-    }
-    str_File_New +="	);\n";
-    str_File_New +="\n";
-    str_File_New +="	refinementSurfaces\n";
-    str_File_New +="	{\n";
-
-    //add refinementSurfaces
-    for(int i=0; i< gBox.refi_Sur.n; i++)
-    {
-        if(gBox.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +="		"+gBox.refi_Sur.surfaces[i].name+"\n";
-            str_File_New +="		{\n";
-            str_File_New +="			level ("+QString::number(gBox.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gBox.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="		}\n";
-        }
-    }
-    for(int i=0; i< gCylin.refi_Sur.n; i++)
-    {
-        if(gCylin.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +="		"+gCylin.refi_Sur.surfaces[i].name+"\n";
-            str_File_New +="		{\n";
-            str_File_New +="			level ("+QString::number(gCylin.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gCylin.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="		}\n";
-        }
-    }
-    for(int i=0; i< gSphere.refi_Sur.n; i++)
-    {
-        if(gSphere.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +="		"+gSphere.refi_Sur.surfaces[i].name+"\n";
-            str_File_New +="            {\n";
-            str_File_New +="                level ("+QString::number(gSphere.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gSphere.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="            }\n";
-        }
-    }
-    for(int i=0; i< gUserDefine.refi_Sur.n; i++)
-    {
-        str_File_New +="            "+gUserDefine.refi_Sur.surfaces[i].name+"\n";
-        str_File_New +="            {\n";
-//        if(gUserDefine.refi_Sur.surfaces[i].lv2 > 0)
-//        {
-            str_File_New +="                level ("+QString::number(gUserDefine.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gUserDefine.refi_Sur.surfaces[i].lv2)+");\n";
-//        }
-        if(gUserDefine.refi_Sur.surfaces[i].n > 0)
-        {
-            //add regions
-            str_File_New +="                regions\n";
-            str_File_New +="                {\n";
-            for(int j=0; j< gUserDefine.refi_Sur.surfaces[i].n; j++)
-            {
-                if(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv1 > 0)
-                {
-                    str_File_New +="                    "+gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].name+"\n";
-                    str_File_New +="                    {\n";
-                    str_File_New +="                        level ("+QString::number(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv1)
-                                                            +" "+QString::number(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv2)+");\n";
-                    str_File_New +="                    }\n";
-                }
-            }
-            str_File_New +="                }\n";
-        }
-        str_File_New +="            }\n";
-    }
-    str_File_New +="    }\n";
-    str_File_New +="	resolveFeatureAngle " + QString::number(resolveFeatureAngle) + ";\n";
-    str_File_New +="\n";
-    str_File_New +="    refinementRegions\n";
-    str_File_New +="    {\n";
-
-    //add refinementRegions
-    for(int i=0; i< gBox.refi_Reg.n; i++)
-    {
-        if(gBox.refi_Reg.region[i].distances.size() > 0)
-        {
-            str_File_New +="		"+gBox.refi_Reg.region[i].name+"\n";
-            str_File_New +="		{\n";
-            str_File_New +="			mode "+gBox.refi_Reg.region[i].mode+";\n";
-            str_File_New +="			levels (";
-            foreach(RefinementDistance r,gBox.refi_Reg.region[i].distances)
-            {
-                str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
-            }
-            str_File_New += " );\n";
-            str_File_New +="		}\n";
-            str_File_New +="\n";
-        }
-    }
-    for(int i=0; i< gCylin.refi_Reg.n; i++)
-    {
-        if(gCylin.refi_Reg.region[i].distances.size() > 0)
-        {
-            str_File_New +="		"+gCylin.refi_Reg.region[i].name+"\n";
-            str_File_New +="		{\n";
-            str_File_New +="			mode "+gCylin.refi_Reg.region[i].mode+";\n";
-            str_File_New +="			levels (";
-            foreach(RefinementDistance r,gCylin.refi_Reg.region[i].distances)
-            {
-                str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
-            }
-            str_File_New += " );\n";
-            str_File_New +="		}\n";
-            str_File_New +="\n";
-        }
-    }
-    for(int i=0; i< gSphere.refi_Reg.n; i++)
-    {
-        if(gSphere.refi_Reg.region[i].distances.size() > 0)
-        {
-            str_File_New +="		"+gSphere.refi_Reg.region[i].name+"\n";
-            str_File_New +="		{\n";
-            str_File_New +="			mode "+gSphere.refi_Reg.region[i].mode+";\n";
-            str_File_New +="			levels (";
-            foreach(RefinementDistance r,gSphere.refi_Reg.region[i].distances)
-            {
-                str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
-            }
-            str_File_New += " );\n";
-            str_File_New +="		}\n";
-            str_File_New +="\n";
-        }
-    }
-    for(int i=0; i< gUserDefine.refi_Reg.n; i++)
-    {
-        if(gUserDefine.refi_Reg.region[i].distances.size() > 0)
-        {
-            str_File_New +="		"+gUserDefine.refi_Reg.region[i].name+"\n";
-            str_File_New +="		{\n";
-            str_File_New +="			mode "+gUserDefine.refi_Reg.region[i].mode+";\n";
-            str_File_New +="			levels (";
-            foreach(RefinementDistance r,gUserDefine.refi_Reg.region[i].distances)
-            {
-                str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
-            }
-            str_File_New += " );\n";
-            str_File_New +="		}\n";
-            str_File_New +="\n";
-        }
-    }
-
-    for(int i=0; i< gBoxRegion.refi_Reg.n; i++)
-    {
-        str_File_New +="		"+gBoxRegion.refi_Reg.region[i].name+"\n";
-        str_File_New +="		{\n";
-        str_File_New +="			mode "+gBoxRegion.refi_Reg.region[i].mode+";\n";
-        str_File_New +="			levels (("+ QString::number(gBoxRegion.refi_Reg.region[i].lv1)
-                                                    +" "+ QString::number(gBoxRegion.refi_Reg.region[i].lv2)+"));\n";
-        str_File_New +="		}\n";
-        str_File_New +="\n";
-    }
-    for(int i=0; i< gCylinRegion.refi_Reg.n; i++)
-    {
-        str_File_New +="		"+gCylinRegion.refi_Reg.region[i].name+"\n";
-        str_File_New +="		{\n";
-        str_File_New +="			mode "+gCylinRegion.refi_Reg.region[i].mode+";\n";
-        str_File_New +="			levels (("+ QString::number(gCylinRegion.refi_Reg.region[i].lv1)
-                                                    +" "+ QString::number(gCylinRegion.refi_Reg.region[i].lv2)+"));\n";
-        str_File_New +="		}\n";
-        str_File_New +="\n";
-    }
-    for(int i=0; i< gSphereRegion.refi_Reg.n; i++)
-    {
-        str_File_New +="		"+gSphereRegion.refi_Reg.region[i].name+"\n";
-        str_File_New +="		{\n";
-        str_File_New +="			mode "+gSphereRegion.refi_Reg.region[i].mode+";\n";
-        str_File_New +="			levels (("+ QString::number(gSphereRegion.refi_Reg.region[i].lv1)
-                                                    +" "+ QString::number(gSphereRegion.refi_Reg.region[i].lv2)+"));\n";
-        str_File_New +="		}\n";
-        str_File_New +="\n";
-    }
-
-    str_File_New +="    }\n";
-    str_File_New +="\n";
-    str_File_New +="	locationInMesh (";
-    str_File_New += QString::number(locationInMesh.x) +" ";
-    str_File_New += QString::number(locationInMesh.y) +" ";
-    str_File_New += QString::number(locationInMesh.z);
-    str_File_New +=");\n";
-    str_File_New +="	allowFreeStandingZoneFaces true;\n";
-    str_File_New +="}\n";
-    str_File_New +="\n";
-    str_File_New +="snapControls\n";
-    str_File_New +="{\n";
-    str_File_New +="        nSolveIter 200;\n";
-    str_File_New +="        nSmoothPatch 3;\n";
-    str_File_New +="        tolerance 0.6;\n";
-    str_File_New +="        nRelaxIter 5;\n";
-    str_File_New +="        nFeatureSnapIter 10;\n";
-    str_File_New +="        implicitFeatureSnap true;\n";
-    str_File_New +="        explicitFeatureSnap true;\n";
-    str_File_New +="        multiRegionFeatureSnap true;\n";
-    str_File_New +="}\n";
-    str_File_New +="\n";
-    str_File_New +="addLayersControls\n";
-    str_File_New +="{\n";
-    str_File_New +="        layers\n";
-    str_File_New +="        {\n";
-//Add layer
-    for (int i = 0; i < add_Layers_Controls.nLayer; i++)
-    {
-        if(add_Layers_Controls.layers[i].nSurfaceLayers > 0)
-        {
-            str_File_New +="			\"" + add_Layers_Controls.layers[i].name + ".*\"\n";
-            str_File_New +="			{\n";
-            str_File_New +="				nSurfaceLayers " + QString::number(add_Layers_Controls.layers[i].nSurfaceLayers) + ";\n";
-            str_File_New +="			}\n";
-        }
-    }
-    str_File_New +="        }\n";
-    str_File_New +="\n";
-    if(add_Layers_Controls.relativeSizes == true)
-        str_File_New +="        relativeSizes true;\n";
-    else
-        str_File_New +="        relativeSizes false;\n";
-    str_File_New +="        expansionRatio " + QString::number(add_Layers_Controls.expansionRatio) + ";\n";
-    str_File_New +="        finalLayerThickness " + QString::number(add_Layers_Controls.finalLayerThickness) + ";\n";
-    str_File_New +="        minThickness " + QString::number(add_Layers_Controls.minThickness) + ";\n";
-    str_File_New +="        nGrow 0;\n";
-    str_File_New +="        featureAngle " + QString::number(add_Layers_Controls.featureAngle) + ";\n";
-    str_File_New +="        slipFeatureAngle " + QString::number(add_Layers_Controls.slipFeatureAngle) + ";\n";
-    str_File_New +="        nRelaxIter 5;\n";
-    str_File_New +="        nSmoothSurfaceNormals 3;\n";
-    str_File_New +="        nSmoothNormals 5;\n";
-    str_File_New +="        nSmoothThickness 10;\n";
-    str_File_New +="        maxFaceThicknessRatio 0.9;\n";
-    str_File_New +="        maxThicknessToMedialRatio 0.9;\n";
-    str_File_New +="        minMedianAxisAngle 90;\n";
-    str_File_New +="        nBufferCellsNoExtrude 0;\n";
-    str_File_New +="        nLayerIter 50;\n";
-    str_File_New +="        nRelaxedIter 20;\n";
-    str_File_New +="}\n";
-    str_File_New +="\n";
-    str_File_New +="meshQualityControls\n";
-    str_File_New +="{\n";
-    str_File_New +="        maxNonOrtho 65;\n";
-    str_File_New +="        maxBoundarySkewness 20;\n";
-    str_File_New +="        maxInternalSkewness 4;\n";
-    str_File_New +="        maxConcave 80;\n";
-    str_File_New +="        minFlatness 0.5;\n";
-    str_File_New +="        minVol 1.00E-13;\n";
-    str_File_New +="        minTetQuality -1e30;\n";
-    str_File_New +="        minArea -1;\n";
-    str_File_New +="        minTwist 0.01;\n";
-    str_File_New +="        minDeterminant 0.001;\n";
-    str_File_New +="        minFaceWeight 0.02;\n";
-    str_File_New +="        minVolRatio 0.02;\n";
-    str_File_New +="        minTriangleTwist -1;\n";
-    str_File_New +="        nSmoothScale 4;\n";
-    str_File_New +="        errorReduction 0.75;\n";
-    str_File_New +="        relaxed\n";
-    str_File_New +="        {\n";
-    str_File_New +="             maxNonOrtho 40;\n";
-    str_File_New +="        }\n";
-    str_File_New +="}\n";
-    str_File_New +="\n";
-    str_File_New +="    debug 0;\n";
-    str_File_New +="    mergeTolerance 1E-6;\n";
+    str_File_New +="debug 0;\n";
+    str_File_New +="mergeTolerance 1E-6;\n";
     str_File_New +="\n";
 
     str_File_New +="// ************************************************************************* //\n";
 
+    str_File_New = FormatSnappyFile(str_File_New);
     file.write(str_File_New.toAscii().data());
     file.close();
 }
-
 bool Snappy_Dmesh::Read_Snappy(QString path)
 {
     QString str_file = "";

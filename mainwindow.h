@@ -93,10 +93,20 @@ private:
     //reset draw boxs
     void ResetDrawBoxs();
     void LoadRefineDistanceSurface(QString currentSurface, int type);
+    void ReloadRefineDistanceSurface(RefinementRegion *refi_Reg);
     void loadData();
     void boundaryDefault();
     void checkDFC();
 
+    void ImportSTLSurface();
+    void ImportSTLCellzone();
+    void DefineSimpleSurface();
+    void DefineSimpleVolume();
+    void DefineSimpleCellZone();
+
+    bool AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface, QString mode, float lv);
+    bool RemoveRefineRegion(RefinementRegions *refi_Reg,QString currentSurface,float lv);
+    bool AddRefineRegion(RefinementRegions *refi_Reg, QString currentSurface, RefinementDistance r);
 private slots:
     void on_actionOpen_triggered();
     void on_txt_Level_Volume_editingFinished();
@@ -123,12 +133,9 @@ private slots:
     void on_btn_RefineLayer_clicked();
     void on_btn_GeoDefineBouding_clicked();
     void on_btn_MeshRefineVolume_clicked();
-    void on_cb_VolumeType_currentIndexChanged(QString );
     void on_btn_GenerateLocation_clicked();
     void on_btn_MeshRefineSurface_clicked();
     void on_btn_RefineBase_clicked();
-    void on_btn_GeoDefineSurface_clicked();
-    void on_btn_GeoImportSurface_clicked();
     void on_btn_MeshLayer_clicked();
     void on_btn_MeshRefinement_clicked();
     void on_btn_Boundary_clicked();
@@ -140,7 +147,6 @@ private slots:
     void on_txt_Min_Y_Bounding_editingFinished();
     void on_txt_Min_X_Bounding_editingFinished();
     void on_btn_Browse_clicked();
-    void on_ckb_MeshVolumeCellZone_clicked(bool checked);
     void on_btn_MeshSurfaceGeneral_clicked();
     void on_btn_MeshVolume_clicked();
     void on_btn_MeshSurface_clicked();
@@ -161,6 +167,11 @@ private slots:
     //void on_tb_boundary_itemSelectionChanged();
     void on_actionClose_triggered();
     void on_actionCapture_triggered();
+    void on_cb_GeometryNewMesh_currentIndexChanged(const QString &arg1);
+    void on_btn_GeoDefineNew_clicked();
+    void on_rbn_Volume_clicked(bool checked);
+    void on_rbn_Cellzone_clicked(bool checked);
+    void on_rbn_Surface_clicked(bool checked);
 };
 
 #endif // MAINWINDOW_H
