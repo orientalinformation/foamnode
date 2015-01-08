@@ -1408,6 +1408,9 @@ void MainWindow::ReloadRefineDistanceSurface(RefinementRegion *refi_Reg)
 
 void MainWindow::loadData()
 {
+    if(ui->tb_boundary->rowCount() <= 0){
+        return;
+    }
     QString currentSurface = ui->tb_boundary->currentItem()->text();
     if(flag_btnSurface_Click == true)
     {
@@ -1748,9 +1751,10 @@ void MainWindow::on_btn_Bounding_clicked()
 
 void MainWindow::on_btn_Browse_clicked()
 {
-    file_name_STL = QFileDialog::getOpenFileName(this,"Import file stl",file_name_STL,tr("Slt (*.stl)"));
+    file_name_STL = QFileDialog::getOpenFileName(this,"Import file stl",lastFileSTL,tr("Slt (*.stl)"));
     if(file_name_STL != "")
-        ui->txt_GeometrySurfaceFileStl->setText(file_name_STL);
+        lastFileSTL = file_name_STL;
+        ui->txt_GeometrySurfaceFileStl->setText(lastFileSTL);
 }
 void MainWindow::ImportSTLSurface()
 {
@@ -1761,6 +1765,7 @@ void MainWindow::ImportSTLSurface()
     }
     else
     {
+        this->file_name_STL = ui->txt_GeometrySurfaceFileStl->text();
         //Get filename and name of folder containds file
         QStringList file_name = file_name_STL.split("/");
         if(file_name.length()==1)
@@ -1862,6 +1867,7 @@ void MainWindow::ImportSTLCellzone()
     }
     else
     {
+        this->file_name_STL = ui->txt_GeometrySurfaceFileStl->text();
         //Get filename and name of folder containds file
         QStringList file_name = file_name_STL.split("/");
         if(file_name.length()==1)
@@ -4748,13 +4754,17 @@ void MainWindow::on_txt_Level_Volume_editingFinished()
 
 void MainWindow::on_actionOpen_triggered()
 {
+    if(lastFolderCase == ""){
+        lastFolderCase == QDir::currentPath();
+    }
     QString dir;
         dir= QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                               QDir::currentPath(),
+                                               lastFolderCase,
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks);
         if(dir!="")
         {
+            lastFolderCase = dir;
             this->setWindowTitle(dir);
 
             bool temp1 = mesh->blockd->Read_Block_Dmesh(dir + "/constant/polyMesh/blockMeshDict");
@@ -5984,7 +5994,11 @@ void MainWindow::on_actionClose_triggered()
 //    on_actionSave_triggered();
     if(ui->tb_boundary->rowCount() > 0){
         this->isClose = true;
-        ui->tb_boundary->clearContents();
+        for(int i = 0; i < ui->tb_boundary->rowCount(); i++){
+            ui->tb_boundary->removeRow(i);
+        }
+        ui->tb_boundary->clearSelection();
+        ui->tb_boundary->clear();
     }
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();

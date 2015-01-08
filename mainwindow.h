@@ -40,6 +40,10 @@ private:
     QString file_name_STL;
     //declare path Open
     QString path_Open;
+
+    QString lastFileSTL;
+
+    QString lastFolderCase;
     //declare flag
     //flag refine surface
     bool flag_btnSurface_Click;
