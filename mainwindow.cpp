@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     loaded = true;
     licenseOK = true;
     mesh = new DMesh();
+    this->isClose = false;
     ui->layout_Mesh->addWidget(mesh);
     ui->txt_Log->setMaximumBlockCount(300);
     LoadControlItems();
@@ -5446,6 +5447,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
         }
         ui->actionClose->setEnabled(true);
+        this->isClose = false;
         mesh->SetViewList(views);
         mesh->updateGL();
 }
@@ -5527,6 +5529,9 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
+    if(isClose){
+        return;
+    }
     flag_Item_Face_Click = true;
     QString currentSurface = ui->tb_boundary->currentItem()->text();
     if(flag_btnSurface_Click == true)
@@ -5978,6 +5983,7 @@ void MainWindow::on_actionClose_triggered()
 {
 //    on_actionSave_triggered();
     if(ui->tb_boundary->rowCount() > 0){
+        this->isClose = true;
         ui->tb_boundary->clearContents();
     }
     ui->layout_Mesh->removeWidget(mesh);
@@ -6053,6 +6059,7 @@ void MainWindow::on_btn_GeoDefineNew_clicked()
         if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
             DefineSimpleVolume();
     }
+    this->isClose = false;
     ui->actionClose->setEnabled(true);
 }
 

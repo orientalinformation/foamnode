@@ -64,6 +64,8 @@ private:
     //enable Close trigger
     bool isOpen;
 
+    bool isClose;
+
     void LoadLocationInMesh();
     void LoadControlItems();
     void LoadMeshControlItems();
