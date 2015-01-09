@@ -4036,7 +4036,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-        createrThread->SetSubCommand("-overwrite",2);
+        createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
         createrThread->SetCommand("renumberMesh");
         createrThread->ThreadName("renumberMesh");
         createrThread->start();
