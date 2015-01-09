@@ -6145,6 +6145,7 @@ void MainWindow::on_actionClose_triggered()
         }
         ui->tb_boundary->clearSelection();
         ui->tb_boundary->clear();
+        Remove_All_Face();
     }
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();
