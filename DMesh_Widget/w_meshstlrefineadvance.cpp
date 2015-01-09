@@ -63,10 +63,10 @@ bool W_MeshSTLRefineAdvance::SetDefine()
         {
             if(rFeature->feature[k].name == currentSurface)
             {
-                rFeature->feature[k].name = currentSurface;
                 rFeature->feature[k].angle = angle;
                 rFeature->feature[k].lv = feaLv;
                 isFeatureExisted = true;
+                break;
             }
         }
         if(!isFeatureExisted)
@@ -87,6 +87,7 @@ bool W_MeshSTLRefineAdvance::SetDefine()
             {
                 rFeature->feature.remove(k);
                 rFeature->n = rFeature->n -1;
+                break;
             }
         }
     }

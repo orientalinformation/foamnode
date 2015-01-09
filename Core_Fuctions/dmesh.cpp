@@ -22,7 +22,7 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
 
     snappyd = new Snappy_Dmesh();
 
-    snappyd->resolveFeatureAngle = 90;
+    snappyd->resolveFeatureAngle = 30;
 
     //creator defaut general and layers
     snappyd->add_Layers_Controls.nLayer =0;
@@ -629,6 +629,17 @@ void DMesh::DrawGeometry()
             renderCylinder_convenient(p1->x,p1->y,p1->z,p2->x,p2->y,p2->z,snappyd->gCylin.cylins[i].radius,30);
         }
     }
+    nCylinder = snappyd->gCylinCellZone.n;
+    for(int i = 0; i < nCylinder; i ++)
+    {
+        if(this->viewList.contains(snappyd->gCylinCellZone.cylins[i].name))
+        {
+            PointDmesh *p1 = &snappyd->gCylinCellZone.cylins[i].point1;
+            PointDmesh *p2 = &snappyd->gCylinCellZone.cylins[i].point2;
+            glColor3f(1,1,1);
+            renderCylinder_convenient(p1->x,p1->y,p1->z,p2->x,p2->y,p2->z,snappyd->gCylinCellZone.cylins[i].radius,30);
+        }
+    }
     nCylinder = snappyd->gCylinRegion.n;
     for(int i = 0; i < nCylinder; i ++)
     {
@@ -651,6 +662,16 @@ void DMesh::DrawGeometry()
             renderSphere(p->x,p->y,p->z,snappyd->gSphere.sphere[i].radius);
         }
     }
+    nSphere = snappyd->gSphereCellZone.n;
+        for(int i = 0; i < nSphere; i++)
+        {
+            if(this->viewList.contains(snappyd->gSphereCellZone.sphere[i].name))
+            {
+                PointDmesh *p = &snappyd->gSphereCellZone.sphere[i].centre;
+                glColor3f(1,1,1);
+                renderSphere(p->x,p->y,p->z,snappyd->gSphereCellZone.sphere[i].radius);
+            }
+        }
     nSphere = snappyd->gSphereRegion.n;
     for(int i = 0; i < nSphere; i++)
     {

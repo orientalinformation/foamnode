@@ -4,6 +4,8 @@
 #include <QString>
 #include <math.h>
 #include <QVector>
+#include <qDebug>
+
 struct Surface_Min_Max
 {
     QString name_Surface;
@@ -61,14 +63,14 @@ struct GeomeUserdefineTypeDmesh
 struct regionSTL
 {
     QString name;
-    float lv1;
-    float lv2;
+    int lv1;
+    int lv2;
 };
 struct RefinementSurfaceSTL
 {
     QString name;
-    float lv1;
-    float lv2;
+    int lv1;
+    int lv2;
     int n;
     QVector<regionSTL> regionSTLs;
 };
@@ -87,21 +89,22 @@ struct RefinementFeaturesSTL
 struct RefinementSurface
 {
     QString name;
-    float lv1;
-    float lv2;
+    int lv1;
+    int lv2;
 };
 struct RefinementDistance
 {
     float lv1;
-    float lv2;
+    int lv2;
 };
 
 struct RefinementRegion
 {
     QString name;
     QString mode;
-    float lv1;
-    float lv2;
+    int lv1;
+    int lv2;
+    int n;
     QVector <RefinementDistance> distances;
 };
 struct RefinementSurfaces
@@ -267,6 +270,8 @@ private:
     QString CreateMeshQualityControls();
 
     QString CreateMeshRefinementRegions(RefinementRegions ref);
+    QString CreateMeshRefinementSurface(RefinementSurfaces ref, int isCellZone = 0);
+    QString CreateMeshRefinementSurfaceSTL(RefinementSurfacesSTL ref, int isCellZone = 0);
     QString FormatSnappyFile(QString value);
     int FinMaxLevel();
 };

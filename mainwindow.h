@@ -37,7 +37,7 @@ private:
     QStringList listSurfaces;
     QStringList listSurfacesDefault;
     //declare file name import *STL
-    QString file_name_STL;
+    QStringList file_name_STLs;
     //declare path Open
     QString path_Open;
 
@@ -87,8 +87,8 @@ private:
     bool AddFaceToList(QString name);
     bool SetLocation();
     void Remove_All_Face();
-    bool AddSurfaceRegionBox();
-    bool AddUserDefine();
+    bool AddSurfaceRegionBox(QString surfaceName, int min, int max);
+    bool AddUserDefine(QString surfaceName, int min, int max);
     bool CheckNameValid(QString value);
     void CheckLicense();
     void SetButtonDefault();
@@ -111,8 +111,8 @@ private:
     void DefineSimpleCellZone();
 
     bool AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface, QString mode, float lv);
-    bool RemoveRefineRegion(RefinementRegions *refi_Reg,QString currentSurface,float lv);
-    bool AddRefineRegion(RefinementRegions *refi_Reg, QString currentSurface, RefinementDistance r);
+    bool RemoveRefineDistant(RefinementRegions *refi_Reg,QString currentSurface,float lv1,int lv2);
+    bool AddRefineRegion(RefinementRegions *refi_Reg, QString currentSurface,float lv1,int lv2);
 private slots:
     void on_actionOpen_triggered();
     void on_txt_Level_Volume_editingFinished();

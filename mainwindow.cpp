@@ -645,26 +645,15 @@ bool MainWindow::CheckAndSaveBoundingDistance()
     return true;
 }
 
-bool MainWindow::AddSurfaceRegionBox()
+bool MainWindow::AddSurfaceRegionBox(QString surfaceName,int min, int max)
 {
-    if(ui->tb_boundary->currentRow() == -1 || flag_Item_Face_Click ==false)
-        return false;
-    bool a,b;
-    float min = ui->txt_Level_Min_Surface_Refine->text().toFloat(&a);
-    float max = ui->txt_Level_Max_Surface_Refine->text().toFloat(&b);
-
-    if(a== false || b==false || min > max)
-    {
-        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
-        return false;
-    }
     RefinementSurfaces *refi_Sur;
     //snappy box
     for(int i = 0; i< mesh->snappyd->gBox.refi_Sur.n; i++)
     {
         refi_Sur = &mesh->snappyd->gBox.refi_Sur;
         //update if exist
-        if(refi_Sur->surfaces[i].name == ui->tb_boundary->currentItem()->text())
+        if(refi_Sur->surfaces[i].name == surfaceName)
         {
             refi_Sur->surfaces[i].lv1= min;
             refi_Sur->surfaces[i].lv2= max;
@@ -676,7 +665,7 @@ bool MainWindow::AddSurfaceRegionBox()
     {
         refi_Sur = &mesh->snappyd->gCylin.refi_Sur;
         //update if exist
-        if(refi_Sur->surfaces[i].name == ui->tb_boundary->currentItem()->text())
+        if(refi_Sur->surfaces[i].name == surfaceName)
         {
             refi_Sur->surfaces[i].lv1= min;
             refi_Sur->surfaces[i].lv2= max;
@@ -688,7 +677,7 @@ bool MainWindow::AddSurfaceRegionBox()
     {
         refi_Sur = &mesh->snappyd->gSphere.refi_Sur;
         //update if exist
-        if(refi_Sur->surfaces[i].name == ui->tb_boundary->currentItem()->text())
+        if(refi_Sur->surfaces[i].name == surfaceName)
         {
             refi_Sur->surfaces[i].lv1= min;
             refi_Sur->surfaces[i].lv2= max;
@@ -700,7 +689,7 @@ bool MainWindow::AddSurfaceRegionBox()
     {
         refi_Sur = &mesh->snappyd->gBoxCellZone.refi_Sur;
         //update if exist
-        if(refi_Sur->surfaces[i].name == ui->tb_boundary->currentItem()->text())
+        if(refi_Sur->surfaces[i].name == surfaceName)
         {
             refi_Sur->surfaces[i].lv1= min;
             refi_Sur->surfaces[i].lv2= max;
@@ -712,7 +701,7 @@ bool MainWindow::AddSurfaceRegionBox()
     {
         refi_Sur = &mesh->snappyd->gCylinCellZone.refi_Sur;
         //update if exist
-        if(refi_Sur->surfaces[i].name == ui->tb_boundary->currentItem()->text())
+        if(refi_Sur->surfaces[i].name == surfaceName)
         {
             refi_Sur->surfaces[i].lv1= min;
             refi_Sur->surfaces[i].lv2= max;
@@ -724,52 +713,57 @@ bool MainWindow::AddSurfaceRegionBox()
     {
         refi_Sur = &mesh->snappyd->gSphereCellZone.refi_Sur;
         //update if exist
-        if(refi_Sur->surfaces[i].name == ui->tb_boundary->currentItem()->text())
+        if(refi_Sur->surfaces[i].name == surfaceName)
         {
             refi_Sur->surfaces[i].lv1= min;
             refi_Sur->surfaces[i].lv2= max;
             return true;
         }
     }
+    return false;
 }
 
-bool MainWindow::AddUserDefine()
+bool MainWindow::AddUserDefine(QString surfaceName,int min, int max)
 {
-    if(flag_Item_Face_Click==true)
+    GeomeUserDefine *gUserDefine = &mesh->snappyd->gUserDefine;
+    for(int i = 0; i< gUserDefine->refi_Sur.n; i++)
     {
-        bool a,b;
-        float lv1 = ui->txt_Level_Min_Surface_Refine->text().toFloat(&a);
-        float lv2 = ui->txt_Level_Max_Surface_Refine->text().toFloat(&b);
-        if(a && b)
+        QString currentSurface = gUserDefine->refi_Sur.surfaces[i].name;
+        if(currentSurface == surfaceName)
         {
-            GeomeUserDefine *gUserDefine = &mesh->snappyd->gUserDefine;
-            for(int i = 0; i< gUserDefine->refi_Sur.n; i++)
+            gUserDefine->refi_Sur.surfaces[i].lv1 = min;
+            gUserDefine->refi_Sur.surfaces[i].lv2 = max;
+            for(int j = 0; j< gUserDefine->refi_Fea.n; j++)
             {
-                QString currentSurface = gUserDefine->refi_Sur.surfaces[i].name;
-                if(currentSurface == ui->tb_boundary->currentItem()->text())
+                QString currentSurface = gUserDefine->refi_Fea.feature[j].name;
+                if(currentSurface == surfaceName)
                 {
-                    gUserDefine->refi_Sur.surfaces[i].lv1= lv1;
-                    gUserDefine->refi_Sur.surfaces[i].lv2 =lv2;                    
-                }
-            }
-            gUserDefine = &mesh->snappyd->gUserDefineCellZone;
-            for(int i = 0; i< gUserDefine->refi_Sur.n; i++)
-            {
-                QString currentSurface = gUserDefine->refi_Sur.surfaces[i].name;
-                if(currentSurface == ui->tb_boundary->currentItem()->text())
-                {
-                    gUserDefine->refi_Sur.surfaces[i].lv1= lv1;
-                    gUserDefine->refi_Sur.surfaces[i].lv2 =lv2;
+                    gUserDefine->refi_Fea.feature[j].lv = max;
+                    return true;
                 }
             }
         }
-        else
+    }
+    gUserDefine = &mesh->snappyd->gUserDefineCellZone;
+    for(int i = 0; i< gUserDefine->refi_Sur.n; i++)
+    {
+        QString currentSurface = gUserDefine->refi_Sur.surfaces[i].name;
+        if(currentSurface == surfaceName)
         {
-            QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
-            return false;
+            gUserDefine->refi_Sur.surfaces[i].lv1 = min;
+            gUserDefine->refi_Sur.surfaces[i].lv2 = max;
+            for(int j = 0; j< gUserDefine->refi_Fea.n; j++)
+            {
+                QString currentSurface = gUserDefine->refi_Fea.feature[j].name;
+                if(currentSurface == surfaceName)
+                {
+                    gUserDefine->refi_Fea.feature[j].lv = max;
+                    return true;
+                }
+            }
         }
-    }    
-    return true;
+    }
+    return false;
 }
 
 bool MainWindow::SetBoundingDistance(float dMinX, float dMaxX, float dMinY, float dMaxY, float dMinZ, float dMaxZ)
@@ -1512,7 +1506,55 @@ void MainWindow::loadData()
                     ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
-                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].distances[0].lv2));
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+            }
+        }
+        refi_Reg = &mesh->snappyd->gBoxCellZone.refi_Reg;
+        for(int i = 0; i < refi_Reg->region.size(); i++)
+        {
+            if(refi_Reg->region[i].name == currentSurface)
+            {
+                if(refi_Reg->region[i].mode =="inside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                else if(refi_Reg->region[i].mode =="outside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+            }
+        }
+        refi_Reg = &mesh->snappyd->gCylinCellZone.refi_Reg;
+        for(int i = 0; i < refi_Reg->region.size(); i++)
+        {
+            if(refi_Reg->region[i].name == currentSurface)
+            {
+                if(refi_Reg->region[i].mode =="inside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                else if(refi_Reg->region[i].mode =="outside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+            }
+        }
+        refi_Reg = &mesh->snappyd->gSphereCellZone.refi_Reg;
+        for(int i = 0; i < refi_Reg->region.size(); i++)
+        {
+            if(refi_Reg->region[i].name == currentSurface)
+            {
+                if(refi_Reg->region[i].mode =="inside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                else if(refi_Reg->region[i].mode =="outside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+            }
+        }
+        refi_Reg = &mesh->snappyd->gUserDefineCellZone.refi_Reg;
+        for(int i = 0; i < refi_Reg->region.size(); i++)
+        {
+            if(refi_Reg->region[i].name == currentSurface)
+            {
+                if(refi_Reg->region[i].mode =="inside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                else if(refi_Reg->region[i].mode =="outside" )
+                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
     }
@@ -1750,114 +1792,128 @@ void MainWindow::on_btn_Bounding_clicked()
 }
 
 void MainWindow::on_btn_Browse_clicked()
-{
-    file_name_STL = QFileDialog::getOpenFileName(this,"Import file stl",lastFileSTL,tr("Slt (*.stl)"));
-    if(file_name_STL != "")
-        lastFileSTL = file_name_STL;
-        ui->txt_GeometrySurfaceFileStl->setText(lastFileSTL);
+{    
+    file_name_STLs = QFileDialog::getOpenFileNames(this,"Import file stl",lastFileSTL,tr("Slt (*.stl)"));
+    if(file_name_STLs.size() > 0) {
+        lastFileSTL = file_name_STLs[0];
+        QString files = "";
+        foreach (QString sTL, file_name_STLs) {
+            files.append(QFileInfo(sTL).fileName() + ",");
+        }
+        ui->txt_GeometrySurfaceFileStl->setText(files);
+    }
 }
 void MainWindow::ImportSTLSurface()
 {
-    if(ui->txt_GeometrySurfaceFileStl->text()=="")
+    if(ui->txt_GeometrySurfaceFileStl->text() == "")
     {
         QMessageBox::information(this,tr("Error"),tr("Please select a STL file!"));
         return;
     }
     else
     {
-        this->file_name_STL = ui->txt_GeometrySurfaceFileStl->text();
-        //Get filename and name of folder containds file
-        QStringList file_name = file_name_STL.split("/");
-        if(file_name.length()==1)
-            file_name = file_name_STL.split("\\");
-        QString name = file_name[file_name.length()-1];
-        QString _name = name.split(".")[0];
-//        QString folder_STl = file_name_STL.split(file_name[file_name.length()-1])[0];
-        //check name exists
-        for(int i=0; i< mesh->snappyd->gUserDefine.n; i++)
-        {
-            if(name==  mesh->snappyd->gUserDefine.user_Defines[i].name_file)
+        foreach(QString file_name_STL,file_name_STLs) {
+            //Get filename and name of folder containds file
+            QStringList file_name = file_name_STL.split("/");
+            if(file_name.length()==1)
+                file_name = file_name_STL.split("\\");
+            QString name = file_name[file_name.length()-1];
+            QString _name = name.split(".")[0];
+    //        QString folder_STl = file_name_STL.split(file_name[file_name.length()-1])[0];
+            //check name exists
+            GeomeUserDefine *gUserDefine = &mesh->snappyd->gUserDefine;
+            for(int i=0; i< gUserDefine->n; i++)
             {
-                QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                if(name==  gUserDefine->user_Defines[i].name_file)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                    return;
+                }
+            }
+
+            //read file
+            QString file1;
+            QFile file(file_name_STL);
+            if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                file1= file.readAll();
+            }
+            if(file1 == "")
+            {
+                QMessageBox::information(this,tr("Error"),tr("File is empty!"));
                 return;
             }
-        }
-
-        //read file
-        QString file1;
-        QFile file(file_name_STL);
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            file1= file.readAll();
-        }
-        if(file1 == "")
-        {
-            QMessageBox::information(this,tr("Error"),tr("File is empty!"));
-            return;
-        }
 
 
-        mesh->snappyd->gUserDefine.n= mesh->snappyd->gUserDefine.n+1;
-        mesh->snappyd->gUserDefine.user_Defines.resize(mesh->snappyd->gUserDefine.n);
-        mesh->snappyd->gUserDefine.user_Defines[mesh->snappyd->gUserDefine.n-1].direction= file_name_STL;
-        mesh->snappyd->gUserDefine.user_Defines[mesh->snappyd->gUserDefine.n-1].name_file=name;
-        mesh->snappyd->gUserDefine.user_Defines[mesh->snappyd->gUserDefine.n-1].type="triSurfaceMesh";
-        mesh->snappyd->gUserDefine.user_Defines[mesh->snappyd->gUserDefine.n-1].name=_name;
-        AddFaceToList(_name);
+            gUserDefine->n= gUserDefine->n+1;
+            gUserDefine->user_Defines.resize(gUserDefine->n);
+            gUserDefine->user_Defines.last().direction= file_name_STL;
+            gUserDefine->user_Defines.last().name_file=name;
+            gUserDefine->user_Defines.last().type="triSurfaceMesh";
+            gUserDefine->user_Defines.last().name=_name;
+            AddFaceToList(_name);
 
-        //add surface
-        int n = mesh->snappyd->gUserDefine.refi_Sur.n+1;
-        mesh->snappyd->gUserDefine.refi_Sur.n=mesh->snappyd->gUserDefine.refi_Sur.n+1;
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces.resize(n);
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].lv1=0;
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].lv2=0;
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].name=_name;
-        //add reg
-        int m = mesh->snappyd->gUserDefine.refi_Reg.n+1;
-        mesh->snappyd->gUserDefine.refi_Reg.n=mesh->snappyd->gUserDefine.refi_Reg.n+1;
-        mesh->snappyd->gUserDefine.refi_Reg.region.resize(m);
-        mesh->snappyd->gUserDefine.refi_Reg.region[m-1].mode = "distance";
-        mesh->snappyd->gUserDefine.refi_Reg.region[m-1].name=_name;
-        //chua co region nao
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].n=0;
-        int index =0;
-        QStringList lines = file1.split("\n",QString::SkipEmptyParts);
-        for(int i=0; i< lines.length(); i++)
-        {
-            if(lines[i].left(5)=="solid")
+            //add surface
+            gUserDefine->refi_Sur.n=gUserDefine->refi_Sur.n+1;
+            gUserDefine->refi_Sur.surfaces.resize(gUserDefine->refi_Sur.n);
+            gUserDefine->refi_Sur.surfaces.last().lv1=0;
+            gUserDefine->refi_Sur.surfaces.last().lv2=0;
+            gUserDefine->refi_Sur.surfaces.last().name=_name;
+            //add reg
+            gUserDefine->refi_Reg.n=gUserDefine->refi_Reg.n+1;
+            gUserDefine->refi_Reg.region.resize(gUserDefine->refi_Reg.n);
+            gUserDefine->refi_Reg.region.last().mode = "distance";
+            gUserDefine->refi_Reg.region.last().name=_name;
+            gUserDefine->refi_Reg.region.last().lv1 = 0;
+            gUserDefine->refi_Reg.region.last().lv2 = 0;
+            gUserDefine->refi_Reg.region.last().n = 0;
+            //feature
+            gUserDefine->refi_Fea.n = gUserDefine->refi_Fea.n + 1;
+            gUserDefine->refi_Fea.feature.resize(gUserDefine->refi_Fea.n);
+            gUserDefine->refi_Fea.feature.last().name = _name;
+            gUserDefine->refi_Fea.feature.last().angle = 150;
+            gUserDefine->refi_Fea.feature.last().lv = 0;
+            //chua co region nao
+            gUserDefine->refi_Sur.surfaces.last().n=0;
+            int index =0;
+            QStringList lines = file1.split("\n",QString::SkipEmptyParts);
+            for(int i=0; i< lines.length(); i++)
             {
-                QString name_re = lines[i].split(" ")[1];
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs.resize(index +1);
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs[index].name=name_re;
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs[index].lv1=0;
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs[index].lv2=0;
-                index++;
+                if(lines[i].left(5)=="solid")
+                {
+                    QString name_re = lines[i].split(" ")[1];
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs.resize(index +1);
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs[index].name=name_re;
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs[index].lv1=0;
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs[index].lv2=0;
+                    index++;
+                }
+            }
+            gUserDefine->refi_Sur.surfaces.last().n=index;
+
+            mesh->snappyd->min_Max.max.x=-1000000.0;
+            mesh->snappyd->min_Max.max.y=-1000000.0;
+            mesh->snappyd->min_Max.max.z=-1000000.0;
+
+            mesh->snappyd->min_Max.min.x=1000000.0;
+            mesh->snappyd->min_Max.min.y=1000000.0;
+            mesh->snappyd->min_Max.min.z=1000000.0;
+            //Read file STL
+            if(mesh->snappyd->ReadSTLFile(file_name_STL))
+            {
+                QStringList views = mesh->GetViewList();
+                foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
+                    listSurfaces.append(_name + "_" + solid.name);
+                views.append(_name);
+                mesh->SetViewList(views);
+
+                SetBoundingDistance();
+                ui->cb_BoundingType->setCurrentIndex(0);
             }
         }
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].n=index;
-
-        mesh->snappyd->min_Max.max.x=-1000000.0;
-        mesh->snappyd->min_Max.max.y=-1000000.0;
-        mesh->snappyd->min_Max.max.z=-1000000.0;
-
-        mesh->snappyd->min_Max.min.x=1000000.0;
-        mesh->snappyd->min_Max.min.y=1000000.0;
-        mesh->snappyd->min_Max.min.z=1000000.0;
-        //Read file STL
-        if(mesh->snappyd->ReadSTLFile(file_name_STL))
-        {
-            QStringList views = mesh->GetViewList();
-            foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
-                listSurfaces.append(_name + "_" + solid.name);
-            views.append(_name);
-            mesh->SetViewList(views);
-
-            SetBoundingDistance();
-            ui->cb_BoundingType->setCurrentIndex(0);
-        }
+        file_name_STLs.clear();
     }
 }
-
 void MainWindow::ImportSTLCellzone()
 {
     if(ui->txt_GeometrySurfaceFileStl->text()=="")
@@ -1867,95 +1923,106 @@ void MainWindow::ImportSTLCellzone()
     }
     else
     {
-        this->file_name_STL = ui->txt_GeometrySurfaceFileStl->text();
-        //Get filename and name of folder containds file
-        QStringList file_name = file_name_STL.split("/");
-        if(file_name.length()==1)
-            file_name = file_name_STL.split("\\");
-        QString name = file_name[file_name.length()-1];
-        QString _name = name.split(".")[0];
-//        QString folder_STl = file_name_STL.split(file_name[file_name.length()-1])[0];
-        //check name exists
-        for(int i=0; i< mesh->snappyd->gUserDefine.n; i++)
-        {
-            if(name==  mesh->snappyd->gUserDefine.user_Defines[i].name_file)
+        foreach(QString file_name_STL,file_name_STLs) {
+            //Get filename and name of folder containds file
+            QStringList file_name = file_name_STL.split("/");
+            if(file_name.length()==1)
+                file_name = file_name_STL.split("\\");
+            QString name = file_name[file_name.length()-1];
+            QString _name = name.split(".")[0];
+    //        QString folder_STl = file_name_STL.split(file_name[file_name.length()-1])[0];
+            //check name exists
+            GeomeUserDefine *gUserDefine = &mesh->snappyd->gUserDefineCellZone;
+            for(int i=0; i< gUserDefine->n; i++)
             {
-                QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                if(name==  gUserDefine->user_Defines[i].name_file)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                    return;
+                }
+            }
+
+            //read file
+            QString file1;
+            QFile file(file_name_STL);
+            if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                 file1= file.readAll();
+            }
+            if(file1 == "")
+            {
+                QMessageBox::information(this,tr("Error"),tr("File is empty!"));
                 return;
             }
-        }
 
-        //read file
-        QString file1;
-        QFile file(file_name_STL);
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-             file1= file.readAll();
-        }
-        if(file1 == "")
-        {
-            QMessageBox::information(this,tr("Error"),tr("File is empty!"));
-            return;
-        }
+            gUserDefine->n= gUserDefine->n+1;
+            gUserDefine->user_Defines.resize(gUserDefine->n);
+            gUserDefine->user_Defines.last().direction= file_name_STL;
+            gUserDefine->user_Defines.last().name_file=name;
+            gUserDefine->user_Defines.last().type="triSurfaceMesh";
+            gUserDefine->user_Defines.last().name=_name;
+            AddFaceToList(_name);
 
-        mesh->snappyd->gUserDefineCellZone.n= mesh->snappyd->gUserDefineCellZone.n+1;
-        mesh->snappyd->gUserDefineCellZone.user_Defines.resize(mesh->snappyd->gUserDefineCellZone.n);
-        mesh->snappyd->gUserDefineCellZone.user_Defines[mesh->snappyd->gUserDefineCellZone.n-1].direction= file_name_STL;
-        mesh->snappyd->gUserDefineCellZone.user_Defines[mesh->snappyd->gUserDefineCellZone.n-1].name_file=name;
-        mesh->snappyd->gUserDefineCellZone.user_Defines[mesh->snappyd->gUserDefineCellZone.n-1].type="triSurfaceMesh";
-        mesh->snappyd->gUserDefineCellZone.user_Defines[mesh->snappyd->gUserDefineCellZone.n-1].name=_name;
-        AddFaceToList(_name);
-
-        //add surface
-        int n = mesh->snappyd->gUserDefineCellZone.refi_Sur.n+1;
-        mesh->snappyd->gUserDefineCellZone.refi_Sur.n=mesh->snappyd->gUserDefineCellZone.refi_Sur.n+1;
-        mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces.resize(n);
-        mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces[n-1].lv1=0;
-        mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces[n-1].lv2=0;
-        mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces[n-1].name=_name;
-        //add reg
-        int m = mesh->snappyd->gUserDefineCellZone.refi_Reg.n+1;
-        mesh->snappyd->gUserDefineCellZone.refi_Reg.n=mesh->snappyd->gUserDefineCellZone.refi_Reg.n+1;
-        mesh->snappyd->gUserDefineCellZone.refi_Reg.region.resize(m);
-        mesh->snappyd->gUserDefineCellZone.refi_Reg.region[m-1].mode = "distance";
-        mesh->snappyd->gUserDefineCellZone.refi_Reg.region[m-1].name=_name;
-        //chua co region nao
-        mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces[n-1].n=0;
-        int index =0;
-        QStringList lines = file1.split("\n",QString::SkipEmptyParts);
-        for(int i=0; i< lines.length(); i++)
-        {
-            if(lines[i].left(5)=="solid")
+            //add surface
+            gUserDefine->refi_Sur.n = gUserDefine->refi_Sur.n + 1;
+            gUserDefine->refi_Sur.surfaces.resize(gUserDefine->refi_Sur.n);
+            gUserDefine->refi_Sur.surfaces.last().lv1=0;
+            gUserDefine->refi_Sur.surfaces.last().lv2=0;
+            gUserDefine->refi_Sur.surfaces.last().name=_name;
+            //add reg
+            gUserDefine->refi_Reg.n=gUserDefine->refi_Reg.n+1;
+            gUserDefine->refi_Reg.region.resize(gUserDefine->refi_Reg.n);
+            gUserDefine->refi_Reg.region.last().mode = "distance";
+            gUserDefine->refi_Reg.region.last().name=_name;
+            gUserDefine->refi_Reg.region.last().lv1 = 0;
+            gUserDefine->refi_Reg.region.last().lv2 = 0;
+            gUserDefine->refi_Reg.region.last().n = 0;
+            //feature
+            gUserDefine->refi_Fea.n = gUserDefine->refi_Fea.n + 1;
+            gUserDefine->refi_Fea.feature.resize(gUserDefine->refi_Fea.n);
+            gUserDefine->refi_Fea.feature.last().name = _name;
+            gUserDefine->refi_Fea.feature.last().angle = 150;
+            gUserDefine->refi_Fea.feature.last().lv = 0;
+            //chua co region nao
+            gUserDefine->refi_Sur.surfaces.last().n=0;
+            int index =0;
+            QStringList lines = file1.split("\n",QString::SkipEmptyParts);
+            for(int i=0; i< lines.length(); i++)
             {
-                QString name_re = lines[i].split(" ")[1];
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs.resize(index +1);
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs[index].name=name_re;
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs[index].lv1=0;
-                mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].regionSTLs[index].lv2=0;
-                index++;
+                if(lines[i].left(5)=="solid")
+                {
+                    QString name_re = lines[i].split(" ")[1];
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs.resize(index +1);
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs[index].name=name_re;
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs[index].lv1=0;
+                    gUserDefine->refi_Sur.surfaces.last().regionSTLs[index].lv2=0;
+                    index++;
+                }
+            }
+            gUserDefine->refi_Sur.surfaces.last().n=index;
+
+            mesh->snappyd->min_Max.max.x=-1000000.0;
+            mesh->snappyd->min_Max.max.y=-1000000.0;
+            mesh->snappyd->min_Max.max.z=-1000000.0;
+
+            mesh->snappyd->min_Max.min.x=1000000.0;
+            mesh->snappyd->min_Max.min.y=1000000.0;
+            mesh->snappyd->min_Max.min.z=1000000.0;
+            //Read file STL
+            if(mesh->snappyd->ReadSTLFile(file_name_STL))
+            {
+                QStringList views = mesh->GetViewList();
+                views.append(_name);
+                mesh->SetViewList(views);
+
+                SetBoundingDistance();
+                ui->cb_BoundingType->setCurrentIndex(0);
             }
         }
-        mesh->snappyd->gUserDefine.refi_Sur.surfaces[n-1].n=index;
-
-        mesh->snappyd->min_Max.max.x=-1000000.0;
-        mesh->snappyd->min_Max.max.y=-1000000.0;
-        mesh->snappyd->min_Max.max.z=-1000000.0;
-
-        mesh->snappyd->min_Max.min.x=1000000.0;
-        mesh->snappyd->min_Max.min.y=1000000.0;
-        mesh->snappyd->min_Max.min.z=1000000.0;
-        //Read file STL
-        if(mesh->snappyd->ReadSTLFile(file_name_STL))
-        {
-            QStringList views = mesh->GetViewList();
-            views.append(_name);
-            mesh->SetViewList(views);
-
-            SetBoundingDistance();
-            ui->cb_BoundingType->setCurrentIndex(0);
-        }
+        file_name_STLs.clear();
     }
 }
+
 void MainWindow::DefineSimpleSurface()
 {
     QString surfaceName = ui->txt_GeometrySurfaceName->text();
@@ -2114,27 +2181,30 @@ void MainWindow::DefineSimpleSurface()
             //add geometry values to mesh
             snappy->gCylin.n=snappy->gCylin.n+1;
             snappy->gCylin.cylins.resize(snappy->gCylin.n);
-            snappy->gCylin.cylins[snappy->gCylin.n-1].name=surfaceName;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].type = "searchableCylinder";
-            snappy->gCylin.cylins[snappy->gCylin.n-1].point2.x=x2;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].point2.y=y2;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].point2.z=z2;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].point1.x=x1;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].point1.y=y1;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].point1.z=z1;
-            snappy->gCylin.cylins[snappy->gCylin.n-1].radius= radius_cyl;
+            snappy->gCylin.cylins.last().name=surfaceName;
+            snappy->gCylin.cylins.last().type = "searchableCylinder";
+            snappy->gCylin.cylins.last().point2.x=x2;
+            snappy->gCylin.cylins.last().point2.y=y2;
+            snappy->gCylin.cylins.last().point2.z=z2;
+            snappy->gCylin.cylins.last().point1.x=x1;
+            snappy->gCylin.cylins.last().point1.y=y1;
+            snappy->gCylin.cylins.last().point1.z=z1;
+            snappy->gCylin.cylins.last().radius= radius_cyl;
 
             //add surface and region default
             snappy->gCylin.refi_Sur.n =snappy->gCylin.refi_Sur.n+1;
             snappy->gCylin.refi_Sur.surfaces.resize(snappy->gCylin.refi_Sur.n);
-            snappy->gCylin.refi_Sur.surfaces[snappy->gCylin.refi_Sur.n-1].lv1= 0;
-            snappy->gCylin.refi_Sur.surfaces[snappy->gCylin.refi_Sur.n-1].lv2= 0;
-            snappy->gCylin.refi_Sur.surfaces[snappy->gCylin.refi_Sur.n-1].name=surfaceName;
+            snappy->gCylin.refi_Sur.surfaces.last().lv1= 0;
+            snappy->gCylin.refi_Sur.surfaces.last().lv2= 0;
+            snappy->gCylin.refi_Sur.surfaces.last().name=surfaceName;
 
             snappy->gCylin.refi_Reg.n = snappy->gCylin.refi_Reg.n+1;
             snappy->gCylin.refi_Reg.region.resize(snappy->gCylin.refi_Reg.n);
-            snappy->gCylin.refi_Reg.region[snappy->gCylin.refi_Reg.n-1].name = surfaceName;
-            snappy->gCylin.refi_Reg.region[snappy->gCylin.refi_Reg.n-1].mode = "distance";
+            snappy->gCylin.refi_Reg.region.last().name = surfaceName;
+            snappy->gCylin.refi_Reg.region.last().mode = "distance";
+            snappy->gCylin.refi_Reg.region.last().lv1 = 0;
+            snappy->gCylin.refi_Reg.region.last().lv2 = 0;
+            snappy->gCylin.refi_Reg.region.last().n = 0;
 
             AddFaceToList(surfaceName);            
             listSurfaces.append(surfaceName);
@@ -2194,14 +2264,14 @@ void MainWindow::DefineSimpleSurface()
 
             snappy->gBox.n=snappy->gBox.n+1;
             snappy->gBox.boxes.resize(snappy->gBox.n);
-            snappy->gBox.boxes[snappy->gBox.n-1].name=surfaceName;
-            snappy->gBox.boxes[snappy->gBox.n-1].type="searchableBox";
-            snappy->gBox.boxes[snappy->gBox.n-1].max.x=x2;
-            snappy->gBox.boxes[snappy->gBox.n-1].max.y=y2;
-            snappy->gBox.boxes[snappy->gBox.n-1].max.z=z2;
-            snappy->gBox.boxes[snappy->gBox.n-1].min.x=x1;
-            snappy->gBox.boxes[snappy->gBox.n-1].min.y=y1;
-            snappy->gBox.boxes[snappy->gBox.n-1].min.z=z1;
+            snappy->gBox.boxes.last().name=surfaceName;
+            snappy->gBox.boxes.last().type="searchableBox";
+            snappy->gBox.boxes.last().max.x=x2;
+            snappy->gBox.boxes.last().max.y=y2;
+            snappy->gBox.boxes.last().max.z=z2;
+            snappy->gBox.boxes.last().min.x=x1;
+            snappy->gBox.boxes.last().min.y=y1;
+            snappy->gBox.boxes.last().min.z=z1;
 
             //add surface and region default
             snappy->gBox.refi_Sur.n =snappy->gBox.refi_Sur.n+1;
@@ -2214,6 +2284,9 @@ void MainWindow::DefineSimpleSurface()
             snappy->gBox.refi_Reg.region.resize(snappy->gBox.refi_Reg.n);
             snappy->gBox.refi_Reg.region.last().name = surfaceName;
             snappy->gBox.refi_Reg.region.last().mode = "distance";
+            snappy->gBox.refi_Reg.region.last().lv1 = 0;
+            snappy->gBox.refi_Reg.region.last().lv2 = 0;
+            snappy->gBox.refi_Reg.region.last().n = 0;
 
             //draw box
 
@@ -2366,24 +2439,27 @@ void MainWindow::DefineSimpleSurface()
              //add geometry values to mesh
              snappy->gSphere.n = snappy->gSphere.n + 1;
              snappy->gSphere.sphere.resize(snappy->gSphere.n);
-             snappy->gSphere.sphere[snappy->gSphere.n-1].name = surfaceName;
-             snappy->gSphere.sphere[snappy->gSphere.n-1].type = "searchableSphere";
-             snappy->gSphere.sphere[snappy->gSphere.n-1].centre.x = x;
-             snappy->gSphere.sphere[snappy->gSphere.n-1].centre.y = y;
-             snappy->gSphere.sphere[snappy->gSphere.n-1].centre.z = z;
-             snappy->gSphere.sphere[snappy->gSphere.n-1].radius = radius_sph;
+             snappy->gSphere.sphere.last().name = surfaceName;
+             snappy->gSphere.sphere.last().type = "searchableSphere";
+             snappy->gSphere.sphere.last().centre.x = x;
+             snappy->gSphere.sphere.last().centre.y = y;
+             snappy->gSphere.sphere.last().centre.z = z;
+             snappy->gSphere.sphere.last().radius = radius_sph;
 
              //add surface and region default
              snappy->gSphere.refi_Sur.n =snappy->gSphere.refi_Sur.n+1;
              snappy->gSphere.refi_Sur.surfaces.resize(snappy->gSphere.refi_Sur.n);
-             snappy->gSphere.refi_Sur.surfaces[snappy->gSphere.refi_Sur.n-1].lv1= 0;
-             snappy->gSphere.refi_Sur.surfaces[snappy->gSphere.refi_Sur.n-1].lv2= 0;
-             snappy->gSphere.refi_Sur.surfaces[snappy->gSphere.refi_Sur.n-1].name=surfaceName;
+             snappy->gSphere.refi_Sur.surfaces.last().lv1= 0;
+             snappy->gSphere.refi_Sur.surfaces.last().lv2= 0;
+             snappy->gSphere.refi_Sur.surfaces.last().name=surfaceName;
 
              snappy->gSphere.refi_Reg.n = snappy->gSphere.refi_Reg.n+1;
              snappy->gSphere.refi_Reg.region.resize(snappy->gSphere.refi_Reg.n);
-             snappy->gSphere.refi_Reg.region[snappy->gSphere.refi_Reg.n-1].name = surfaceName;
-             snappy->gSphere.refi_Reg.region[snappy->gSphere.refi_Reg.n-1].mode = "distance";
+             snappy->gSphere.refi_Reg.region.last().name = surfaceName;
+             snappy->gSphere.refi_Reg.region.last().mode = "distance";
+             snappy->gSphere.refi_Reg.region.last().lv1 = 0;
+             snappy->gSphere.refi_Reg.region.last().lv2 = 0;
+             snappy->gSphere.refi_Reg.region.last().n = 0;
 
              AddFaceToList(surfaceName);
              listSurfaces.append(surfaceName);
@@ -2579,6 +2655,7 @@ void MainWindow::DefineSimpleCellZone()
             gCylin->refi_Reg.region.last().mode = "inside";
             gCylin->refi_Reg.region.last().lv1 = 0;
             gCylin->refi_Reg.region.last().lv2 = 0;
+            gCylin->refi_Reg.region.last().n = 0;
 
             AddFaceToList(surfaceName);
 
@@ -2657,6 +2734,7 @@ void MainWindow::DefineSimpleCellZone()
             gBox->refi_Reg.region.last().mode = "inside";
             gBox->refi_Reg.region.last().lv1 = 0;
             gBox->refi_Reg.region.last().lv2 = 0;
+            gBox->refi_Reg.region.last().n = 0;
 
 
             //draw box
@@ -2832,6 +2910,7 @@ void MainWindow::DefineSimpleCellZone()
              gSphere->refi_Reg.region.last().mode = "inside";
              gSphere->refi_Reg.region.last().lv1 = 0;
              gSphere->refi_Reg.region.last().lv2 = 0;
+             gSphere->refi_Reg.region.last().n = 0;
 
              AddFaceToList(surfaceName);
 
@@ -2899,6 +2978,7 @@ void MainWindow::DefineSimpleVolume()
             refi_Reg->region[index].mode = "inside";
             refi_Reg->region[index].lv1 = 0;
             refi_Reg->region[index].lv2 = 0;
+            refi_Reg->region[index].n = 0;
 
 
             int plus = mesh->snappyd->points.size();
@@ -3055,6 +3135,7 @@ void MainWindow::DefineSimpleVolume()
             refi_Reg->region[index].mode = "inside";
             refi_Reg->region[index].lv1 = 0;
             refi_Reg->region[index].lv2 = 0;
+            refi_Reg->region[index].n = 0;
 
             AddFaceToList(volumeName);
 
@@ -3109,6 +3190,7 @@ void MainWindow::DefineSimpleVolume()
             refi_Reg->region[index].mode = "inside";
             refi_Reg->region[index].lv1 = 0;
             refi_Reg->region[index].lv2 = 0;
+            refi_Reg->region[index].n = 0;
 
             AddFaceToList(volumeName);
 
@@ -3506,14 +3588,28 @@ void MainWindow::on_btn_MeshVolume_clicked()
     {
         AddFaceToList(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name);
     }
-
     ui->cb_MeshVolumeMode->setCurrentIndex(0);
 }
 
 void MainWindow::on_btn_MeshRefineSurface_clicked()
 {
-    if(AddUserDefine() && AddSurfaceRegionBox())
-        ui->txt_Log->appendPlainText("Defining of "+ ui->tb_boundary->currentItem()->text() +" surface has been done");
+    if(ui->tb_boundary->currentRow() == -1 || flag_Item_Face_Click ==false){
+        QMessageBox::warning(this,"Error","Please select a surface!");
+        return;
+    }
+    bool a,b;
+    int min = ui->txt_Level_Min_Surface_Refine->text().toInt(&a);
+    int max = ui->txt_Level_Max_Surface_Refine->text().toInt(&b);
+
+    if(a== false || b==false || min > max)
+    {
+        QMessageBox::critical(this,tr("Error"),tr("Please input all values in this form...!"));
+        return;
+    }    
+    foreach (QTableWidgetItem *item, ui->tb_boundary->selectedItems()) {
+        if(AddUserDefine(item->text(),min,max) || AddSurfaceRegionBox(item->text(),min,max))
+            ui->txt_Log->appendPlainText("Defining of "+ item->text() +" surface has been done");
+    }
 }
 
 
@@ -3525,7 +3621,7 @@ bool MainWindow::AddRefineVolume(RefinementRegions *refi_Reg, QString currentSur
         {
             refi_Reg->region[i].mode = mode;
             refi_Reg->region[i].lv2 = lv;
-            ui->txt_Log->appendPlainText("Settings of refining volume for " + currentSurface + " have been done");
+            ui->txt_Log->appendPlainText("Settings of refining volume for " + currentSurface + " cell zone have been done");
             return true;
         }
     }
@@ -3612,23 +3708,25 @@ void MainWindow::on_btn_RefineLayer_clicked()
         QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
         return;
     }
-    int n = mesh->snappyd->add_Layers_Controls.nLayer;
-    //if exists, update
-    for(int i=0;i< n; i++)
-    {
-        if(mesh->snappyd->add_Layers_Controls.layers[i].name == ui->tb_boundary->currentItem()->text())
+    foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()) {
+        int n = mesh->snappyd->add_Layers_Controls.nLayer;
+        //if exists, update
+        for(int i=0;i< n; i++)
         {
-            mesh->snappyd->add_Layers_Controls.layers[i].nSurfaceLayers =layer;
-            ui->txt_Log->appendPlainText("Settings for layer of " + ui->tb_boundary->currentItem()->text() + " have been done");
-            return;
+            if(mesh->snappyd->add_Layers_Controls.layers[i].name ==item->text())
+            {
+                mesh->snappyd->add_Layers_Controls.layers[i].nSurfaceLayers =layer;
+                ui->txt_Log->appendPlainText("Settings for layer of " + item->text() + " have been done");
+                return;
+            }
         }
+        //add new
+        mesh->snappyd->add_Layers_Controls.nLayer = n + 1;
+        mesh->snappyd->add_Layers_Controls.layers.resize(n+1);
+        mesh->snappyd->add_Layers_Controls.layers[n].name = item->text();
+        mesh->snappyd->add_Layers_Controls.layers[n].nSurfaceLayers = layer;
+        ui->txt_Log->appendPlainText("Settings for layer of " + item->text() + " have been done");
     }
-    //add new
-    mesh->snappyd->add_Layers_Controls.nLayer = n + 1;
-    mesh->snappyd->add_Layers_Controls.layers.resize(n+1);
-    mesh->snappyd->add_Layers_Controls.layers[n].name = ui->tb_boundary->currentItem()->text();
-    mesh->snappyd->add_Layers_Controls.layers[n].nSurfaceLayers = layer;
-    ui->txt_Log->appendPlainText("Settings for layer of " + ui->tb_boundary->currentItem()->text() + " have been done");
 }
 
 void MainWindow::on_btn_MeshSurfaceGeneral_clicked()
@@ -3771,6 +3869,10 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QFile(mesh->snappyd->gUserDefine.user_Defines[i].direction).copy(saveCase + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file);
             }
+            for(int i=0; i<mesh->snappyd->gUserDefineCellZone.n; i++)
+            {
+                QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(saveCase + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
+            }
             if(mesh->patchDict->boundaries.size() > 0)
             {
                 mesh->patchDict->WritePatchDict(saveCase + "/system");
@@ -3790,6 +3892,17 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
                                           " constant/triSurface/" + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name);
+                createrThread->ThreadName("blockMesh");
+                createrThread->start();
+                while(createrThread->isRunning())
+                {
+                    QApplication::processEvents();
+                }
+            }
+            for(int i = 0; i < mesh->snappyd->gUserDefineCellZone.refi_Fea.n; i++)
+            {
+                createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].angle) +
+                                          " constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name);
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
                 while(createrThread->isRunning())
@@ -3858,6 +3971,10 @@ void MainWindow::on_btn_CreateMesh_clicked()
         for(int i=0; i<mesh->snappyd->gUserDefine.n; i++)
         {
             QFile(mesh->snappyd->gUserDefine.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file);
+        }
+        for(int i=0; i<mesh->snappyd->gUserDefineCellZone.n; i++)
+        {
+            QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
         }
         if(mesh->patchDict->boundaries.size() > 0)
         {
@@ -4413,6 +4530,10 @@ void MainWindow::on_actionSave_triggered()
         {
             QFile(mesh->snappyd->gUserDefine.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file);
         }
+        for(int i=0; i<mesh->snappyd->gUserDefineCellZone.n; i++)
+        {
+            QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
+        }
         if(mesh->patchDict->boundaries.size() > 0)
         {
             QFile(path_Open + "/system/createPatchDict").remove();
@@ -4473,6 +4594,10 @@ void MainWindow::on_actionSave_triggered()
         for(int i=0; i<mesh->snappyd->gUserDefine.n; i++)
         {
             QFile(mesh->snappyd->gUserDefine.user_Defines[i].direction).copy(saveCase + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file);
+        }
+        for(int i=0; i<mesh->snappyd->gUserDefineCellZone.n; i++)
+        {
+            QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
         }
         if(mesh->patchDict->boundaries.size() > 0)
         {
@@ -4542,12 +4667,22 @@ void MainWindow::on_btn_MeshRefineAdvance_clicked()
         return;
     QString currentSurface = ui->tb_boundary->currentItem()->text();
     RefinementSurfaceSTL *rSurface;
-    RefinementFeaturesSTL *rFeature = &mesh->snappyd->gUserDefine.refi_Fea;
+    RefinementFeaturesSTL *rFeature;
     for(int i = 0 ; i < mesh->snappyd->gUserDefine.refi_Sur.n; i++)
     {
-        if(mesh->snappyd->gUserDefine.refi_Sur.surfaces[i].name == currentSurface)
+        if(mesh->snappyd->gUserDefine.refi_Sur.surfaces[i].name == currentSurface){
             rSurface = &mesh->snappyd->gUserDefine.refi_Sur.surfaces[i];
+            rFeature = &mesh->snappyd->gUserDefine.refi_Fea;
+        }
     }
+    for(int i = 0 ; i < mesh->snappyd->gUserDefineCellZone.refi_Sur.n; i++)
+    {
+        if(mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces[i].name == currentSurface){
+            rSurface = &mesh->snappyd->gUserDefineCellZone.refi_Sur.surfaces[i];
+            rFeature = &mesh->snappyd->gUserDefineCellZone.refi_Fea;
+        }
+    }
+
 
     W_MeshSTLRefineAdvance *w = new W_MeshSTLRefineAdvance(rSurface,rFeature,&mesh->snappyd->resolveFeatureAngle);
     if(w->exec())
@@ -4555,7 +4690,7 @@ void MainWindow::on_btn_MeshRefineAdvance_clicked()
         ui->txt_Log->appendPlainText("Defining of advance values for "+ ui->tb_boundary->currentItem()->text() +" surface has been done");
     }
 }
-bool MainWindow::RemoveRefineRegion(RefinementRegions *refi_Reg,QString currentSurface,float lv)
+bool MainWindow::RemoveRefineDistant(RefinementRegions *refi_Reg, QString currentSurface, float lv1, int lv2)
 {
     for(int i = 0; i< refi_Reg->n; i++)
     {
@@ -4563,9 +4698,10 @@ bool MainWindow::RemoveRefineRegion(RefinementRegions *refi_Reg,QString currentS
         {
             for(int j = 0; j < refi_Reg->region[i].distances.size(); j ++)
             {
-                if(refi_Reg->region[i].distances[j].lv1 == lv)
+                if(refi_Reg->region[i].distances[j].lv1 == lv1 && refi_Reg->region[i].distances[j].lv2 == lv2)
                 {
                     refi_Reg->region[i].distances.remove(j);
+                    refi_Reg->region[i].n = refi_Reg->region[i].n - 1;
                     break;
                 }
             }
@@ -4574,17 +4710,21 @@ bool MainWindow::RemoveRefineRegion(RefinementRegions *refi_Reg,QString currentS
             return true;
         }
     }
+    return false;
 }
-bool MainWindow::AddRefineRegion(RefinementRegions *refi_Reg,QString currentSurface,RefinementDistance r)
+bool MainWindow::AddRefineRegion(RefinementRegions *refi_Reg, QString currentSurface, float lv1, int lv2)
 {
     for(int i = 0; i< refi_Reg->n; i++)
     {
         if(refi_Reg->region[i].name == currentSurface)
         {
             int j;
+            RefinementDistance r;
+            r.lv1 = lv1;
+            r.lv2 = lv2;
             for(j = 0; j < refi_Reg->region[i].distances.size(); j ++)
             {
-                if(refi_Reg->region[i].distances[j].lv1 > r.lv1)
+                if(refi_Reg->region[i].distances[j].lv1 > lv1)
                 {
                     refi_Reg->region[i].distances.insert(j,r);
                     break;
@@ -4592,6 +4732,7 @@ bool MainWindow::AddRefineRegion(RefinementRegions *refi_Reg,QString currentSurf
             }
             if(j == refi_Reg->region[i].distances.size())
                 refi_Reg->region[i].distances.append(r);
+            refi_Reg->region[i].n = refi_Reg->region[i].n + 1;
 //            LoadRefineDistanceSurface(currentSurface,0);
             ReloadRefineDistanceSurface(&refi_Reg->region[i]);
             ui->txt_Log->appendPlainText("Settings of refining distance for " + currentSurface + " have been done");
@@ -4605,77 +4746,82 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
 {
     if(ui->tb_boundary->currentRow() < 0)
         return;
-    QString currentSurface = ui->tb_boundary->currentItem()->text();
-    if(column == 2)
-    {
-        if(row < ui->tb_MeshRefineAroundSurface->rowCount() - 1)
+    foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()){
+        QString currentSurface = item->text();
+        if(column == 2)
         {
-            if(QMessageBox::warning(this,tr("Warning"),tr("Do you want to delete this field")))
+            if(row < ui->tb_MeshRefineAroundSurface->rowCount() - 1)
             {
-                float lv = ui->tb_MeshRefineAroundSurface->item(row,0)->text().toFloat();
+                if(QMessageBox::warning(this,tr("Warning"),tr("Do you want to delete this field")))
+                {
+                    float lv1 = ui->tb_MeshRefineAroundSurface->item(row,0)->text().toFloat();
+                    int lv2 = ui->tb_MeshRefineAroundSurface->item(row,1)->text().toInt();
+                    //Foreach Box
+                    if(RemoveRefineDistant(&mesh->snappyd->gBox.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach Cilynder
+                    if(RemoveRefineDistant(&mesh->snappyd->gCylin.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach Sphere
+                    if(RemoveRefineDistant(&mesh->snappyd->gSphere.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach STL
+                    if(RemoveRefineDistant(&mesh->snappyd->gUserDefine.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach Box Cell zone
+                    if(RemoveRefineDistant(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach Cilynder Cell zone
+                    if(RemoveRefineDistant(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach Sphere Cell zone
+                    if(RemoveRefineDistant(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                    //Foreach STL Cell zone
+                    if(RemoveRefineDistant(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,lv1,lv2))
+                        return;
+                }
+            }  else {
+                RefinementDistance r;
+                QString c = ui->tb_MeshRefineAroundSurface->item(row,0)->text();
+                QString d = ui->tb_MeshRefineAroundSurface->item(row,1)->text();
+                if(c == "" || d == ""){
+                    QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
+                    return;
+                }
+                bool a,b;
+                float lv1 = c.toFloat(&a);
+                int lv2 = d.toInt(&b);
+                if(!a || !b)
+                {
+                    QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
+                    return;
+                }
                 //Foreach Box
-                if(RemoveRefineRegion(&mesh->snappyd->gBox.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gBox.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach Cilynder
-                if(RemoveRefineRegion(&mesh->snappyd->gCylin.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gCylin.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach Sphere
-                if(RemoveRefineRegion(&mesh->snappyd->gSphere.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gSphere.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach STL
-                if(RemoveRefineRegion(&mesh->snappyd->gUserDefine.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gUserDefine.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach Box Cell zone
-                if(RemoveRefineRegion(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach Cilynder Cell zone
-                if(RemoveRefineRegion(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach Sphere Cell zone
-                if(RemoveRefineRegion(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,lv1,lv2))
                     return;
                 //Foreach STL Cell zone
-                if(RemoveRefineRegion(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,lv))
+                if(AddRefineRegion(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,lv1,lv2))
                     return;
             }
-        }
-        else
-        {
-            RefinementDistance r;
-            QString c = ui->tb_MeshRefineAroundSurface->item(row,0)->text();
-            QString d = ui->tb_MeshRefineAroundSurface->item(row,1)->text();
-            bool a,b;
-            r.lv1 = c.toFloat(&a);
-            r.lv2 = d.toFloat(&b);
-            if(!a || !b)
-            {
-                QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
-                return;
-            }
-            //Foreach Box
-            if(AddRefineRegion(&mesh->snappyd->gBox.refi_Reg,currentSurface,r))
-                return;
-            //Foreach Cilynder
-            if(AddRefineRegion(&mesh->snappyd->gCylin.refi_Reg,currentSurface,r))
-                return;
-            //Foreach Sphere
-            if(AddRefineRegion(&mesh->snappyd->gSphere.refi_Reg,currentSurface,r))
-                return;
-            //Foreach STL
-            if(AddRefineRegion(&mesh->snappyd->gUserDefine.refi_Reg,currentSurface,r))
-                return;
-            //Foreach Box Cell zone
-            if(AddRefineRegion(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,r))
-                return;
-            //Foreach Cilynder Cell zone
-            if(AddRefineRegion(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,r))
-                return;
-            //Foreach Sphere Cell zone
-            if(AddRefineRegion(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,r))
-                return;
-            //Foreach STL Cell zone
-            if(AddRefineRegion(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,r))
-                return;
         }
     }
 }

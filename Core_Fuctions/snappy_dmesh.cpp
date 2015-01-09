@@ -96,7 +96,7 @@ void Snappy_Dmesh::FindMinMax(QList<Surface_Min_Max> l)
             if(defaultBounding.maxBouDef.z < l[i].min.z)
             {
                 defaultBounding.maxBouDef.z = l[i].min.z;
-            }
+            }            
     }
     float lx, ly, lz;
     lx = (defaultBounding.maxBouDef.x - defaultBounding.minBouDef.x)*0.01;
@@ -265,32 +265,32 @@ QString Snappy_Dmesh::CreateCastellatedMeshControls()
 {
     QString str_File_New = "castellatedMeshControls\n";
     str_File_New +="{\n";
-    str_File_New +="maxLocalCells 1000000;\n";
-    str_File_New +="maxGlobalCells 2000000;\n";
+    str_File_New +="maxLocalCells 10000000;\n";
+    str_File_New +="maxGlobalCells 20000000;\n";
     str_File_New +="minRefinementCells 2;\n";
     str_File_New +="nCellsBetweenLevels 3;\n";
     str_File_New +="\n";
-    str_File_New +="features";
-    str_File_New +="(";
+    str_File_New +="features\n";
+    str_File_New +="(\n";
     for(int i=0; i<gUserDefine.refi_Fea.n; i++)
     {
-        str_File_New +="{";
-        str_File_New +="file \"" + gUserDefine.refi_Fea.feature[i].name + ".eMesh\";";
-        str_File_New +="level " + QString::number(gUserDefine.refi_Fea.feature[i].lv) + ";";
-        str_File_New +="}";
+        str_File_New +="{\n";
+        str_File_New +="file \"" + gUserDefine.refi_Fea.feature[i].name + ".eMesh\";\n";
+        str_File_New +="level " + QString::number(gUserDefine.refi_Fea.feature[i].lv) + ";\n";
+        str_File_New +="}\n";
     }
     for(int i=0; i<gUserDefineCellZone.refi_Fea.n; i++)
     {
-        str_File_New +="{";
-        str_File_New +="file \"" + gUserDefineCellZone.refi_Fea.feature[i].name + ".eMesh\";";
-        str_File_New +="level " + QString::number(gUserDefineCellZone.refi_Fea.feature[i].lv) + ";";
-        str_File_New +="}";
+        str_File_New +="{\n";
+        str_File_New +="file \"" + gUserDefineCellZone.refi_Fea.feature[i].name + ".eMesh\";\n";
+        str_File_New +="level " + QString::number(gUserDefineCellZone.refi_Fea.feature[i].lv) + ";\n";
+        str_File_New +="}\n";
     }
     str_File_New +=");\n";
     str_File_New +="refinementSurfaces\n";
     str_File_New +="{\n";
 
-    //Add refinementSurfaces
+    //Add refinement surfaces
     for(int i=0; i< gBox.refi_Sur.n; i++)
     {
         if(gBox.refi_Sur.surfaces[i].lv2 > 0)
@@ -302,114 +302,15 @@ QString Snappy_Dmesh::CreateCastellatedMeshControls()
             str_File_New +="}\n";
         }
     }
-    for(int i=0; i< gCylin.refi_Sur.n; i++)
-    {
-        if(gCylin.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +=gCylin.refi_Sur.surfaces[i].name + "\n";
-            str_File_New +="{\n";
-            str_File_New +="level ("+QString::number(gCylin.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gCylin.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="}\n";
-        }
-    }
-    for(int i=0; i< gSphere.refi_Sur.n; i++)
-    {
-        if(gSphere.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +=gSphere.refi_Sur.surfaces[i].name + "\n";
-            str_File_New +="{\n";
-            str_File_New +="level ("+QString::number(gSphere.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gSphere.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="}\n";
-        }
-    }
-    for(int i=0; i< gUserDefine.refi_Sur.n; i++)
-    {
-        str_File_New +=gUserDefine.refi_Sur.surfaces[i].name + "\n";
-        str_File_New +="{\n";
-//        if(gUserDefine.refi_Sur.surfaces[i].lv2 > 0)
-//        {
-            str_File_New +="level ("+QString::number(gUserDefine.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gUserDefine.refi_Sur.surfaces[i].lv2)+");\n";
-//        }
-        if(gUserDefine.refi_Sur.surfaces[i].n > 0)
-        {
-            //add regions
-            str_File_New +="regions\n";
-            str_File_New +="{\n";
-            for(int j=0; j< gUserDefine.refi_Sur.surfaces[i].n; j++)
-            {
-                if(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv1 > 0)
-                {
-                    str_File_New +=gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].name + "\n";
-                    str_File_New +="{\n";
-                    str_File_New +="level ("+QString::number(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv1)
-                                                            +" "+QString::number(gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].lv2)+");\n";
-                    str_File_New +="}\n";
-                }
-            }
-            str_File_New +="}\n";
-        }
-        str_File_New +="}\n";
-    }
-    //Add refinement cell zone
-    for(int i=0; i < gBoxCellZone.refi_Sur.n; i++)
-    {
-        if(gBoxCellZone.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +=gBoxCellZone.refi_Sur.surfaces[i].name + "\n";
-            str_File_New +="{\n";
-            str_File_New +="level ("+QString::number(gBoxCellZone.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gBoxCellZone.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="cellZone " + gBoxCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="faceZone " + gBoxCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="celZoneInside inside;\n";
-            str_File_New +="}\n";
-        }
-    }
-    for(int i=0; i < gCylinCellZone.refi_Sur.n; i++)
-    {
-        if(gCylinCellZone.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +="" + gCylinCellZone.refi_Sur.surfaces[i].name+"\n";
-            str_File_New +="{\n";
-            str_File_New +="level ("+QString::number(gCylinCellZone.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gCylinCellZone.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="cellZone " + gCylinCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="faceZone " + gCylinCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="celZoneInside inside;\n";
-            str_File_New +="}\n";
-        }
-    }
-    for(int i=0; i < gSphereCellZone.refi_Sur.n; i++)
-    {
-        if(gSphereCellZone.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +=gSphereCellZone.refi_Sur.surfaces[i].name+"\n";
-            str_File_New +="{\n";
-            str_File_New +="level ("+QString::number(gSphereCellZone.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gSphereCellZone.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="cellZone " + gSphereCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="faceZone " + gSphereCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="celZoneInside inside;\n";
-            str_File_New +="}\n";
-        }
-    }
-    for(int i=0; i < gUserDefineCellZone.refi_Sur.n; i++)
-    {
-        if(gUserDefineCellZone.refi_Sur.surfaces[i].lv2 > 0)
-        {
-            str_File_New +=gUserDefineCellZone.refi_Sur.surfaces[i].name+"\n";
-            str_File_New +="{\n";
-            str_File_New +="level ("+QString::number(gUserDefineCellZone.refi_Sur.surfaces[i].lv1)
-                                                    +" "+QString::number(gUserDefineCellZone.refi_Sur.surfaces[i].lv2)+");\n";
-            str_File_New +="cellZone " + gUserDefineCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="faceZone " + gUserDefineCellZone.refi_Sur.surfaces[i].name + ";\n";
-            str_File_New +="celZoneInside inside;\n";
-            str_File_New +="}\n";
-        }
-    }
+    str_File_New.append(CreateMeshRefinementSurface(gBox.refi_Sur));
+    str_File_New.append(CreateMeshRefinementSurface(gCylin.refi_Sur));
+    str_File_New.append(CreateMeshRefinementSurface(gSphere.refi_Sur));
+    str_File_New.append(CreateMeshRefinementSurfaceSTL(gUserDefine.refi_Sur));
+    //Add refinement surfaces cell zone
+    str_File_New.append(CreateMeshRefinementSurface(gBoxCellZone.refi_Sur,1));
+    str_File_New.append(CreateMeshRefinementSurface(gCylinCellZone.refi_Sur,1));
+    str_File_New.append(CreateMeshRefinementSurface(gSphereCellZone.refi_Sur,1));
+    str_File_New.append(CreateMeshRefinementSurfaceSTL(gUserDefineCellZone.refi_Sur,1));
 
     str_File_New +="}\n";
     str_File_New +="resolveFeatureAngle " + QString::number(resolveFeatureAngle) + ";\n";
@@ -683,20 +584,19 @@ QString Snappy_Dmesh::CreateMeshRefinementRegions(RefinementRegions ref)
     QString str_File_New = "";
     for(int i=0; i< ref.n; i++)
     {
-        if(ref.region[i].distances.size() > 0)
+        if(ref.region[i].n > 0)
         {
             str_File_New += ref.region[i].name + "\n";
             str_File_New += "{\n";
             str_File_New += "mode distance;\n";
             str_File_New += "levels (";
-            foreach(RefinementDistance r,ref.region[i].distances)
-            {
+            foreach(RefinementDistance r, ref.region[i].distances) {
                 str_File_New += " ("+ QString::number(r.lv1) + " "+ QString::number(r.lv2)+")";
             }
             str_File_New += " );\n";
             str_File_New +="}\n";
         }
-        if(ref.region[i].lv1 > 0 && ref.region[i].lv2 > 0) {
+        if(ref.region[i].lv1 > -1 && ref.region[i].lv2 > ref.region[i].lv1 && ref.region[i].mode != "distance") {
             str_File_New += ref.region[i].name + "\n";
             str_File_New += "{\n";
             str_File_New += "mode " + ref.region[i].mode + ";\n";
@@ -705,6 +605,81 @@ QString Snappy_Dmesh::CreateMeshRefinementRegions(RefinementRegions ref)
             str_File_New +="}\n";
 
         }
+    }
+    return str_File_New;
+}
+QString Snappy_Dmesh::CreateMeshRefinementSurface(RefinementSurfaces ref,int isCellZone)
+{
+    QString str_File_New = "";
+    for(int i=0; i< ref.n; i++)
+    {
+        if(ref.surfaces[i].lv2 > 0)
+        {
+            str_File_New +=ref.surfaces[i].name + "\n";
+            str_File_New +="{\n";
+            str_File_New +="level ("+QString::number(ref.surfaces[i].lv1)
+                                                    +" "+QString::number(ref.surfaces[i].lv2)+");\n";
+            if(isCellZone) {
+                str_File_New +="cellZone " + ref.surfaces[i].name + ";\n";
+                str_File_New +="faceZone " + ref.surfaces[i].name + ";\n";
+                str_File_New +="celZoneInside inside;\n";
+            }
+            str_File_New +="}\n";
+        }
+    }
+    return str_File_New;
+}
+QString Snappy_Dmesh::CreateMeshRefinementSurfaceSTL(RefinementSurfacesSTL ref,int isCellZone)
+{
+    QString str_File_New = "";
+    for(int i=0; i< ref.n; i++)
+    {
+        QString str_File_STL = "";
+        QString str_File_Regions = "";
+//        bool isDefined = false;
+        bool isDefinedRegion = false;
+
+        str_File_STL +=ref.surfaces[i].name + "\n";
+        str_File_STL +="{\n";
+//        if(ref.surfaces[i].lv2 > 0)
+//        {
+            str_File_STL +="level ("+QString::number(ref.surfaces[i].lv1)
+                                                    +" "+QString::number(ref.surfaces[i].lv2)+");\n";
+            if(isCellZone) {
+                str_File_STL +="cellZone " + ref.surfaces[i].name + ";\n";
+                str_File_STL +="faceZone " + ref.surfaces[i].name + ";\n";
+                str_File_STL +="celZoneInside inside;\n";
+            }
+//            isDefined = true;
+//        }
+        if(ref.surfaces[i].n > 0)
+        {
+            //add regions
+            str_File_Regions +="regions\n";
+            str_File_Regions +="{\n";
+            for(int j=0; j< ref.surfaces[i].n; j++)
+            {
+                if(ref.surfaces[i].regionSTLs[j].lv2 > 0)
+                {
+                    str_File_Regions +=ref.surfaces[i].regionSTLs[j].name + "\n";
+                    str_File_Regions +="{\n";
+                    str_File_Regions +="level ("+QString::number(ref.surfaces[i].regionSTLs[j].lv1)
+                                                            +" "+QString::number(ref.surfaces[i].regionSTLs[j].lv2)+");\n";
+                    if(isCellZone) {
+                        str_File_Regions +="cellZone " + ref.surfaces[i].name + ";\n";
+                        str_File_Regions +="faceZone " + ref.surfaces[i].name + ";\n";
+                        str_File_Regions +="celZoneInside inside;\n";
+                    }
+                    str_File_Regions +="}\n";
+                    isDefinedRegion = true;
+                }
+            }
+            if(isDefinedRegion)
+                str_File_STL.append(str_File_Regions);
+        }
+        str_File_STL +="}\n";
+//        if(isDefined)
+        str_File_New.append(str_File_STL);
     }
     return str_File_New;
 }

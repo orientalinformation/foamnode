@@ -325,7 +325,7 @@
       <item>
        <widget class="QCheckBox" name="ckb_MeshSurfaceFeatures">
         <property name="text">
-         <string>Change settings of features</string>
+         <string>Snap and refine surface feature</string>
         </property>
        </widget>
       </item>
