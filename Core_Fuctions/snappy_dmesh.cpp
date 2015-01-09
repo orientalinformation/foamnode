@@ -842,6 +842,74 @@ void Snappy_Dmesh::Write_Snappy(QString path)
     file.write(str_File_New.toAscii().data());
     file.close();
 }
+void Snappy_Dmesh::Write_Topodict(QString path)
+{
+    path.append("/DMESH.topoSetDict");
+
+    QFile file(QDir::toNativeSeparators(path));
+    file.open(QIODevice::WriteOnly);
+    QString str_File_New;
+
+    str_File_New.append(CreateHeader());
+
+    str_File_New.append("actions\n");
+    str_File_New.append("(\n");
+    foreach(GeomeBoxTypeDmesh g,gBoxCellZone.boxes) {
+        str_File_New.append("{\n");
+        str_File_New.append("name          " + g.name + ";\n");
+        str_File_New.append("type          cellSet;\n");
+        str_File_New.append("action        new;\n");
+        str_File_New.append("source        zoneToCell;\n");
+        str_File_New.append("sourceInfo\n");
+        str_File_New.append("{\n");
+        str_File_New.append("name    " + g.name + ";\n");
+        str_File_New.append("}\n");
+        str_File_New.append("}\n");
+    }
+    foreach(GeomeCylinTypeDmesh g,gCylinCellZone.cylins) {
+        str_File_New.append("{\n");
+        str_File_New.append("name          " + g.name + ";\n");
+        str_File_New.append("type          cellSet;\n");
+        str_File_New.append("action        new;\n");
+        str_File_New.append("source        zoneToCell;\n");
+        str_File_New.append("sourceInfo\n");
+        str_File_New.append("{\n");
+        str_File_New.append("name    " + g.name + ";\n");
+        str_File_New.append("}\n");
+        str_File_New.append("}\n");
+    }
+    foreach(GeomeSphereTypeDmesh g,gSphereCellZone.sphere) {
+        str_File_New.append("{\n");
+        str_File_New.append("name          " + g.name + ";\n");
+        str_File_New.append("type          cellSet;\n");
+        str_File_New.append("action        new;\n");
+        str_File_New.append("source        zoneToCell;\n");
+        str_File_New.append("sourceInfo\n");
+        str_File_New.append("{\n");
+        str_File_New.append("name    " + g.name + ";\n");
+        str_File_New.append("}\n");
+        str_File_New.append("}\n");
+    }
+    foreach(GeomeUserdefineTypeDmesh g,gUserDefineCellZone.user_Defines) {
+        str_File_New.append("{\n");
+        str_File_New.append("name          " + g.name + ";\n");
+        str_File_New.append("type          cellSet;\n");
+        str_File_New.append("action        new;\n");
+        str_File_New.append("source        zoneToCell;\n");
+        str_File_New.append("sourceInfo\n");
+        str_File_New.append("{\n");
+        str_File_New.append("name    " + g.name + ";\n");
+        str_File_New.append("}\n");
+        str_File_New.append("}\n");
+    }
+
+    str_File_New +="// ************************************************************************* //\n";
+
+    str_File_New = FormatSnappyFile(str_File_New);
+    file.write(str_File_New.toAscii().data());
+    file.close();
+}
+
 bool Snappy_Dmesh::Read_Snappy(QString path)
 {
     QString str_file = "";

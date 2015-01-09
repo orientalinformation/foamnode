@@ -3863,6 +3863,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
 
             mesh->blockd->Write_Block_Dmesh(saveCase + "/constant/polyMesh/");
             mesh->snappyd->Write_Snappy(saveCase + "/system/");
+            mesh->snappyd->Write_Topodict(saveCase + "/system/");
             if(!QDir(saveCase + "/constant/triSurface").exists())
                 QDir().mkdir(saveCase + "/constant/triSurface");
             for(int i=0; i<mesh->snappyd->gUserDefine.n; i++)
@@ -3926,6 +3927,21 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
+            createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
+            createrThread->SetCommand("renumberMesh");
+            createrThread->ThreadName("renumberMesh");
+            createrThread->start();
+            while(createrThread->isRunning())
+            {
+                QApplication::processEvents();
+            }
+            createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
+            createrThread->ThreadName("topoSetDict");
+            createrThread->start();
+            while(createrThread->isRunning())
+            {
+                QApplication::processEvents();
+            }
 
             //save file setting bounding
             QStringList list;
@@ -3966,6 +3982,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
 
         QFile(path_Open + "/system/snappyHexMeshDict").remove();
         mesh->snappyd->Write_Snappy(path_Open + "/system/");
+        mesh->snappyd->Write_Topodict(path_Open + "/system/");
         if(!QDir(path_Open + "/constant/triSurface").exists())
             QDir().mkdir(path_Open + "/constant/triSurface");
         for(int i=0; i<mesh->snappyd->gUserDefine.n; i++)
@@ -4014,6 +4031,21 @@ void MainWindow::on_btn_CreateMesh_clicked()
         createrThread->SetSubCommand("-overwrite",2);
         createrThread->SetCommand("createPatch");
         createrThread->ThreadName("createPatch");
+        createrThread->start();
+        while(createrThread->isRunning())
+        {
+            QApplication::processEvents();
+        }
+        createrThread->SetSubCommand("-overwrite",2);
+        createrThread->SetCommand("renumberMesh");
+        createrThread->ThreadName("renumberMesh");
+        createrThread->start();
+        while(createrThread->isRunning())
+        {
+            QApplication::processEvents();
+        }
+        createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
+        createrThread->ThreadName("topoSetDict");
         createrThread->start();
         while(createrThread->isRunning())
         {
@@ -4524,6 +4556,7 @@ void MainWindow::on_actionSave_triggered()
         //save snappy
         QFile(path_Open + "/system/snappyHexMeshDict").remove();
         mesh->snappyd->Write_Snappy(path_Open + "/system");
+        mesh->snappyd->Write_Topodict(path_Open + "/system/");
         if(!QDir(path_Open + "/constant/triSurface").exists())
             QDir().mkdir(path_Open + "/constant/triSurface");
         for(int i=0; i<mesh->snappyd->gUserDefine.n; i++)
@@ -4589,6 +4622,7 @@ void MainWindow::on_actionSave_triggered()
 
         //save snappy
         mesh->snappyd->Write_Snappy(saveCase + "/system");
+        mesh->snappyd->Write_Topodict(saveCase + "/system/");
         if(!QDir(saveCase + "/constant/triSurface").exists())
             QDir().mkdir(saveCase + "/constant/triSurface");
         for(int i=0; i<mesh->snappyd->gUserDefine.n; i++)

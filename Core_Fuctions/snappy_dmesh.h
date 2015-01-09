@@ -245,6 +245,7 @@ public:
     DefaultBounding defaultBounding;
 
     void Write_Snappy(QString path);
+    void Write_Topodict(QString path);
     bool Read_Snappy(QString path);
     bool ReadSTLFile(QString path_car);
 
