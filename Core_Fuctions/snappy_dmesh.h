@@ -4,7 +4,6 @@
 #include <QString>
 #include <math.h>
 #include <QVector>
-#include <qDebug>
 
 struct Surface_Min_Max
 {
