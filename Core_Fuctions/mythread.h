@@ -28,6 +28,8 @@ private:
     QString subCommand_2;
     QString subCommand_3;
     QString threadName;
+    QString PID;
+    bool emitappend;
 protected:
     void run();
 signals:

@@ -15,6 +15,7 @@ MyThread::MyThread(QObject *parent) :
     this->subCommand_1 = "";
     this->subCommand_2 = "";
     this->threadName = "";
+    this->emitappend = true;
 }
 QString MyThread::ThreadName()
 {
@@ -65,8 +66,29 @@ void MyThread::run()
         process->setWorkingDirectory(OpenFoam::OpenFOAMPath());
         process->start(command,QIODevice::ReadOnly);
         while(process->waitForReadyRead(-1))
-            while(process->canReadLine())
-                emit changed(process->readLine());
+            while(process->canReadLine()){
+//                emit changed(process->readLine());
+                QString temp = process->readLine();
+                if(temp.contains("/*-----")){
+                    emitappend = false;
+                }
+                if(temp.contains("// * *")){
+                    emitappend = true;
+                }
+                if(temp.left(3) == "PID"){
+                    QStringList temps = temp.trimmed().split(":",QString::SkipEmptyParts);
+                    if(temps.size() == 2){
+                        PID= temps[1];
+                    }
+                }/*
+                if(temp.trimmed() == "End" || temp.trimmed() == "End."){
+                    lastLog = temp;
+                    temp = "Successfully accomplished!";
+                }*/
+                if(emitappend){
+                    emit changed(temp);
+                }
+            }
     }
     #else
     {
@@ -78,8 +100,29 @@ void MyThread::run()
         process->setWorkingDirectory(OpenFoam::OpenFOAMPath());
         process->start("/bin/bash",commands,QIODevice::ReadOnly);
         while(process->waitForReadyRead(-1))
-            while(process->canReadLine())
-                emit changed(process->readLine());
+            while(process->canReadLine()){
+                QString temp = process->readLine();
+                if(temp.contains("/*-----")){
+                    emitappend = false;
+                }
+                if(temp.contains("// * *")){
+                    emitappend = true;
+                }
+                if(temp.left(3) == "PID"){
+                    QStringList temps = temp.trimmed().split(":",QString::SkipEmptyParts);
+                    if(temps.size() == 2){
+                        PID= temps[1];
+                    }
+                }/*
+                if(temp.trimmed() == "End" || temp.trimmed() == "End."){
+                    lastLog = temp;
+                    temp = "Successfully accomplished!";
+                }*/
+                if(emitappend){
+                    emit changed(temp);
+                }
+//                emit changed(process->readLine());
+            }
     }
     #endif
     this->exit();

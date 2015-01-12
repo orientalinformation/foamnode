@@ -4665,6 +4665,9 @@
    <addaction name="actionShow_Hide_Note_Coordinate"/>
    <addaction name="separator"/>
    <addaction name="actionCapture"/>
+   <addaction name="separator"/>
+   <addaction name="actionCheck_mesh"/>
+   <addaction name="actionParaView"/>
   </widget>
   <action name="actionX">
    <property name="icon">
@@ -4824,6 +4827,33 @@
    </property>
    <property name="toolTip">
     <string>Capture </string>
+   </property>
+  </action>
+  <action name="actionParaView">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/resource/images/parafoam.png</normaloff>:/resource/images/parafoam.png</iconset>
+   </property>
+   <property name="text">
+    <string>ParaView</string>
+   </property>
+   <property name="toolTip">
+    <string>ParaView</string>
+   </property>
+  </action>
+  <action name="actionCheck_mesh">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/resource/images/checkMesh.png</normaloff>:/resource/images/checkMesh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check mesh</string>
+   </property>
+   <property name="toolTip">
+    <string>Check mesh</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

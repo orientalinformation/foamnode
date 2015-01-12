@@ -37,5 +37,6 @@
         <file>resource/images/delete-icon.png</file>
         <file>resource/images/tick.png</file>
         <file>resource/images/open.png</file>
+        <file>resource/images/checkMesh.png</file>
     </qresource>
 </RCC>

@@ -33,6 +33,8 @@ private:
     Ui::MainWindow *ui;
     DMesh *mesh;
     MyThread *createrThread;
+    MyThread *checkMeshThread;
+    QList<QStringList> table;
     QStringList listFaces;
     QStringList listSurfaces;
     QStringList listSurfacesDefault;
@@ -41,9 +43,15 @@ private:
     //declare path Open
     QString path_Open;
 
+    QString comment;
+
     QString lastFileSTL;
 
     QString lastFolderCase;
+
+    QString StrLogCheckMesh;
+    //log flag
+    bool emitflag;
     //declare flag
     //flag refine surface
     bool flag_btnSurface_Click;
@@ -106,6 +114,7 @@ private:
     void loadData();
     void boundaryDefault();
     void checkDFC();
+    void FilterLogMesh(QString value);
 
     void ImportSTLSurface();
     void ImportSTLCellzone();
@@ -181,6 +190,8 @@ private slots:
     void on_rbn_Volume_clicked(bool checked);
     void on_rbn_Cellzone_clicked(bool checked);
     void on_rbn_Surface_clicked(bool checked);
+    void on_actionCheck_mesh_triggered();
+    void on_actionParaView_triggered();
 };
 
 #endif // MAINWINDOW_H

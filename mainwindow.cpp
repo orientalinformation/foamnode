@@ -8,11 +8,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     loaded = true;
     licenseOK = true;
+    emitflag = 0;
     mesh = new DMesh();
     this->isClose = false;
     this->keepBoundary = false;
     ui->layout_Mesh->addWidget(mesh);
     ui->txt_Log->setMaximumBlockCount(300);
+    checkMeshThread = new MyThread();
+    this->comment = "";
     LoadControlItems();
     LoadControlsVisible();
     LoadLocationInMesh();
@@ -206,6 +209,9 @@ void MainWindow::LoadControlsVisible()
     ui->btn_Mesh->show();
     ui->btn_Boundary->show();
     ui->btn_Generate->show();
+    ui->actionCheck_mesh->setDisabled(true);
+    ui->actionParaView->setDisabled(true);
+    ui->actionSave->setDisabled(true);
 }
 void MainWindow::LoadGeometryControlsVisible()
 {
@@ -272,7 +278,10 @@ bool MainWindow::AddFaceToList(QString name)
 void MainWindow::Thread_Changed(QString value)
 {
     value = value.remove("\n");
-    ui->txt_Log->appendPlainText(value);
+//    if(comment == "checkMesh"){
+//        FilterLogMesh(value);
+//    }else
+        ui->txt_Log->appendPlainText(value);
 }
 void MainWindow::Remove_All_Face()
 {
@@ -1694,10 +1703,10 @@ void MainWindow::checkDFC()
         if(messDFC->exec() == QMessageBox::Yes){
             #if defined(Q_OS_WIN)
                 QDesktopServices::openUrl(QUrl("http://dofilink.com/files/DOFICore/OpenFOAM_2.1.0_Win_64bits.exe"));
-//                    this->close();
+    //                    this->close();
             #else
                 QDesktopServices::openUrl(QUrl("http://dofilink.com/files/DOFICore/OpenFOAM.tar.gz"));
-//                    this->close();
+    //                    this->close();
             #endif
             loaded = false;
         }else{
@@ -1706,6 +1715,330 @@ void MainWindow::checkDFC()
         CheckDFC = false;
     }else {
         CheckDFC = true;
+    }
+}
+
+void MainWindow::FilterLogMesh(QString value)
+{
+    StrLogCheckMesh = value;
+    StrLogCheckMesh = StrLogCheckMesh.trimmed();
+    int padding = 40;
+    bool ok;
+    if(emitflag == 0){
+        ui->txt_Log->appendPlainText(value);
+    }
+    if(StrLogCheckMesh == "Mesh stats" || StrLogCheckMesh == "Overall number of cells of each type:"){
+        if(StrLogCheckMesh == "Overall number of cells of each type:"){
+            padding = 80;
+        }
+        emitflag = 1;
+    }
+    if(StrLogCheckMesh == "Checking topology..."){
+        emitflag = 2;
+    }
+    if(StrLogCheckMesh == "Checking patch topology for multiply connected surfaces ..."){
+        emitflag = 3;
+    }
+    if(StrLogCheckMesh == "Checking geometry..."){
+        StrLogCheckMesh+="\n";
+        emitflag = 0;
+    }
+    if(emitflag == 1){
+        QList<QString> tablename;
+        QList<QString> tablevalue;
+        QStringList listname;
+        QStringList listvalue;
+        QString str_value;
+        if(StrLogCheckMesh != ""){
+            QStringList list_str = StrLogCheckMesh.split(QRegExp("\\s+"));
+            table.append(list_str);
+        }else{
+            table.removeFirst();
+            for(int i = 0; i< table.length(); i++){
+                for(int j = 0; j < table[i].length(); j++){
+                    table[i][j].toFloat(&ok);
+                    if(ok == false){
+                        if(j == 0){
+                            listname.append(table[i][j]);
+                        }else{
+                            listname.append(" "+table[i][j]);
+                        }
+                    }else{
+                        listvalue.append("\t"+table[i][j]);
+                    }
+                }
+                if(listname.length() == 0){
+                    tablename.append("\t");
+                }else{
+                    int j = 0;
+                    while(j+1<listname.length()){
+                        listname[0]+=listname[j+1];
+                        j++;
+                    }
+                    tablename.append(listname[0]);
+                }
+                listname.clear();
+                if(listvalue.length() == 0){
+                    //listvalue.append();
+                    tablevalue.append(" ");
+                }else{
+                    tablevalue.append(listvalue);
+                }
+                listvalue.clear();
+            }
+            table.clear();
+            str_value = "<table>";
+            for(int i = 0; i< tablename.length(); i++){
+                if(tablename[i] == "" && tablevalue[i] == ""){
+                    tablename.removeAt(i);
+                    tablevalue.removeAt(i);
+                }
+                if(tablename[i] != "" && tablevalue[i] == ""){
+                    str_value += "<tr><td colspan = \"4\" >"+tablename[i]+"</td></tr>";
+                }
+                if(tablename[i] != "" && tablevalue[i] != ""){
+                    str_value += "<tr><td style = \"padding-left: "+QString::number(padding) +";\">"+tablename[i]+"</td><td>\t</td><td style = \"padding-left: 40px;\">"+tablevalue[i]+"</td</tr>";
+                }
+            }
+            str_value += "</table>";
+            StrLogCheckMesh.append(str_value);
+            ui->txt_Log->appendHtml(StrLogCheckMesh);
+            emitflag = 0;
+
+        }
+    }
+
+    if(emitflag == 2){
+        QList<QString> tablename;
+        QList<QStringList> tablevalue;
+        QStringList listname;
+        QStringList listvalue;
+        QString str_value;
+        if(StrLogCheckMesh != ""){
+            QStringList list_str = StrLogCheckMesh.split(QRegExp("\\s+"));
+            table.append(list_str);
+        }else{
+            table.removeFirst();
+            for(int i = 0; i< table.length(); i++){
+                for(int j = 0; j < table[i].length(); j++){
+                    table[i][j].toFloat(&ok);
+                    if(ok == false && table[i][j].contains("OK") == false){
+                        if(j == 0){
+                            listname.append(table[i][j]);
+                        }else{
+                            listname.append(" "+table[i][j]);
+                        }
+                    }else{
+                        if(ok == true){
+                            listvalue.append(table[i][j]);
+                        }else{
+                            listvalue.append("\t"+table[i][j]);
+                        }
+                    }
+                }
+                if(listname.length() == 0){
+                    tablename.append("\t");
+                }else{
+                    int j = 0;
+                    while(j+1<listname.length()){
+                        listname[0]+=listname[j+1];
+                        j++;
+                    }
+                    tablename.append(listname[0]);
+                }
+                listname.clear();
+                if(listvalue.length() == 0){
+                    listvalue.append(" ");
+                }
+                tablevalue.append(listvalue);
+                listvalue.clear();
+            }
+            table.clear();
+            int t = 0;
+            int td = 0;
+            while(t < tablevalue.length()){
+                if(td < tablevalue[t].length()){
+                    td = tablevalue[t].length();
+                }
+                t++;
+            }
+            QStringList a;
+            QString b;
+            int k = 0;
+            while(k < tablevalue.length()){
+                int tt = td - tablevalue[k].length();
+                b = "";
+                if(tt > 0){
+                    for(int i = 0; i< tt ; i++){
+                        b+= "<td style = \"padding-left: 40px;\"></td>";
+                    }
+                }
+                for(int i = 0; i< tablevalue[k].length(); i++){
+                    b+= "<td style = \"padding-left: 40px;\">"+tablevalue[k][i]+"</td>";
+                }
+                a.append(b);
+                k++;
+            }
+            str_value = "<table>";
+            for(int i = 0; i< tablename.length(); i++){
+                if(tablename[i] == "" && a[i] == ""){
+                    tablename.removeAt(i);
+                    tablevalue.removeAt(i);
+                }
+                if(tablename[i] != "" && a[i] == ""){
+                    str_value += "<tr><td colspan = \"4\" >"+tablename[i]+"</td></tr>";
+                }
+                if(tablename[i] != "" && a[i] != ""){
+                    str_value += "<tr><td style = \"padding-left: 40px;\">"+tablename[i]+"</td><td>\t</td>"+a[i]+"</tr>";
+                }
+            }
+            str_value += "</table>";
+            StrLogCheckMesh.append(str_value);
+            ui->txt_Log->appendHtml(StrLogCheckMesh);
+            emitflag = 0;
+
+        }
+    }
+
+    if(emitflag == 3){
+        QList<QString> tablename;
+        QList<QString> tablevalue;
+        QStringList listname;
+        QStringList listvalue;
+        QStringList tmp;
+        int max;
+        if(StrLogCheckMesh != ""){
+            QString end_str;
+            if(StrLogCheckMesh.contains(" ok "))
+            {
+                end_str = StrLogCheckMesh.right(StrLogCheckMesh.length() - StrLogCheckMesh.indexOf(" ok "));
+                StrLogCheckMesh = StrLogCheckMesh.left(StrLogCheckMesh.indexOf(" ok ") -1);
+            }
+            QStringList list_str = StrLogCheckMesh.split(QRegExp("\\s+"));
+            list_str.append(end_str);
+            table.append(list_str);
+        }else{
+            table.removeFirst();
+            for(int i = 0; i< table.length(); i++){
+                int j = 0;
+                //bool end = false;
+                while(j < table[i].length()){
+                    table[i][j].toFloat(&ok);
+                    if(ok == false && table[i][j].contains(" ok ") == false){
+                        if(j == 0){
+                            listname.append(table[i][j]);
+                        }else{
+                            listname.append(" "+table[i][j]);
+                        }
+                        j++;
+                    }else{
+                        listvalue.append("\t"+table[i][j]);
+                        j++;
+                    }
+                }
+                if(listname.length() == 0){
+                    tablename.append("\t");
+                }else{
+                    if(i == 0){
+                        tmp = listname;
+                        listname[0] = " ";
+                    }else{
+                        int j = 0;
+                        while(j+1<listname.length()){
+                            listname[0]+=listname[j+1];
+                            j++;
+                        }
+                    }
+                    tablename.append(listname[0]);
+                }
+                listname.clear();
+                if(listvalue.length() == 0){
+                    tablevalue.append(" ");
+                }else{
+                    int j = 1;
+                    while(j<listvalue.length()){
+                        listvalue[0]+=listvalue[j];
+                        j++;
+                    }
+                    tablevalue.append(listvalue[0]);
+                }
+                listvalue.clear();
+            }
+            table.clear();
+            tablename[0] = tablename.value(0).trimmed();
+            max = tablename.value(0).length();
+            int i = 1;
+            while (i<tablename.length()) {
+                tablename.value(i) = tablename.value(i).trimmed();
+                if(max < tablename.value(i).length()){
+                    max = tablename.value(i).length();
+                }
+                i++;
+            }
+            if(max < 11){
+                max = 1;
+            }else{
+                if((max%11) != 0){
+                    max = max/11+1;
+                }else{
+                    max = max/11;
+                }
+            }
+            QString str_value;
+            tmp[0] = tmp.value(0).trimmed();
+            int lt = tmp.value(0).length();
+            if(lt < 11){
+                lt = 0;
+            }else{
+                lt = lt/11;
+            }
+            int t = max - lt;
+            if(t > 0){
+                int k = 0;
+                while(k < t){
+                    tmp[0] += "\t";
+                    k++;
+                }
+            }
+            int tt =1;
+            while(tt<tmp.length()){
+                if((tt) == (tmp.length() -2)){
+                    tmp[0]+=tmp[tt];
+                }else{
+                    tmp[0]+=("\t"+tmp[tt]);
+                }
+                tt++;
+            }
+            str_value = "\n\t"+tmp.value(0)+"\n";
+            for(int j = 0; j < tablename.length(); j++){
+                int l_i= tablename.value(j).length();
+                if(l_i < 11){
+                    l_i = 0;
+                }else{
+                    l_i = l_i/11;
+                }
+                int l = max - l_i;
+                if(l > 0){
+                    int k = 0;
+                    while(k < l){
+                        tablename[j]+="\t";
+                        k++;
+                    }
+                }
+                str_value+="\t"+tablename[j]+tablevalue[j]+"\n";
+            }
+            max=0;
+            StrLogCheckMesh.append(str_value);
+            ui->txt_Log->appendPlainText(StrLogCheckMesh);
+            emitflag = 0;
+
+        }
+    }
+
+    if(emitflag == 4){
+        ui->txt_Log->appendPlainText("\t"+StrLogCheckMesh);
+        emitflag = 0;
+
     }
 }
 
@@ -3986,6 +4319,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 list.append(str_para);
             }
             mesh->blockd->Write_Bounding(saveCase + "/constant/polyMesh/setting.dat", list);
+            OpenFoam::SetOpenFOAMPath(saveCase);
 
         }
     }
@@ -4653,6 +4987,7 @@ void MainWindow::on_actionSave_triggered()
         {
             mesh->patchDict->WritePatchDict(saveCase + "/system");
         }
+        OpenFoam::SetOpenFOAMPath(saveCase);
     }
 }
 
@@ -4961,6 +5296,7 @@ void MainWindow::on_actionOpen_triggered()
         if(dir!="")
         {
             lastFolderCase = dir;
+            OpenFoam::SetOpenFOAMPath(dir);
             this->setWindowTitle(dir);
 
             bool temp1 = mesh->blockd->Read_Block_Dmesh(dir + "/constant/polyMesh/blockMeshDict");
@@ -5654,6 +5990,9 @@ void MainWindow::on_actionOpen_triggered()
         }
         ui->actionClose->setEnabled(true);
         this->isClose = false;
+        ui->actionCheck_mesh->setDisabled(false);
+        ui->actionParaView->setDisabled(false);
+        ui->actionSave->setDisabled(false);
         mesh->SetViewList(views);
         mesh->updateGL();
 }
@@ -5682,7 +6021,7 @@ void MainWindow::SetButtonDefault()
 void MainWindow::SetButtonEnable(bool value)
 {
     ui->actionOpen->setEnabled(value);
-    ui->actionSave->setEnabled(value);
+//    ui->actionSave->setEnabled(value);
 
     ui->btn_Boundary->setEnabled(value);
     ui->btn_Mesh->setEnabled(value);
@@ -6213,6 +6552,9 @@ void MainWindow::on_actionClose_triggered()
     LoadLocationInMesh();
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
     ui->actionClose->setEnabled(false);
+    ui->actionParaView->setDisabled(true);
+    ui->actionParaView->setDisabled(true);
+    ui->actionSave->setDisabled(true);
 }
 
 void MainWindow::on_actionCapture_triggered()
@@ -6273,6 +6615,9 @@ void MainWindow::on_btn_GeoDefineNew_clicked()
     }
     this->isClose = false;
     ui->actionClose->setEnabled(true);
+    ui->actionCheck_mesh->setEnabled(true);
+    ui->actionParaView->setEnabled(true);
+    ui->actionSave->setDisabled(false);
 }
 
 void MainWindow::on_rbn_Volume_clicked(bool checked)
@@ -6295,4 +6640,35 @@ void MainWindow::on_rbn_Surface_clicked(bool checked)
 {
     if(checked)
         ui->cb_GeometryNewMesh->setEnabled(true);
+}
+
+void MainWindow::on_actionCheck_mesh_triggered()
+{
+    if(!CheckDFC){
+        return;
+    }
+    if(checkMeshThread->isRunning() && comment == "checkMesh"){
+        return;
+    }
+    checkMeshThread = new MyThread();
+    checkMeshThread->SetCommand("checkMesh");
+    this->comment = "checkMesh";
+    checkMeshThread->ThreadName("check mesh");
+    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
+    checkMeshThread->start();
+}
+
+void MainWindow::on_actionParaView_triggered()
+{
+
+    if(checkMeshThread->isRunning() && comment == "paraFoam"){
+        return;
+    }
+    checkMeshThread = new MyThread();
+    checkMeshThread->SetCommand("paraFoam");
+    this->comment = "paraFoam";
+    checkMeshThread->ThreadName("paraFoam");
+//    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
+    ui->txt_Log->appendPlainText("ParaView run...");
+    checkMeshThread->start();
 }
