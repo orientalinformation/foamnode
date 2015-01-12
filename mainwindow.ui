@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>908</width>
-    <height>2914</height>
+    <height>2931</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1335,7 +1335,7 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_GeometryMeshType">
-                  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
                    <item>
                     <layout class="QVBoxLayout" name="verticalLayout_32">
                      <item>
@@ -1364,9 +1364,9 @@
                    <item>
                     <layout class="QVBoxLayout" name="bts_color">
                      <item>
-                      <widget class="QPushButton" name="bt_yelow">
+                      <widget class="QLabel" name="label_7">
                        <property name="styleSheet">
-                        <string notr="true">background-color:rgb(255,255,0)</string>
+                        <string notr="true">background-color:rgb(255,255,0);</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -1374,9 +1374,9 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="bt_white">
+                      <widget class="QLabel" name="label_30">
                        <property name="styleSheet">
-                        <string notr="true">background-color:rgb(255,255,255)</string>
+                        <string notr="true">background-color:rgb(255,255,255);</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -1384,9 +1384,9 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="bt_blue">
+                      <widget class="QLabel" name="label_40">
                        <property name="styleSheet">
-                        <string notr="true">background-color:rgb(0,255,0)</string>
+                        <string notr="true">background-color:rgb(0,255,0);</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -1396,13 +1396,6 @@
                     </layout>
                    </item>
                   </layout>
-                  <zorder>rbn_Surface</zorder>
-                  <zorder>rbn_Cellzone</zorder>
-                  <zorder>rbn_Volume</zorder>
-                  <zorder>rbn_Surface</zorder>
-                  <zorder>bt_yelow</zorder>
-                  <zorder>bt_white</zorder>
-                  <zorder>bt_blue</zorder>
                  </widget>
                 </item>
                 <item>
@@ -3503,16 +3496,7 @@
                       <enum>QFrame::Raised</enum>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_44">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -3597,47 +3581,6 @@
                           <string/>
                          </property>
                         </column>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_129">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_44">
-                      <property name="margin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QPushButton" name="btn_MeshRefineAdvance">
-                        <property name="maximumSize">
-                         <size>
-                          <width>150</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string>Advanced</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="btn_MeshRefineSurface">
-                        <property name="maximumSize">
-                         <size>
-                          <width>150</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string>Apply</string>
-                        </property>
                        </widget>
                       </item>
                      </layout>
