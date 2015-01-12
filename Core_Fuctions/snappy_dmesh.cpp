@@ -147,6 +147,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gBox.boxes[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableBox;\n";
+        str_File_New += "tag  surface;\n";
         str_File_New += "min ("+QString::number(gBox.boxes[i].min.x)+" "+QString::number(gBox.boxes[i].min.y)
                                                 +" "+QString::number(gBox.boxes[i].min.z)+");\n";
         str_File_New += "max ("+QString::number(gBox.boxes[i].max.x)+" "+QString::number(gBox.boxes[i].max.y)
@@ -158,6 +159,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gCylin.cylins[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableCylinder;\n";
+        str_File_New += "tag  surface;\n";
         str_File_New += "point1 ("+QString::number(gCylin.cylins[i].point1.x)+" "+QString::number(gCylin.cylins[i].point1.y)
                                                 +" "+QString::number(gCylin.cylins[i].point1.z)+");\n";
         str_File_New += "point2 ("+QString::number(gCylin.cylins[i].point2.x)+" "+QString::number(gCylin.cylins[i].point2.y)
@@ -170,6 +172,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gSphere.sphere[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableSphere;\n";
+        str_File_New += "tag  surface;\n";
         str_File_New += "centre ("+QString::number(gSphere.sphere[i].centre.x)+" "+QString::number(gSphere.sphere[i].centre.y)
                                                 +" "+QString::number(gSphere.sphere[i].centre.z)+");\n";
         str_File_New += "radius "+QString::number(gSphere.sphere[i].radius)+";\n";
@@ -180,6 +183,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gUserDefine.user_Defines[i].name_file + "\n";
         str_File_New += "{\n";
         str_File_New += "type triSurfaceMesh;\n";
+        str_File_New += "tag  surface;\n";
         str_File_New += "name "+gUserDefine.user_Defines[i].name+";\n";
         str_File_New += "}\n";
     }
@@ -188,6 +192,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gBoxCellZone.boxes[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableBox;\n";
+        str_File_New += "tag  cellZone;\n";
         str_File_New += "min ("+QString::number(gBoxCellZone.boxes[i].min.x)+" "+QString::number(gBoxCellZone.boxes[i].min.y)
                                                 +" "+QString::number(gBoxCellZone.boxes[i].min.z)+");\n";
         str_File_New += "max ("+QString::number(gBoxCellZone.boxes[i].max.x)+" "+QString::number(gBoxCellZone.boxes[i].max.y)
@@ -199,6 +204,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gCylinCellZone.cylins[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableCylinder;\n";
+        str_File_New += "tag  cellZone;\n";
         str_File_New += "point1 ("+QString::number(gCylinCellZone.cylins[i].point1.x)+" "+QString::number(gCylinCellZone.cylins[i].point1.y)
                                                 +" "+QString::number(gCylinCellZone.cylins[i].point1.z)+");\n";
         str_File_New += "point2 ("+QString::number(gCylinCellZone.cylins[i].point2.x)+" "+QString::number(gCylinCellZone.cylins[i].point2.y)
@@ -211,6 +217,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gSphereCellZone.sphere[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableSphere;\n";
+        str_File_New += "tag  cellZone;\n";
         str_File_New += "centre ("+QString::number(gSphereCellZone.sphere[i].centre.x)+" "+QString::number(gSphereCellZone.sphere[i].centre.y)
                                                 +" "+QString::number(gSphereCellZone.sphere[i].centre.z)+");\n";
         str_File_New += "radius "+QString::number(gSphereCellZone.sphere[i].radius)+";\n";
@@ -221,6 +228,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gUserDefineCellZone.user_Defines[i].name_file + "\n";
         str_File_New += "{\n";
         str_File_New += "type triSurfaceMesh;\n";
+        str_File_New += "tag  cellZone;\n";
         str_File_New += "name "+gUserDefineCellZone.user_Defines[i].name+";\n";
         str_File_New += "}\n";
     }
@@ -229,6 +237,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gBoxRegion.boxes[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableBox;\n";
+        str_File_New += "tag  volume;\n";
         str_File_New += "min ("+QString::number(gBoxRegion.boxes[i].min.x)+" "+QString::number(gBoxRegion.boxes[i].min.y)
                                                 +" "+QString::number(gBoxRegion.boxes[i].min.z)+");\n";
         str_File_New += "max ("+QString::number(gBoxRegion.boxes[i].max.x)+" "+QString::number(gBoxRegion.boxes[i].max.y)
@@ -240,6 +249,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gCylinRegion.cylins[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableCylinder;\n";
+        str_File_New += "tag  volume;\n";
         str_File_New += "point1 ("+QString::number(gCylinRegion.cylins[i].point1.x)+" "+QString::number(gCylinRegion.cylins[i].point1.y)
                                                 +" "+QString::number(gCylinRegion.cylins[i].point1.z)+");\n";
         str_File_New += "point2 ("+QString::number(gCylinRegion.cylins[i].point2.x)+" "+QString::number(gCylinRegion.cylins[i].point2.y)
@@ -252,6 +262,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gSphereRegion.sphere[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableSphere;\n";
+        str_File_New += "tag  volume;\n";
         str_File_New += "centre ("+QString::number(gSphereRegion.sphere[i].centre.x)+" "+QString::number(gSphereRegion.sphere[i].centre.y)
                                                 +" "+QString::number(gSphereRegion.sphere[i].centre.z)+");\n";
         str_File_New += "radius "+QString::number(gSphereRegion.sphere[i].radius)+";\n";
@@ -338,7 +349,7 @@ QString Snappy_Dmesh::CreateCastellatedMeshControls()
     str_File_New += QString::number(locationInMesh.y) +" ";
     str_File_New += QString::number(locationInMesh.z);
     str_File_New +=");\n";
-    str_File_New +="allowFreeStandingZoneFaces true;\n";
+    str_File_New +="allowFreeStandingZoneFaces false;\n";
     str_File_New +="}\n";
     str_File_New +="\n";
     return str_File_New;
@@ -561,18 +572,18 @@ QString Snappy_Dmesh::CreateMeshQualityControls()
 
     str_File_New +="minVol " + QString::number(minVol) + ";\n";
     str_File_New +="minTetQuality -1e30;\n";
-    float minArea = pow(minVol,3)/10;
+    float minArea = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),2)/100;
     str_File_New +="minArea " + QString::number(minArea) + ";\n";
-    str_File_New +="minTwist 0.01;\n";
+    str_File_New +="minTwist 0.02;\n";
     str_File_New +="minDeterminant 0.001;\n";
     str_File_New +="minFaceWeight 0.02;\n";
-    str_File_New +="minVolRatio 0.02;\n";
+    str_File_New +="minVolRatio 0.01;\n";
     str_File_New +="minTriangleTwist -1;\n";
     str_File_New +="nSmoothScale 4;\n";
     str_File_New +="errorReduction 0.75;\n";
     str_File_New +="relaxed\n";
     str_File_New +="{\n";
-    str_File_New +=" maxNonOrtho 40;\n";
+    str_File_New +="maxNonOrtho 70;\n";
     str_File_New +="}\n";
     str_File_New +="}\n";
     str_File_New +="\n";
@@ -902,7 +913,7 @@ void Snappy_Dmesh::Write_Topodict(QString path)
         str_File_New.append("}\n");
         str_File_New.append("}\n");
     }
-
+    str_File_New.append(");\n");
     str_File_New +="// ************************************************************************* //\n";
 
     str_File_New = FormatSnappyFile(str_File_New);
