@@ -1907,7 +1907,7 @@ void MainWindow::ImportSTLSurface()
             mesh->snappyd->min_Max.min.y=1000000.0;
             mesh->snappyd->min_Max.min.z=1000000.0;
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(file_name_STL))
+            if(mesh->snappyd->ReadSTLFile(file_name_STL,1))
             {
                 QStringList views = mesh->GetViewList();
                 foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
@@ -2017,7 +2017,7 @@ void MainWindow::ImportSTLCellzone()
             mesh->snappyd->min_Max.min.y=1000000.0;
             mesh->snappyd->min_Max.min.z=1000000.0;
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(file_name_STL))
+            if(mesh->snappyd->ReadSTLFile(file_name_STL,0))
             {
                 QStringList views = mesh->GetViewList();
                 views.append(_name);
@@ -5037,7 +5037,7 @@ void MainWindow::on_actionOpen_triggered()
             QString path = dir + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file;
             //temp = mesh->snappyd->ReadSTLFile(path);
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(path))
+            if(mesh->snappyd->ReadSTLFile(path,-1))
             {
                 QString _name = mesh->snappyd->gUserDefine.user_Defines[i].name;
                 foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
