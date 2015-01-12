@@ -507,18 +507,11 @@ void DMesh::DrawNoteCoordinate()
 void DMesh::DrawLocationPoint()
 {
     glPushMatrix();
-        glTranslatef(snappyd->locationInMesh.x,snappyd->locationInMesh.y,snappyd->locationInMesh.z);
         glColor3f(0.0,1.0,0.0);
-        GLUquadric *myQuad;
-        GLdouble radius = this->minValue(this->radiusCaculationMax)/80.0;
-//        if(radius < 0)
-//            radius = radius * -1.0;
-        GLint slices, stacks;
-        myQuad=gluNewQuadric();
-        slices = stacks = 20;
-        gluSphere( myQuad , radius , slices , stacks  );
-        float a= snappyd->locationInMesh.x;
-        a= a+1.0;
+        glPointSize(5);
+        glBegin(GL_POINTS);
+            glVertex3d(snappyd->locationInMesh.x,snappyd->locationInMesh.y,snappyd->locationInMesh.z);
+        glEnd();
     glPopMatrix();
 }
 void DMesh::DrawEdges()
