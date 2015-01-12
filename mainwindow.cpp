@@ -3747,6 +3747,7 @@ void MainWindow::on_btn_MeshRefinement_clicked()
     ui->frame_MeshLayer->hide();
     ui->frame_MeshVolume->hide();
     ui->frame_MeshRefinement->show();
+    on_btn_MeshSurface_clicked();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////// Boundary Area //////////////////////////////////////////////
@@ -3935,6 +3936,9 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
+            if(mesh->snappyd->gBoxCellZone.boxes.size() > 0 || mesh->snappyd->gCylinCellZone.cylins.size() > 0 ||
+                    mesh->snappyd->gSphereCellZone.sphere.size() > 0 || mesh->snappyd->gUserDefineCellZone.user_Defines.size() > 0)
+            createrThread->SetSubCommand("",2);
             createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
             createrThread->ThreadName("topoSetDict");
             createrThread->start();
