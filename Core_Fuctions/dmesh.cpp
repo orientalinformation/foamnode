@@ -8,6 +8,9 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     f = -1;
     zOut =0;
     zIn = 0;
+    xAverage = 0;
+    yAverage = 0;
+    zAverage = 0;
     flagFirstStart = false;
     zoomScale =100;
     //declare dmesh
@@ -370,6 +373,9 @@ void DMesh::ShowHeighWidthGreen()
         textshow += ", " + QString::number(y2);
         textshow += ", " + QString::number(z2);
         textshow += ")";
+        xAverage = (x1+x2)/2;
+        yAverage = (y1+y2)/2;
+        zAverage = (z1+z2)/2;
 
     }
     else

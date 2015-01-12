@@ -27,7 +27,9 @@ public:
     void SetDrawCoordinate(bool note,bool center);
     void SetViewList(QStringList views);
     QStringList GetViewList();
-
+    float xAverage;
+    float yAverage;
+    float zAverage;
     bool isCtrlPress;
 private:
 

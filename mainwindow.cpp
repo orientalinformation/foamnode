@@ -365,6 +365,9 @@ void MainWindow::on_btn_Generate_clicked()
         ui->btn_Boundary->hide();
         ui->frame_Generate->show();
         ui->btn_DeleteSurface->setEnabled(true);
+        ui->txt_X_Location->setText(QString::number(mesh->xAverage));
+        ui->txt_Y_Location->setText(QString::number(mesh->yAverage));
+        ui->txt_Z_Location->setText(QString::number(mesh->zAverage));
         Remove_All_Face();
     }
 }
