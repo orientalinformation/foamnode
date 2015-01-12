@@ -717,7 +717,7 @@ QString Snappy_Dmesh::FormatSnappyFile(QString value)
     return lines.join("\n");
 }
 
-bool Snappy_Dmesh::ReadSTLFile(QString path)
+bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
 {
     //read file
 
@@ -756,9 +756,20 @@ bool Snappy_Dmesh::ReadSTLFile(QString path)
             //Add name
             sTemp->name = name_re;
             //Add default color
-            sTemp->color.x = 1.0;
-            sTemp->color.y = 1.0;
-            sTemp->color.z = 1.0;
+            sTemp->type = type;
+            if(type == 1){
+                sTemp->color.x = 1.0;
+                sTemp->color.y = 1.0;
+                sTemp->color.z = 0.0;
+            }else if(type == 2){
+                sTemp->color.x = 0.0;
+                sTemp->color.y = 0.0;
+                sTemp->color.z = 1.0;
+            }else{
+                sTemp->color.x = 1.0;
+                sTemp->color.y = 1.0;
+                sTemp->color.z = 1.0;
+            }
             //Loop for Normal vector and Vertexs
 
             while(lines[i].trimmed().left(8) != "endsolid")

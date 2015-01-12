@@ -67,8 +67,9 @@ private:
     bool licenseOK;
     //enable Close trigger
     bool isOpen;
-
     bool isClose;
+
+    bool keepBoundary;
 
     void LoadLocationInMesh();
     void LoadControlItems();
@@ -81,6 +82,8 @@ private:
     void LoadMeshControlsVisible();
     void LoadBoundaryControlsVisible();
     void LoadGenerateControlsVisible();
+
+    void LoadColor();
 
     bool CheckAndSaveBoundingBoxInput();
     bool CheckAndSaveBoundingDistance();

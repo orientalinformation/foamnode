@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     licenseOK = true;
     mesh = new DMesh();
     this->isClose = false;
+    this->keepBoundary = false;
     ui->layout_Mesh->addWidget(mesh);
     ui->txt_Log->setMaximumBlockCount(300);
     LoadControlItems();
@@ -155,12 +156,14 @@ void MainWindow::LoadGeometryControlItems()
 }
 void MainWindow::LoadBoundaryControlItems()
 {
-    ui->cb_BoundaryType->clear();
-    ui->cb_BoundaryType->addItem("---Type---");
-    ui->cb_BoundaryType->addItem("patch");
-    ui->cb_BoundaryType->addItem("empty");
-    ui->cb_BoundaryType->addItem("symmetryPlane");
-    ui->cb_BoundaryType->addItem("wall");
+    if(this->keepBoundary == false){
+        ui->cb_BoundaryType->clear();
+        ui->cb_BoundaryType->addItem("---Type---");
+        ui->cb_BoundaryType->addItem("patch");
+        ui->cb_BoundaryType->addItem("empty");
+        ui->cb_BoundaryType->addItem("symmetryPlane");
+        ui->cb_BoundaryType->addItem("wall");
+    }
 
     ui->tb_MeshSurface->clear();
     ui->tb_MeshSurface->setColumnCount(1);
@@ -239,6 +242,11 @@ void MainWindow::LoadGenerateControlsVisible()
 {
     ui->btn_Generate->hide();
     ui->frame_GeometryBounding->hide();
+}
+
+void MainWindow::LoadColor()
+{
+//    ui->
 }
 
 bool MainWindow::AddFaceToList(QString name)
@@ -1899,7 +1907,7 @@ void MainWindow::ImportSTLSurface()
             mesh->snappyd->min_Max.min.y=1000000.0;
             mesh->snappyd->min_Max.min.z=1000000.0;
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(file_name_STL))
+            if(mesh->snappyd->ReadSTLFile(file_name_STL,1))
             {
                 QStringList views = mesh->GetViewList();
                 foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
@@ -2009,7 +2017,7 @@ void MainWindow::ImportSTLCellzone()
             mesh->snappyd->min_Max.min.y=1000000.0;
             mesh->snappyd->min_Max.min.z=1000000.0;
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(file_name_STL))
+            if(mesh->snappyd->ReadSTLFile(file_name_STL,0))
             {
                 QStringList views = mesh->GetViewList();
                 views.append(_name);
@@ -2830,7 +2838,7 @@ void MainWindow::DefineSimpleCellZone()
             snappy->facezones[snappy->facezones.size()-1][1]= starend[1];
 
             snappy->facetype.resize(snappy->facetype.size() + 1);
-            snappy->facetype[snappy->facetype.size() - 1] = 1;
+            snappy->facetype[snappy->facetype.size() - 1] = 0;
 
             snappy->facename.append(surfaceName);
 
@@ -3072,7 +3080,7 @@ void MainWindow::DefineSimpleVolume()
             mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1][1]= starend[1];
 
             mesh->snappyd->facetype.resize(mesh->snappyd->facetype.size() + 1);
-            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 0;
+            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 2;
 
             mesh->snappyd->facename.append(volumeName);
 
@@ -3786,7 +3794,9 @@ void MainWindow::on_btn_CreateBoundary_clicked()
         b.patches.surfaces = surfaces;
         b.patchInfo.type = ui->cb_BoundaryType->currentText();
         mesh->patchDict->boundaries.append(b);
+        this->keepBoundary = true;
         LoadBoundaryControlItems();
+        this->keepBoundary = false;
         ui->txt_Log->appendPlainText("These surfaces have been merged to boundary " + b.name);
     }
     else
@@ -3810,7 +3820,9 @@ void MainWindow::on_btn_DeleteBoundary_clicked()
                 }
             }
         }
+        this->keepBoundary = true;
         LoadBoundaryControlItems();
+        this->keepBoundary = false;
         if(ui->tb_MeshBoundary->selectedItems().count() > 1)
             ui->txt_Log->appendPlainText("These boundaries have been deleted");
         else
@@ -5025,7 +5037,7 @@ void MainWindow::on_actionOpen_triggered()
             QString path = dir + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file;
             //temp = mesh->snappyd->ReadSTLFile(path);
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(path))
+            if(mesh->snappyd->ReadSTLFile(path,-1))
             {
                 QString _name = mesh->snappyd->gUserDefine.user_Defines[i].name;
                 foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)

@@ -190,7 +190,7 @@ struct Solid
 {
     QString name;
     PointDmesh color;
-
+    int type;// 0.Cell zone -*- 1.Surface -*- 2.Volume
     int n;
     QVector<Facet> facets;
 
@@ -246,7 +246,7 @@ public:
     void Write_Snappy(QString path);
     void Write_Topodict(QString path);
     bool Read_Snappy(QString path);
-    bool ReadSTLFile(QString path_car);
+    bool ReadSTLFile(QString path_car, int type);
 
     void FindMinMaxDefaultBounding(float x, float y, float z);
     void FindMinMax(QList<Surface_Min_Max> l);
@@ -254,7 +254,7 @@ public:
     QVector <float *> points;
     QVector <int *> faces;
     QVector <int *> facezones;
-    QVector <int> facetype;
+    QVector <int> facetype;// 0/-1.Cell zone/Default -*- 1.Surface -*- 2.Volume
     QStringList facename;
 
     PointDmesh deltaBaseMesh;
