@@ -4578,7 +4578,7 @@ void MainWindow::on_actionSave_triggered()
         return;
     }
     //save new
-    QString saveCase = QFileDialog::getSaveFileName(this);
+    QString saveCase = QFileDialog::getSaveFileName(this,"",lastFileSTL);
     if(saveCase != "")
     {
         if(!OpenFoam::CopyDir("Data/OpenFoamDefault",saveCase))
@@ -6183,6 +6183,7 @@ void MainWindow::on_actionClose_triggered()
     }
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();
+
     mesh = new DMesh();
     ui->layout_Mesh->addWidget(mesh);
     LoadControlsVisible();
