@@ -596,9 +596,11 @@ void DMesh::DrawGeometry()
         if(this->viewList.contains(snappyd->facename[i]))
         {
             if(snappyd->facetype[i] == 1)
+                glColor3f(1,1,0);
+            else if(snappyd->facetype[i] == 0){
                 glColor3f(1,1,1);
-            else
-                glColor3f(0,0,1);
+            }else
+                glColor3f(0,1,0);
 
             int j = snappyd->facezones[i][0];
             int nFace = snappyd->facezones[i][1];
@@ -625,7 +627,7 @@ void DMesh::DrawGeometry()
         {
             PointDmesh *p1 = &snappyd->gCylin.cylins[i].point1;
             PointDmesh *p2 = &snappyd->gCylin.cylins[i].point2;
-            glColor3f(1,1,1);
+            glColor3f(1,1,0);
             renderCylinder_convenient(p1->x,p1->y,p1->z,p2->x,p2->y,p2->z,snappyd->gCylin.cylins[i].radius,30);
         }
     }
@@ -647,7 +649,7 @@ void DMesh::DrawGeometry()
         {
             PointDmesh *p1 = &snappyd->gCylinRegion.cylins[i].point1;
             PointDmesh *p2 = &snappyd->gCylinRegion.cylins[i].point2;
-            glColor3f(0,0,1);
+            glColor3f(0,1,0);
             renderCylinder_convenient(p1->x,p1->y,p1->z,p2->x,p2->y,p2->z,snappyd->gCylinRegion.cylins[i].radius,30);
         }
     }
@@ -658,7 +660,7 @@ void DMesh::DrawGeometry()
         if(this->viewList.contains(snappyd->gSphere.sphere[i].name))
         {
             PointDmesh *p = &snappyd->gSphere.sphere[i].centre;
-            glColor3f(1,1,1);
+            glColor3f(1,1,0);
             renderSphere(p->x,p->y,p->z,snappyd->gSphere.sphere[i].radius);
         }
     }
@@ -678,7 +680,7 @@ void DMesh::DrawGeometry()
         if(this->viewList.contains(snappyd->gSphereRegion.sphere[i].name))
         {
             PointDmesh *p = &snappyd->gSphereRegion.sphere[i].centre;
-            glColor3f(0,0,1);
+            glColor3f(0,1,0);
             renderSphere(p->x,p->y,p->z,snappyd->gSphereRegion.sphere[i].radius);
         }
     }

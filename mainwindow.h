@@ -82,6 +82,8 @@ private:
     void LoadBoundaryControlsVisible();
     void LoadGenerateControlsVisible();
 
+    void LoadColor();
+
     bool CheckAndSaveBoundingBoxInput();
     bool CheckAndSaveBoundingDistance();
     bool AddFaceToList(QString name);

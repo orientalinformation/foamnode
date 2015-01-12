@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>908</width>
-    <height>2492</height>
+    <height>2914</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,16 +105,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_GeometryImportSTL">
                   <layout class="QHBoxLayout" name="horizontalLayout_8">
-                   <property name="leftMargin">
-                    <number>9</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>9</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>9</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>9</number>
                    </property>
                    <item>
@@ -137,16 +128,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_GeometrySimpleSurface">
                   <layout class="QVBoxLayout" name="verticalLayout_30">
-                   <property name="leftMargin">
-                    <number>9</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>9</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>9</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>9</number>
                    </property>
                    <item>
@@ -158,16 +140,7 @@
                       <enum>QFrame::Raised</enum>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_31">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -256,16 +229,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -316,16 +280,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -360,16 +315,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -400,16 +346,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -440,16 +377,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -652,16 +580,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -712,16 +631,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -756,16 +666,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -796,16 +697,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -836,16 +728,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -1161,16 +1044,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -1221,16 +1095,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -1265,16 +1130,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -1305,16 +1161,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -1345,16 +1192,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -1497,29 +1335,74 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_GeometryMeshType">
-                  <layout class="QVBoxLayout" name="verticalLayout_59">
+                  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
                    <item>
-                    <widget class="QRadioButton" name="rbn_Surface">
-                     <property name="text">
-                      <string>Surface</string>
-                     </property>
-                    </widget>
+                    <layout class="QVBoxLayout" name="verticalLayout_32">
+                     <item>
+                      <widget class="QRadioButton" name="rbn_Surface">
+                       <property name="text">
+                        <string>Surface</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="rbn_Cellzone">
+                       <property name="text">
+                        <string>Cell zone</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="rbn_Volume">
+                       <property name="text">
+                        <string>Volume</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                    <item>
-                    <widget class="QRadioButton" name="rbn_Cellzone">
-                     <property name="text">
-                      <string>Cell zone</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="rbn_Volume">
-                     <property name="text">
-                      <string>Volume</string>
-                     </property>
-                    </widget>
+                    <layout class="QVBoxLayout" name="bts_color">
+                     <item>
+                      <widget class="QPushButton" name="bt_yelow">
+                       <property name="styleSheet">
+                        <string notr="true">background-color:rgb(255,255,0)</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="bt_white">
+                       <property name="styleSheet">
+                        <string notr="true">background-color:rgb(255,255,255)</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="bt_blue">
+                       <property name="styleSheet">
+                        <string notr="true">background-color:rgb(0,255,0)</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
+                  <zorder>rbn_Surface</zorder>
+                  <zorder>rbn_Cellzone</zorder>
+                  <zorder>rbn_Volume</zorder>
+                  <zorder>rbn_Surface</zorder>
+                  <zorder>bt_yelow</zorder>
+                  <zorder>bt_white</zorder>
+                  <zorder>bt_blue</zorder>
                  </widget>
                 </item>
                 <item>
@@ -1531,16 +1414,7 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_49">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>0</number>
                    </property>
                    <item>
@@ -2057,16 +1931,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -2123,16 +1988,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -2167,16 +2023,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -2207,16 +2054,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -2247,16 +2085,7 @@
                             <property name="spacing">
                              <number>3</number>
                             </property>
-                            <property name="leftMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="topMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="rightMargin">
-                             <number>3</number>
-                            </property>
-                            <property name="bottomMargin">
+                            <property name="margin">
                              <number>3</number>
                             </property>
                             <item>
@@ -2577,16 +2406,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -3436,16 +3256,7 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_55">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>0</number>
                    </property>
                    <item>
@@ -3695,16 +3506,7 @@
                       <bool>false</bool>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_81">
-                      <property name="leftMargin">
-                       <number>3</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>3</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>3</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>3</number>
                       </property>
                       <item>
@@ -3759,16 +3561,7 @@
                       <enum>QFrame::Raised</enum>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_44">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -3831,16 +3624,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -3924,16 +3708,7 @@
                       <property name="spacing">
                        <number>0</number>
                       </property>
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                      </layout>
@@ -3948,16 +3723,7 @@
                       <enum>QFrame::Raised</enum>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_43">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
+                      <property name="margin">
                        <number>0</number>
                       </property>
                       <item>
@@ -4010,16 +3776,7 @@
                    <property name="spacing">
                     <number>3</number>
                    </property>
-                   <property name="leftMargin">
-                    <number>3</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>3</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>3</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>3</number>
                    </property>
                    <item>
@@ -4063,16 +3820,7 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_56">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>0</number>
                    </property>
                    <item>
@@ -4135,16 +3883,7 @@
              <property name="spacing">
               <number>6</number>
              </property>
-             <property name="leftMargin">
-              <number>9</number>
-             </property>
-             <property name="topMargin">
-              <number>9</number>
-             </property>
-             <property name="rightMargin">
-              <number>9</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>9</number>
              </property>
              <item>
@@ -4305,16 +4044,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_57">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
+                <property name="margin">
                  <number>0</number>
                 </property>
                 <item>
@@ -4370,16 +4100,7 @@
                 <enum>QFrame::NoFrame</enum>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_59">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
+                <property name="margin">
                  <number>0</number>
                 </property>
                 <item>
@@ -4432,16 +4153,7 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_119">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
+                <property name="margin">
                  <number>0</number>
                 </property>
                 <item>
@@ -4650,16 +4362,7 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_20">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
+                   <property name="margin">
                     <number>0</number>
                    </property>
                    <item>
@@ -4834,16 +4537,7 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_58">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
@@ -4939,7 +4633,7 @@
      <x>0</x>
      <y>0</y>
      <width>908</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

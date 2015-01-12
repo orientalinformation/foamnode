@@ -241,6 +241,11 @@ void MainWindow::LoadGenerateControlsVisible()
     ui->frame_GeometryBounding->hide();
 }
 
+void MainWindow::LoadColor()
+{
+//    ui->
+}
+
 bool MainWindow::AddFaceToList(QString name)
 {
     int i = listFaces.indexOf(name);
@@ -2830,7 +2835,7 @@ void MainWindow::DefineSimpleCellZone()
             snappy->facezones[snappy->facezones.size()-1][1]= starend[1];
 
             snappy->facetype.resize(snappy->facetype.size() + 1);
-            snappy->facetype[snappy->facetype.size() - 1] = 1;
+            snappy->facetype[snappy->facetype.size() - 1] = 0;
 
             snappy->facename.append(surfaceName);
 
@@ -3072,7 +3077,7 @@ void MainWindow::DefineSimpleVolume()
             mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1][1]= starend[1];
 
             mesh->snappyd->facetype.resize(mesh->snappyd->facetype.size() + 1);
-            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 0;
+            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 2;
 
             mesh->snappyd->facename.append(volumeName);
 
