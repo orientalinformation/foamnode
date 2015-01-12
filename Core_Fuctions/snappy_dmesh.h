@@ -190,7 +190,7 @@ struct Solid
 {
     QString name;
     PointDmesh color;
-
+    QVector<int> type;
     int n;
     QVector<Facet> facets;
 

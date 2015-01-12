@@ -67,8 +67,9 @@ private:
     bool licenseOK;
     //enable Close trigger
     bool isOpen;
-
     bool isClose;
+
+    bool keepBoundary;
 
     void LoadLocationInMesh();
     void LoadControlItems();

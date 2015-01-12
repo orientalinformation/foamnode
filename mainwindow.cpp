@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     licenseOK = true;
     mesh = new DMesh();
     this->isClose = false;
+    this->keepBoundary = false;
     ui->layout_Mesh->addWidget(mesh);
     ui->txt_Log->setMaximumBlockCount(300);
     LoadControlItems();
@@ -155,12 +156,14 @@ void MainWindow::LoadGeometryControlItems()
 }
 void MainWindow::LoadBoundaryControlItems()
 {
-    ui->cb_BoundaryType->clear();
-    ui->cb_BoundaryType->addItem("---Type---");
-    ui->cb_BoundaryType->addItem("patch");
-    ui->cb_BoundaryType->addItem("empty");
-    ui->cb_BoundaryType->addItem("symmetryPlane");
-    ui->cb_BoundaryType->addItem("wall");
+    if(this->keepBoundary == false){
+        ui->cb_BoundaryType->clear();
+        ui->cb_BoundaryType->addItem("---Type---");
+        ui->cb_BoundaryType->addItem("patch");
+        ui->cb_BoundaryType->addItem("empty");
+        ui->cb_BoundaryType->addItem("symmetryPlane");
+        ui->cb_BoundaryType->addItem("wall");
+    }
 
     ui->tb_MeshSurface->clear();
     ui->tb_MeshSurface->setColumnCount(1);
@@ -3791,7 +3794,9 @@ void MainWindow::on_btn_CreateBoundary_clicked()
         b.patches.surfaces = surfaces;
         b.patchInfo.type = ui->cb_BoundaryType->currentText();
         mesh->patchDict->boundaries.append(b);
+        this->keepBoundary = true;
         LoadBoundaryControlItems();
+        this->keepBoundary = false;
         ui->txt_Log->appendPlainText("These surfaces have been merged to boundary " + b.name);
     }
     else
@@ -3815,7 +3820,9 @@ void MainWindow::on_btn_DeleteBoundary_clicked()
                 }
             }
         }
+        this->keepBoundary = true;
         LoadBoundaryControlItems();
+        this->keepBoundary = false;
         if(ui->tb_MeshBoundary->selectedItems().count() > 1)
             ui->txt_Log->appendPlainText("These boundaries have been deleted");
         else
