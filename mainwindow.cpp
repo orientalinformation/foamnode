@@ -13,9 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->isClose = false;
     this->keepBoundary = false;
     ui->layout_Mesh->addWidget(mesh);
-    ui->txt_Log->setMaximumBlockCount(300);
+//    ui->txt_Log->setMaximumBlockCount(300);
     checkMeshThread = new MyThread();
     this->comment = "";
+    this->table.clear();
     LoadControlItems();
     LoadControlsVisible();
     LoadLocationInMesh();
@@ -278,10 +279,10 @@ bool MainWindow::AddFaceToList(QString name)
 void MainWindow::Thread_Changed(QString value)
 {
     value = value.remove("\n");
-//    if(comment == "checkMesh"){
-//        FilterLogMesh(value);
-//    }else
-        ui->txt_Log->appendPlainText(value);
+    if(comment == "checkMesh"){
+        FilterLogMesh(value);
+    }else
+        ui->txt_Log->append(value);
 }
 void MainWindow::Remove_All_Face()
 {
@@ -1725,7 +1726,7 @@ void MainWindow::FilterLogMesh(QString value)
     int padding = 40;
     bool ok;
     if(emitflag == 0){
-        ui->txt_Log->appendPlainText(value);
+        ui->txt_Log->append(value);
     }
     if(StrLogCheckMesh == "Mesh stats" || StrLogCheckMesh == "Overall number of cells of each type:"){
         if(StrLogCheckMesh == "Overall number of cells of each type:"){
@@ -1802,7 +1803,8 @@ void MainWindow::FilterLogMesh(QString value)
             }
             str_value += "</table>";
             StrLogCheckMesh.append(str_value);
-            ui->txt_Log->appendHtml(StrLogCheckMesh);
+            ui->txt_Log->append(StrLogCheckMesh);
+            ui->txt_Log->toHtml();
             emitflag = 0;
 
         }
@@ -1894,7 +1896,8 @@ void MainWindow::FilterLogMesh(QString value)
             }
             str_value += "</table>";
             StrLogCheckMesh.append(str_value);
-            ui->txt_Log->appendHtml(StrLogCheckMesh);
+            ui->txt_Log->append(StrLogCheckMesh);
+            ui->txt_Log->toHtml();
             emitflag = 0;
 
         }
@@ -2029,14 +2032,14 @@ void MainWindow::FilterLogMesh(QString value)
             }
             max=0;
             StrLogCheckMesh.append(str_value);
-            ui->txt_Log->appendPlainText(StrLogCheckMesh);
+            ui->txt_Log->append(StrLogCheckMesh);
             emitflag = 0;
 
         }
     }
 
     if(emitflag == 4){
-        ui->txt_Log->appendPlainText("\t"+StrLogCheckMesh);
+        ui->txt_Log->append("\t"+StrLogCheckMesh);
         emitflag = 0;
 
     }
@@ -2557,7 +2560,7 @@ void MainWindow::DefineSimpleSurface()
             SetBoundingDistance();
 //            snappy->facename.append(surfaceName);
             mesh->updateGL();
-            ui->txt_Log->appendPlainText("Defining "+ surfaceName +" cylinder has been done");
+            ui->txt_Log->append("Defining "+ surfaceName +" cylinder has been done");
         }
     }
     else if(ui->cb_SurfaceType->currentText() == "Box")
@@ -2734,7 +2737,7 @@ void MainWindow::DefineSimpleSurface()
 
             AddFaceToList(surfaceName);
             listSurfaces.append(surfaceName);
-            ui->txt_Log->appendPlainText("Successfully create "+ surfaceName +" box");
+            ui->txt_Log->append("Successfully create "+ surfaceName +" box");
         }
 
     }
@@ -2812,7 +2815,7 @@ void MainWindow::DefineSimpleSurface()
              SetBoundingDistance();
  //            snappy->facename.append(surfaceName);
              mesh->updateGL();
-             ui->txt_Log->appendPlainText("Defining "+ surfaceName +" sphere has been done");
+             ui->txt_Log->append("Defining "+ surfaceName +" sphere has been done");
          }
     }
     ui->cb_BoundingType->setCurrentIndex(0);
@@ -3006,7 +3009,7 @@ void MainWindow::DefineSimpleCellZone()
 
             SetBoundingDistance();
             mesh->updateGL();
-            ui->txt_Log->appendPlainText("Defining "+ surfaceName +" cylinder cell zone has been done");
+            ui->txt_Log->append("Defining "+ surfaceName +" cylinder cell zone has been done");
         }
     }
     else if(ui->cb_SurfaceType->currentText() == "Box")
@@ -3182,7 +3185,7 @@ void MainWindow::DefineSimpleCellZone()
             SetBoundingDistance();
 
             AddFaceToList(surfaceName);
-            ui->txt_Log->appendPlainText("Successfully create "+ surfaceName +" box cell zone");
+            ui->txt_Log->append("Successfully create "+ surfaceName +" box cell zone");
         }
 
     }
@@ -3261,7 +3264,7 @@ void MainWindow::DefineSimpleCellZone()
 
              SetBoundingDistance();
              mesh->updateGL();
-             ui->txt_Log->appendPlainText("Defining "+ surfaceName +" sphere cell zone has been done");
+             ui->txt_Log->append("Defining "+ surfaceName +" sphere cell zone has been done");
          }
     }
     ui->cb_BoundingType->setCurrentIndex(0);
@@ -3424,7 +3427,7 @@ void MainWindow::DefineSimpleVolume()
             AddFaceToList(volumeName);
 
             mesh->updateGL();
-            ui->txt_Log->appendPlainText("Defining of "+ volumeName +" box has been done");
+            ui->txt_Log->append("Defining of "+ volumeName +" box has been done");
         }
 
     }
@@ -3485,7 +3488,7 @@ void MainWindow::DefineSimpleVolume()
             mesh->SetViewList(views);
 
             mesh->updateGL();
-            ui->txt_Log->appendPlainText("Defining  of "+ volumeName +" cylinder has been done");
+            ui->txt_Log->append("Defining  of "+ volumeName +" cylinder has been done");
         }
 
     }
@@ -3540,7 +3543,7 @@ void MainWindow::DefineSimpleVolume()
             mesh->SetViewList(views);
 
             mesh->updateGL();
-            ui->txt_Log->appendPlainText("Defining of "+ volumeName +" sphere has been done");
+            ui->txt_Log->append("Defining of "+ volumeName +" sphere has been done");
         }
     }
 }
@@ -3556,12 +3559,12 @@ void MainWindow::on_btn_GeoDefineBouding_clicked()
     else if(ui->cb_BoundingType->currentText() == "Distance")
     {
         if(CheckAndSaveBoundingDistance())
-            ui->txt_Log->appendPlainText("Settings for bounding distance have been save");
+            ui->txt_Log->append("Settings for bounding distance have been save");
     }
     else
     {
         if(CheckAndSaveBoundingBoxInput())
-            ui->txt_Log->appendPlainText("Values of bounding have been save");
+            ui->txt_Log->append("Values of bounding have been save");
     }
 }
 
@@ -3808,7 +3811,7 @@ void MainWindow::on_btn_RefineBase_clicked()
     mesh->snappyd->deltaBaseMesh.x = ui->txt_DeltaX->text().toFloat();
     mesh->snappyd->deltaBaseMesh.y = ui->txt_DeltaY->text().toFloat();
     mesh->snappyd->deltaBaseMesh.z = ui->txt_DeltaZ->text().toFloat();
-    ui->txt_Log->appendPlainText("Settings for base mesh have been save");
+    ui->txt_Log->append("Settings for base mesh have been save");
 }
 
 void MainWindow::on_btn_MeshBounding_clicked()
@@ -3949,7 +3952,7 @@ void MainWindow::on_btn_MeshRefineSurface_clicked()
     }    
     foreach (QTableWidgetItem *item, ui->tb_boundary->selectedItems()) {
         if(AddUserDefine(item->text(),min,max) || AddSurfaceRegionBox(item->text(),min,max))
-            ui->txt_Log->appendPlainText("Defining of "+ item->text() +" surface has been done");
+            ui->txt_Log->append("Defining of "+ item->text() +" surface has been done");
     }
 }
 
@@ -3962,7 +3965,7 @@ bool MainWindow::AddRefineVolume(RefinementRegions *refi_Reg, QString currentSur
         {
             refi_Reg->region[i].mode = mode;
             refi_Reg->region[i].lv2 = lv;
-            ui->txt_Log->appendPlainText("Settings of refining volume for " + currentSurface + " cell zone have been done");
+            ui->txt_Log->append("Settings of refining volume for " + currentSurface + " cell zone have been done");
             return true;
         }
     }
@@ -4057,7 +4060,7 @@ void MainWindow::on_btn_RefineLayer_clicked()
             if(mesh->snappyd->add_Layers_Controls.layers[i].name ==item->text())
             {
                 mesh->snappyd->add_Layers_Controls.layers[i].nSurfaceLayers =layer;
-                ui->txt_Log->appendPlainText("Settings for layer of " + item->text() + " have been done");
+                ui->txt_Log->append("Settings for layer of " + item->text() + " have been done");
                 return;
             }
         }
@@ -4066,7 +4069,7 @@ void MainWindow::on_btn_RefineLayer_clicked()
         mesh->snappyd->add_Layers_Controls.layers.resize(n+1);
         mesh->snappyd->add_Layers_Controls.layers[n].name = item->text();
         mesh->snappyd->add_Layers_Controls.layers[n].nSurfaceLayers = layer;
-        ui->txt_Log->appendPlainText("Settings for layer of " + item->text() + " have been done");
+        ui->txt_Log->append("Settings for layer of " + item->text() + " have been done");
     }
 }
 
@@ -4076,7 +4079,7 @@ void MainWindow::on_btn_MeshSurfaceGeneral_clicked()
     w_general = new W_MeshSurfaceRefineGeneral(mesh);
     w_general->exec();
     if(w_general->result())
-        ui->txt_Log->appendPlainText("Settings for general value of layers have been done");
+        ui->txt_Log->append("Settings for general value of layers have been done");
 }
 void MainWindow::on_tb_boundary_clicked(QModelIndex index)
 {
@@ -4130,7 +4133,7 @@ void MainWindow::on_btn_CreateBoundary_clicked()
         this->keepBoundary = true;
         LoadBoundaryControlItems();
         this->keepBoundary = false;
-        ui->txt_Log->appendPlainText("These surfaces have been merged to boundary " + b.name);
+        ui->txt_Log->append("These surfaces have been merged to boundary " + b.name);
     }
     else
         QMessageBox::critical(this,tr("Error"),tr("Please select as least as once surface!"));
@@ -4157,9 +4160,9 @@ void MainWindow::on_btn_DeleteBoundary_clicked()
         LoadBoundaryControlItems();
         this->keepBoundary = false;
         if(ui->tb_MeshBoundary->selectedItems().count() > 1)
-            ui->txt_Log->appendPlainText("These boundaries have been deleted");
+            ui->txt_Log->append("These boundaries have been deleted");
         else
-            ui->txt_Log->appendPlainText("This boundary have been deleted");
+            ui->txt_Log->append("This boundary have been deleted");
     }
     else
         QMessageBox::critical(this,tr("Error"),tr("Please select as least as once boundary!"));
@@ -4199,7 +4202,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             if(!OpenFoam::CopyDir("Data/OpenFoamDefault",saveCase))
             {
-                ui->txt_Log->appendPlainText("Can't copy default value to " + saveCase);
+                ui->txt_Log->append("Can't copy default value to " + saveCase);
                 return;
             }
             QFile(saveCase + "/constant/polyMesh/blockMeshDict").remove();
@@ -4224,7 +4227,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 mesh->patchDict->WritePatchDict(saveCase + "/system");
             }
-            ui->txt_Log->appendPlainText("Creating mesh...!");
+            ui->txt_Log->append("Creating mesh...!");
             createrThread = new MyThread();
             connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
             OpenFoam::SetOpenFOAMPath(saveCase);
@@ -4348,7 +4351,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             QFile(path_Open + "/system/createPatchDict").remove();
             mesh->patchDict->WritePatchDict(path_Open + "/system");
         }
-        ui->txt_Log->appendPlainText("Creating mesh...!");
+        ui->txt_Log->append("Creating mesh...!");
         createrThread = new MyThread();
         connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
         OpenFoam::SetOpenFOAMPath(path_Open);
@@ -4436,7 +4439,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
 void MainWindow::on_btn_GenerateLocation_clicked()
 {
     if(SetLocation())
-        ui->txt_Log->appendPlainText("Settings for location vetices have been done");
+        ui->txt_Log->append("Settings for location vetices have been done");
 }
 
 void MainWindow::on_btn_DeleteSurface_clicked()
@@ -4509,7 +4512,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                 }
 
                 //remove row on table
-                ui->txt_Log->appendPlainText("Successfully delete "+ name +" box");
+                ui->txt_Log->append("Successfully delete "+ name +" box");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -4593,7 +4596,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                 }
 
                 //remove row on table
-                ui->txt_Log->appendPlainText("Successfully delete "+ name +" box");
+                ui->txt_Log->append("Successfully delete "+ name +" box");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -4678,7 +4681,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                 }
 
                 //remove row on table
-                ui->txt_Log->appendPlainText("Successfully delete "+ name +" box");
+                ui->txt_Log->append("Successfully delete "+ name +" box");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -4769,7 +4772,7 @@ void MainWindow::on_btn_DeleteSurface_clicked()
                     }
                 }
                 //remove row on table
-                ui->txt_Log->appendPlainText("Successfully delete "+ name +" STL");
+                ui->txt_Log->append("Successfully delete "+ name +" STL");
                 Remove_All_Face();
                 for(int j=0; j< mesh->snappyd->gBox.n; j++)
                 {
@@ -4933,7 +4936,7 @@ void MainWindow::on_actionSave_triggered()
     {
         if(!OpenFoam::CopyDir("Data/OpenFoamDefault",saveCase))
         {
-            ui->txt_Log->appendPlainText("Can't copy default value to " + saveCase);
+            ui->txt_Log->append("Can't copy default value to " + saveCase);
             return;
         }
         QFile(saveCase + "/constant/polyMesh/blockMeshDict").remove();
@@ -5072,7 +5075,7 @@ void MainWindow::on_btn_MeshRefineAdvance_clicked()
     W_MeshSTLRefineAdvance *w = new W_MeshSTLRefineAdvance(rSurface,rFeature,&mesh->snappyd->resolveFeatureAngle);
     if(w->exec())
     {
-        ui->txt_Log->appendPlainText("Defining of advance values for "+ ui->tb_boundary->currentItem()->text() +" surface has been done");
+        ui->txt_Log->append("Defining of advance values for "+ ui->tb_boundary->currentItem()->text() +" surface has been done");
     }
 }
 bool MainWindow::RemoveRefineDistant(RefinementRegions *refi_Reg, QString currentSurface, float lv1, int lv2)
@@ -5120,7 +5123,7 @@ bool MainWindow::AddRefineRegion(RefinementRegions *refi_Reg, QString currentSur
             refi_Reg->region[i].n = refi_Reg->region[i].n + 1;
 //            LoadRefineDistanceSurface(currentSurface,0);
             ReloadRefineDistanceSurface(&refi_Reg->region[i]);
-            ui->txt_Log->appendPlainText("Settings of refining distance for " + currentSurface + " have been done");
+            ui->txt_Log->append("Settings of refining distance for " + currentSurface + " have been done");
             return true;
         }
     }
@@ -6669,6 +6672,6 @@ void MainWindow::on_actionParaView_triggered()
     this->comment = "paraFoam";
     checkMeshThread->ThreadName("paraFoam");
 //    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
-    ui->txt_Log->appendPlainText("ParaView run...");
+    ui->txt_Log->append("ParaView run...");
     checkMeshThread->start();
 }

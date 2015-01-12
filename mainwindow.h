@@ -51,7 +51,7 @@ private:
 
     QString StrLogCheckMesh;
     //log flag
-    bool emitflag;
+    int emitflag;
     //declare flag
     //flag refine surface
     bool flag_btnSurface_Click;
