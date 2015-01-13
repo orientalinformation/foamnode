@@ -5218,12 +5218,11 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
                 }
             }
         }  else {
-            RefinementDistance r;
             QString c = ui->tb_MeshRefineAroundSurface->item(row,0)->text();
             QString d = ui->tb_MeshRefineAroundSurface->item(row,1)->text();
             if(c == "" || d == ""){
                 QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
-                continue;
+                return;
             }
             bool a,b;
             float lv1 = c.toFloat(&a);
@@ -5231,7 +5230,7 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
             if(!a || !b)
             {
                 QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
-                continue;
+                return;
             }
             foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()){
                 QString currentSurface = item->text();
@@ -5284,7 +5283,7 @@ void MainWindow::on_txt_Level_Min_Surface_Refine_textChanged(const QString &arg1
             QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
             ui->txt_Level_Min_Surface_Refine->undo();
         } else {
-            float delta = mesh->snappyd->MaxIn(mesh->snappyd->deltaBaseMesh.x,mesh->snappyd->deltaBaseMesh.y,mesh->snappyd->deltaBaseMesh.y)/pow(2.0,temp);
+            float delta = mesh->snappyd->MaxIn(mesh->snappyd->deltaBaseMesh.x,mesh->snappyd->deltaBaseMesh.y,mesh->snappyd->deltaBaseMesh.z)/pow(2.0,temp);
             ui->txt_Delta_Min_Surface_Refine->setText(QString::number(delta));
         }
     }
@@ -5310,7 +5309,7 @@ void MainWindow::on_txt_Level_Max_Surface_Refine_textChanged(const QString &arg1
             QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
             ui->txt_Level_Max_Surface_Refine->undo();
         } else {
-            float delta = mesh->snappyd->MinIn(mesh->snappyd->deltaBaseMesh.x,mesh->snappyd->deltaBaseMesh.y,mesh->snappyd->deltaBaseMesh.y)/pow(2.0,temp);
+            float delta = mesh->snappyd->MinIn(mesh->snappyd->deltaBaseMesh.x,mesh->snappyd->deltaBaseMesh.y,mesh->snappyd->deltaBaseMesh.z)/pow(2.0,temp);
             ui->txt_Delta_Max_Surface_Refine->setText(QString::number(delta));
         }
     }
