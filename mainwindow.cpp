@@ -33,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     if(licenseOK){
         checkDFC();
     }
-    QPushButton *btn = new QPushButton();
-    connect(btn,SIGNAL(clicked()),this,SLOT(setColorBoundary()));
 }
 void MainWindow::CheckLicense()
 {
