@@ -771,12 +771,12 @@ bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
                 sTemp->color.z = 0.0;
             }else if(type == 2){
                 sTemp->color.x = 0.0;
-                sTemp->color.y = 0.0;
-                sTemp->color.z = 1.0;
-            }else{
-                sTemp->color.x = 0.0;
                 sTemp->color.y = 1.0;
                 sTemp->color.z = 0.0;
+            }else{
+                sTemp->color.x = 0.0;
+                sTemp->color.y = 0.0;
+                sTemp->color.z = 1.0;
             }
             //Loop for Normal vector and Vertexs
 
