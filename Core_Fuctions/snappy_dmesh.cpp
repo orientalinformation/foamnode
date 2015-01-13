@@ -578,11 +578,10 @@ QString Snappy_Dmesh::CreateMeshQualityControls()
     int maxLevel = FinMaxLevel();
     if (maxLevel == 0)
         maxLevel = 1;
-    float minVol = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),3)/100;
-
+    float minVol = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),3)/1000;
     str_File_New +="minVol " + QString::number(minVol) + ";\n";
     str_File_New +="minTetQuality -1e30;\n";
-    float minArea = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),2)/100;
+    float minArea = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),2)/300;
     str_File_New +="minArea " + QString::number(minArea) + ";\n";
     str_File_New +="minTwist 0.02;\n";
     str_File_New +="minDeterminant 0.001;\n";
