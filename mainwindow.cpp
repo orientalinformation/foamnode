@@ -6593,7 +6593,8 @@ void MainWindow::on_actionClose_triggered()
 //    on_actionSave_triggered();
     if(ui->tb_boundary->rowCount() > 0){
         this->isClose = true;
-        for(int i = 0; i < ui->tb_boundary->rowCount(); i++){
+        int nRow = ui->tb_boundary->rowCount();
+        for(int i =nRow -1 ; i >=0 ; i--){
             ui->tb_boundary->removeRow(i);
         }
         ui->tb_boundary->clearSelection();
@@ -6603,6 +6604,7 @@ void MainWindow::on_actionClose_triggered()
     }
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();
+    listFaces.clear();
 
     mesh = new DMesh();
     ui->layout_Mesh->addWidget(mesh);
