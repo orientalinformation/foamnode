@@ -19,6 +19,8 @@ public:
     void ThreadName(QString name);
     void Terminate();
     QString ThreadName();
+    QString logPath;
+    bool writeLog;
 private:
     QProcess *process;
     QString mainCommand;
