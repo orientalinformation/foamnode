@@ -513,7 +513,7 @@ void DMesh::DrawNoteCoordinate()
 void DMesh::DrawLocationPoint()
 {
     glPushMatrix();
-        glColor3f(0.0,1.0,0.0);
+        glColor3f(1.0,0.0,0.0);
         glPointSize(5);
         glBegin(GL_POINTS);
             glVertex3d(snappyd->locationInMesh.x,snappyd->locationInMesh.y,snappyd->locationInMesh.z);

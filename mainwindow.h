@@ -146,7 +146,8 @@ private slots:
     void on_actionZ_triggered();
     void on_actionY_triggered();
     void on_actionX_triggered();
-    void on_btn_ViewMesh_clicked();    void on_btn_DeleteSurface_clicked();
+    void on_btn_ViewMesh_clicked();
+    void on_btn_DeleteSurface_clicked();
     void on_actionSave_triggered();
     void on_btn_RefineLayer_clicked();
     void on_btn_GeoDefineBouding_clicked();

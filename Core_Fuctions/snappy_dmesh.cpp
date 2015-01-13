@@ -413,14 +413,24 @@ QString Snappy_Dmesh::CreateAddLayersControls()
     str_File_New +="\n";
     return str_File_New;
 }
-float MinIn(float a, float b, float c)
+float Snappy_Dmesh::MinIn(float a, float b, float c)
 {
     if(a < b && a < c)
         return a;
     if(b < a && b < c)
         return b;
     if(c < a && c < b)
+        return c;
+    return a;
+}
+float Snappy_Dmesh::MaxIn(float a, float b, float c)
+{
+    if(a > b && a > c)
+        return a;
+    if(b > a && b > c)
         return b;
+    if(c > a && c > b)
+        return c;
     return a;
 }
 int Snappy_Dmesh::FinMaxLevel()
