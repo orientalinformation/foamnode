@@ -194,6 +194,7 @@ private slots:
     void on_rbn_Surface_clicked(bool checked);
     void on_actionCheck_mesh_triggered();
     void on_actionParaView_triggered();
+    void on_tb_boundary_itemSelectionChanged();
 };
 
 #endif // MAINWINDOW_H
