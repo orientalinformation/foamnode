@@ -4318,8 +4318,8 @@ void MainWindow::on_btn_CreateMesh_clicked()
             if(mesh->snappyd->gBoxCellZone.boxes.size() > 0 || mesh->snappyd->gCylinCellZone.cylins.size() > 0 ||
                     mesh->snappyd->gSphereCellZone.sphere.size() > 0 || mesh->snappyd->gUserDefineCellZone.user_Defines.size() > 0) {
                 createrThread->SetSubCommand("",2);
-                createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
-                createrThread->ThreadName("topoSetDict");
+                createrThread->SetCommand("topoSet -dict system/DMESH.topoSetDict");
+                createrThread->ThreadName("topoSet");
                 createrThread->start();
                 while(createrThread->isRunning())
                 {
@@ -4500,7 +4500,6 @@ void MainWindow::on_btn_DeleteSurface_clicked()
         //Delete simple surface - Box
         QString name = ui->tb_boundary->currentItem()->text();
         int n  = mesh->snappyd->gBox.n;
-
         //Delele layer
         for(int j=0; j < mesh->snappyd->add_Layers_Controls.nLayer; j++)
         {
