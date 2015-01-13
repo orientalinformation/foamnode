@@ -3941,6 +3941,9 @@ void MainWindow::on_btn_MeshVolume_clicked()
         AddFaceToList(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name);
     }
     ui->cb_MeshVolumeMode->setCurrentIndex(0);
+    if(ui->tb_boundary->rowCount() > 0){
+        ui->tb_boundary->setCurrentCell(0,0);
+    }
 }
 
 void MainWindow::on_btn_MeshRefineSurface_clicked()
@@ -4210,7 +4213,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
     bool writeLog = false;
     if(flag_YesNo == false)
     {
-        QString saveCase = QFileDialog::getSaveFileName(this);
+        QString saveCase = QFileDialog::getSaveFileName(this,"",path_Open);
         if(saveCase != "")
         {
             if(ui->checkBox_WriteLog->isChecked()){
@@ -4982,6 +4985,7 @@ void MainWindow::on_actionSave_triggered()
     QString saveCase = QFileDialog::getSaveFileName(this,"",lastFileSTL);
     if(saveCase != "")
     {
+        path_Open = saveCase;
         if(!OpenFoam::CopyDir("Data/OpenFoamDefault",saveCase))
         {
             ui->txt_Log->append("Can't copy default value to " + saveCase);
@@ -5341,7 +5345,10 @@ void MainWindow::on_txt_Level_Volume_editingFinished()
 void MainWindow::on_actionOpen_triggered()
 {
     if(lastFolderCase == ""){
-        lastFolderCase == QDir::currentPath();
+        if(lastFileSTL != ""){
+            lastFolderCase = lastFileSTL;
+        }else
+            lastFolderCase == QDir::currentPath();
     }
     QString dir;
         dir= QFileDialog::getExistingDirectory(this, tr("Open Directory"),

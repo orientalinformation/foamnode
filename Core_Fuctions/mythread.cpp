@@ -32,6 +32,9 @@ QString MyThread::FilterLog(QString value)
             checkFlag = 1;
             return value;
         }
+        if(value.trimmed() == ""){
+            return "NULL-NONE";
+        }
         if(value.contains("Marked for refinement due to") || value.contains("Keeping all cells in region")
                 || value.contains("markFacesOnProblemCells") || value.contains("markFacesOnProblemCells")
                 || value.contains("Introducing baffles for")){
