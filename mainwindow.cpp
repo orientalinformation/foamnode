@@ -273,11 +273,11 @@ bool MainWindow::AddFaceToList(QString name, int type)
     QTableWidgetItem *temp = new QTableWidgetItem(name);
     if(type != 0){
         if(type == 1){
-            temp->setBackgroundColor(QColor(255,255,0));
-        }else if(type == 2){
             temp->setBackgroundColor(QColor(0,255,0));
+        }else if(type == 2){
+            temp->setBackgroundColor(QColor(255,220,0));
         }else{
-            temp->setBackgroundColor(QColor(0,0,255));
+            temp->setBackgroundColor(QColor(20,90,255));
             temp->setTextColor(QColor(255,255,255));
         }
     }
@@ -289,17 +289,19 @@ bool MainWindow::AddFaceToList(QString name, int type)
 void MainWindow::Thread_Changed(QString value)
 {
 //    QString logvalue = value;
-    value = value.remove("\n");
-//    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
-//        QFile file(logPath);
-//        file.open(QIODevice::Append);
-//        file.write(logvalue.toAscii().data());
-//        file.close();
-//    }
-    if(comment == "checkMesh"){
-        FilterLogMesh(value);
-    }else
-        ui->txt_Log->append(value);
+    if(comment != "blockMesh"){
+        value = value.remove("\n");
+    //    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
+    //        QFile file(logPath);
+    //        file.open(QIODevice::Append);
+    //        file.write(logvalue.toAscii().data());
+    //        file.close();
+    //    }
+        if(comment == "checkMesh"){
+            FilterLogMesh(value);
+        }else
+            ui->txt_Log->append(value);
+    }
 }
 void MainWindow::Remove_All_Face()
 {
@@ -6592,7 +6594,8 @@ void MainWindow::on_actionClose_triggered()
 //    on_actionSave_triggered();
     if(ui->tb_boundary->rowCount() > 0){
         this->isClose = true;
-        for(int i = 0; i < ui->tb_boundary->rowCount(); i++){
+        int nRow = ui->tb_boundary->rowCount();
+        for(int i =nRow -1 ; i >=0 ; i--){
             ui->tb_boundary->removeRow(i);
         }
         ui->tb_boundary->clearSelection();
@@ -6602,6 +6605,7 @@ void MainWindow::on_actionClose_triggered()
     }
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();
+    listFaces.clear();
 
     mesh = new DMesh();
     ui->layout_Mesh->addWidget(mesh);

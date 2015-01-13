@@ -18,10 +18,47 @@ MyThread::MyThread(QObject *parent) :
     this->emitappend = true;
     logPath = "";
     writeLog = false;
+    checkFlag = 0;
 }
 QString MyThread::ThreadName()
 {
     return this->threadName;
+}
+
+QString MyThread::FilterLog(QString value)
+{
+//    if(flag == true){
+        if(value.contains("Read mesh in")){
+            checkFlag = 1;
+            return value;
+        }
+        if(value.contains("Marked for refinement due to") || value.contains("Keeping all cells in region")
+                || value.contains("markFacesOnProblemCells") || value.contains("markFacesOnProblemCells")
+                || value.contains("Introducing baffles for")){
+            checkFlag = 0;
+            return "NULL-NONE";
+        }
+        if(value.contains("Selected for refinement : 0 cells") || value.contains("Number of intersected edges"))
+        {
+            checkFlag = 1;
+            return "NULL-NONE";
+        }
+        if(value.contains("Checking faces in error :") || value.contains("Moving mesh using diplacement scaling")){
+            checkFlag = 0;
+            return "NULL-NONE";
+        }
+        if(value.contains("faces on cells with determinant"))
+        {
+            checkFlag = 1;
+            return "NULL-NONE";
+        }
+        if(checkFlag == 0){
+            return "NULL-NONE";
+        }
+        if(checkFlag == 1){
+            return value;
+        }
+//    }
 }
 void MyThread::ThreadName(QString name)
 {
@@ -83,25 +120,24 @@ void MyThread::run()
                     file.write(temp.toAscii().data());
                     file.close();
                 }
-                if(temp.contains("/*-----")){
-                    emitappend = false;
-                }
-                if(temp.contains("// * *")){
-                    emitappend = true;
-                }
-                if(temp.left(3) == "PID"){
-                    QStringList temps = temp.trimmed().split(":",QString::SkipEmptyParts);
-                    if(temps.size() == 2){
-                        PID= temps[1];
+//                if(this->ThreadName() != "blocMesh"){
+                    if(temp.contains("/*-----")){
+                        emitappend = false;
                     }
-                }/*
-                if(temp.trimmed() == "End" || temp.trimmed() == "End."){
-                    lastLog = temp;
-                    temp = "Successfully accomplished!";
-                }*/
-                if(emitappend){
-                    emit changed(temp);
-                }
+                    if(temp.contains("// * *")){
+                        emitappend = true;
+                    }
+                    if(temp.left(3) == "PID"){
+                        QStringList temps = temp.trimmed().split(":",QString::SkipEmptyParts);
+                        if(temps.size() == 2){
+                            PID= temps[1];
+                        }
+                    }
+                    temp = FilterLog(temp,emitappend);
+                    if(emitappend && temp != "NULL-NONE"){
+                        emit changed(temp);
+                    }
+//                }
             }
     }
     #else
@@ -122,26 +158,25 @@ void MyThread::run()
                     file.write(temp.toAscii().data());
                     file.close();
                 }
-                if(temp.contains("/*-----")){
-                    emitappend = false;
-                }
-                if(temp.contains("// * *")){
-                    emitappend = true;
-                }
-                if(temp.left(3) == "PID"){
-                    QStringList temps = temp.trimmed().split(":",QString::SkipEmptyParts);
-                    if(temps.size() == 2){
-                        PID= temps[1];
+//                if(this->ThreadName() != "blocMesh"){
+                    if(temp.contains("/*-----")){
+                        emitappend = false;
                     }
-                }/*
-                if(temp.trimmed() == "End" || temp.trimmed() == "End."){
-                    lastLog = temp;
-                    temp = "Successfully accomplished!";
-                }*/
-                if(emitappend){
-                    emit changed(temp);
-                }
-//                emit changed(process->readLine());
+                    if(temp.contains("// * *")){
+                        emitappend = true;
+                    }
+                    if(temp.left(3) == "PID"){
+                        QStringList temps = temp.trimmed().split(":",QString::SkipEmptyParts);
+                        if(temps.size() == 2){
+                            PID= temps[1];
+                        }
+                    }
+                    QString temp1 = temp;
+                    temp = FilterLog(temp1);
+                    if(emitappend && temp != "NULL-NONE"){
+                        emit changed(temp);
+                    }
+//                }
             }
     }
     #endif

@@ -32,6 +32,8 @@ private:
     QString threadName;
     QString PID;
     bool emitappend;
+    QString FilterLog(QString value);
+    int checkFlag;
 protected:
     void run();
 signals:
