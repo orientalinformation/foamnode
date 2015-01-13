@@ -5028,6 +5028,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="btn_ViewMesh">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>150</width>

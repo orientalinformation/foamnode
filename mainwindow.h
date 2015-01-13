@@ -183,7 +183,6 @@ private slots:
     void on_actionQuit_triggered();
     void on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_tb_MeshSurface_itemSelectionChanged();
-    //void on_tb_boundary_itemSelectionChanged();
     void on_actionClose_triggered();
     void on_actionCapture_triggered();
     void on_cb_GeometryNewMesh_currentIndexChanged(const QString &arg1);
@@ -193,6 +192,7 @@ private slots:
     void on_rbn_Surface_clicked(bool checked);
     void on_actionCheck_mesh_triggered();
     void on_actionParaView_triggered();
+    void on_tb_boundary_itemSelectionChanged();
     void on_txt_Level_Min_Surface_Refine_textChanged(const QString &arg1);
     void on_txt_Level_Max_Surface_Refine_textChanged(const QString &arg1);
 };

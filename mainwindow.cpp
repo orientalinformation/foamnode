@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionSave->setDisabled(true);
     ui->checkBox_WriteLog->setChecked(true);
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
+    ui->tb_boundary->setRowCount(0);
 
     SetButtonDefault();
     CheckLicense();
@@ -323,7 +324,7 @@ void MainWindow::on_btn_Geometry_clicked()
         ui->btn_Boundary->hide();
         ui->btn_Generate->hide();
         ui->frame_Geometry->show();
-        ui->btn_DeleteSurface->setEnabled(true);
+//        ui->btn_DeleteSurface->setEnabled(true);
         Remove_All_Face();
     }
 }
@@ -339,7 +340,7 @@ void MainWindow::on_btn_Mesh_clicked()
         ui->btn_Boundary->hide();
         ui->btn_Generate->hide();
         ui->frame_Mesh->show();
-        ui->btn_DeleteSurface->setEnabled(true);
+//        ui->btn_DeleteSurface->setEnabled(true);
         if(mesh->blockd->vertice.n==0)
         {
             ui->btn_MeshBounding->setEnabled(false);
@@ -390,7 +391,7 @@ void MainWindow::on_btn_Generate_clicked()
         ui->btn_Mesh->hide();
         ui->btn_Boundary->hide();
         ui->frame_Generate->show();
-        ui->btn_DeleteSurface->setEnabled(true);
+//        ui->btn_DeleteSurface->setEnabled(true);
         ui->txt_X_Location->setText(QString::number(mesh->xAverage));
         ui->txt_Y_Location->setText(QString::number(mesh->yAverage));
         ui->txt_Z_Location->setText(QString::number(mesh->zAverage));
@@ -410,7 +411,7 @@ void MainWindow::on_btn_Boundary_clicked()
         ui->btn_Generate->hide();
         ui->frame_Boundary->show();
         LoadBoundaryControlItems();
-        ui->btn_DeleteSurface->setEnabled(true);
+//        ui->btn_DeleteSurface->setEnabled(true);
         Remove_All_Face();
         for(int i=0; i< mesh->snappyd->gBox.n; i++)
         {
@@ -2087,7 +2088,7 @@ void MainWindow::on_btn_Surface_clicked()
     flag_btn_MeshLayer_Click =false;
     ui->frame_GeometryBounding->hide();
     ui->frame_GeometrySurface->show();
-    ui->btn_DeleteSurface->setEnabled(true);
+//    ui->btn_DeleteSurface->setEnabled(true);
     //reset all textbox
     ui->txt_GeometrySurfaceFileStl->setText("");
     //cylin
@@ -2149,7 +2150,7 @@ void MainWindow::on_btn_Bounding_clicked()
     ui->frame_GeometrySurface->hide();
     ui->frame_BoundingGeometryType->hide();
     ui->frame_GeometryBounding->show();
-    ui->btn_DeleteSurface->setEnabled(false);
+//    ui->btn_DeleteSurface->setEnabled(false);
     Remove_All_Face();
     if(mesh->blockd->boundMesh.n  > 0 && !mesh->blockd->isAutomatic)
     {
@@ -5872,7 +5873,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->facename.append(mesh->snappyd->gBoxRegion.boxes[i].name);
 
             views.append(mesh->snappyd->gBoxRegion.boxes[i].name);
-            AddFaceToList(mesh->snappyd->gBoxRegion.boxes[i].name,3);
+            AddFaceToList(mesh->snappyd->gBoxRegion.boxes[i].name,2);
             //find min max
             mesh->snappyd->min_Max.min.x = mesh->snappyd->gBoxRegion.boxes[i].min.x;
             mesh->snappyd->min_Max.min.y = mesh->snappyd->gBoxRegion.boxes[i].min.y;
@@ -5899,7 +5900,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gCylinRegion.cylins.size(); i++)
         {
             views.append(mesh->snappyd->gCylinRegion.cylins[i].name);
-            AddFaceToList(mesh->snappyd->gCylinRegion.cylins[i].name,3);
+            AddFaceToList(mesh->snappyd->gCylinRegion.cylins[i].name,2);
             //find minmax
             float x1 = mesh->snappyd->gCylinRegion.cylins[i].point1.x;
             float x2 = mesh->snappyd->gCylinRegion.cylins[i].point2.x;
@@ -6028,7 +6029,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gSphereRegion.sphere.size(); i++)
         {
             views.append(mesh->snappyd->gSphereRegion.sphere[i].name);
-            AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name,3);
+            AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name,2);
             //finf min max
             mesh->snappyd->min_Max.min.x = mesh->snappyd->gSphereRegion.sphere[i].centre.x + mesh->snappyd->gSphereRegion.sphere[i].radius;
             mesh->snappyd->min_Max.min.y = mesh->snappyd->gSphereRegion.sphere[i].centre.y + mesh->snappyd->gSphereRegion.sphere[i].radius;
@@ -6740,4 +6741,15 @@ void MainWindow::on_actionParaView_triggered()
 //    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
     ui->txt_Log->append("ParaView run...");
     checkMeshThread->start();
+}
+
+void MainWindow::on_tb_boundary_itemSelectionChanged()
+{
+    if(ui->tb_boundary->selectedItems().count() > 0){
+        ui->btn_DeleteSurface->setEnabled(true);
+        ui->btn_ViewMesh->setEnabled(true);
+    }else{
+        ui->btn_DeleteSurface->setDisabled(true);
+        ui->btn_ViewMesh->setDisabled(true);
+    }
 }
