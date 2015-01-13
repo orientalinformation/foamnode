@@ -133,7 +133,7 @@ void MyThread::run()
                             PID= temps[1];
                         }
                     }
-                    temp = FilterLog(temp,emitappend);
+                    temp = FilterLog(temp);
                     if(emitappend && temp != "NULL-NONE"){
                         emit changed(temp);
                     }
