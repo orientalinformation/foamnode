@@ -289,17 +289,19 @@ bool MainWindow::AddFaceToList(QString name, int type)
 void MainWindow::Thread_Changed(QString value)
 {
 //    QString logvalue = value;
-    value = value.remove("\n");
-//    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
-//        QFile file(logPath);
-//        file.open(QIODevice::Append);
-//        file.write(logvalue.toAscii().data());
-//        file.close();
-//    }
-    if(comment == "checkMesh"){
-        FilterLogMesh(value);
-    }else
-        ui->txt_Log->append(value);
+    if(comment != "blockMesh"){
+        value = value.remove("\n");
+    //    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
+    //        QFile file(logPath);
+    //        file.open(QIODevice::Append);
+    //        file.write(logvalue.toAscii().data());
+    //        file.close();
+    //    }
+        if(comment == "checkMesh"){
+            FilterLogMesh(value);
+        }else
+            ui->txt_Log->append(value);
+    }
 }
 void MainWindow::Remove_All_Face()
 {
