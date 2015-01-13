@@ -130,8 +130,6 @@ private:
 private slots:
     void on_actionOpen_triggered();
     void on_txt_Level_Volume_editingFinished();
-    void on_txt_Level_Max_Surface_Refine_editingFinished();
-    void on_txt_Level_Min_Surface_Refine_editingFinished();
     void on_txt_Z_textChanged(QString );
     void on_txt_Y_textChanged(QString );
     void on_txt_X_textChanged(QString );
@@ -195,6 +193,8 @@ private slots:
     void on_rbn_Surface_clicked(bool checked);
     void on_actionCheck_mesh_triggered();
     void on_actionParaView_triggered();
+    void on_txt_Level_Min_Surface_Refine_textChanged(const QString &arg1);
+    void on_txt_Level_Max_Surface_Refine_textChanged(const QString &arg1);
 };
 
 #endif // MAINWINDOW_H

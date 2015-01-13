@@ -3175,6 +3175,9 @@
                       </item>
                       <item>
                        <widget class="QLineEdit" name="txt_DeltaX">
+                        <property name="styleSheet">
+                         <string notr="true">background-color: rgb(231, 231, 231);</string>
+                        </property>
                         <property name="readOnly">
                          <bool>true</bool>
                         </property>
@@ -3219,6 +3222,9 @@
                       </item>
                       <item>
                        <widget class="QLineEdit" name="txt_DeltaY">
+                        <property name="styleSheet">
+                         <string notr="true">background-color: rgb(231, 231, 231);</string>
+                        </property>
                         <property name="readOnly">
                          <bool>true</bool>
                         </property>
@@ -3263,6 +3269,9 @@
                       </item>
                       <item>
                        <widget class="QLineEdit" name="txt_DeltaZ">
+                        <property name="styleSheet">
+                         <string notr="true">background-color: rgb(231, 231, 231);</string>
+                        </property>
                         <property name="readOnly">
                          <bool>true</bool>
                         </property>
@@ -3774,6 +3783,9 @@
                             </property>
                             <item>
                              <widget class="QLineEdit" name="txt_Delta_Min_Surface_Refine">
+                              <property name="styleSheet">
+                               <string notr="true">background-color: rgb(231, 231, 231);</string>
+                              </property>
                               <property name="readOnly">
                                <bool>true</bool>
                               </property>
@@ -3808,6 +3820,9 @@
                             </property>
                             <item>
                              <widget class="QLineEdit" name="txt_Delta_Max_Surface_Refine">
+                              <property name="styleSheet">
+                               <string notr="true">background-color: rgb(231, 231, 231);</string>
+                              </property>
                               <property name="readOnly">
                                <bool>true</bool>
                               </property>

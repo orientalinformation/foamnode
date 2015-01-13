@@ -168,11 +168,10 @@ void MainWindow::LoadBoundaryControlItems()
 {
     if(this->keepBoundary == false){
         ui->cb_BoundaryType->clear();
-        ui->cb_BoundaryType->addItem("---Type---");
-        ui->cb_BoundaryType->addItem("patch");
         ui->cb_BoundaryType->addItem("empty");
         ui->cb_BoundaryType->addItem("symmetryPlane");
         ui->cb_BoundaryType->addItem("wall");
+        ui->cb_BoundaryType->setCurrentIndex(2);
     }
 
     ui->tb_MeshSurface->clear();
@@ -5263,14 +5262,14 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
     }
 }
 
-void MainWindow::on_txt_Level_Min_Surface_Refine_editingFinished()
+void MainWindow::on_txt_Level_Min_Surface_Refine_textChanged(const QString &arg1)
 {
-    if(ui->txt_Level_Min_Surface_Refine->text()=="")
+    if(arg1=="")
     {
         return;
     }
     bool a;
-    int temp = ui->txt_Level_Min_Surface_Refine->text().toInt(&a);
+    int temp = arg1.toInt(&a);
     if(a ==false)
     {
         QMessageBox::warning(this,tr("Error"),tr("Please enter a valid number!"));
@@ -5287,17 +5286,16 @@ void MainWindow::on_txt_Level_Min_Surface_Refine_editingFinished()
             ui->txt_Delta_Min_Surface_Refine->setText(QString::number(delta));
         }
     }
-
-
 }
-void MainWindow::on_txt_Level_Max_Surface_Refine_editingFinished()
+
+void MainWindow::on_txt_Level_Max_Surface_Refine_textChanged(const QString &arg1)
 {
-    if(ui->txt_Level_Max_Surface_Refine->text()=="")
+    if(arg1=="")
     {
         return;
     }
     bool a;
-    int temp = ui->txt_Level_Max_Surface_Refine->text().toInt(&a);
+    int temp = arg1.toInt(&a);
     if(a ==false)
     {
         QMessageBox::warning(this,tr("Error"),tr("Please enter a valid number!"));
@@ -5314,9 +5312,7 @@ void MainWindow::on_txt_Level_Max_Surface_Refine_editingFinished()
             ui->txt_Delta_Max_Surface_Refine->setText(QString::number(delta));
         }
     }
-
 }
-
 void MainWindow::on_txt_Level_Volume_editingFinished()
 {
     if(ui->txt_Level_Volume->text()=="")

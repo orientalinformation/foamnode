@@ -744,11 +744,9 @@ bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
     }
     QStringList lines = file1.split("\n",QString::SkipEmptyParts);
 
-    //create STL    
-    QStringList file_name = path.split("/");
-    if(file_name.length()==1)
-        file_name = path.split("\\");
-    QString name = file_name[file_name.length()-1].split(".")[0];
+    //create STL
+    QString name = QFileInfo(file).fileName();
+
     int size_sTL =  sTL.size()+1;
     sTL.resize(size_sTL);
     sTL[size_sTL -1].n =0;
