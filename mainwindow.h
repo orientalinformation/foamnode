@@ -50,6 +50,8 @@ private:
     QString lastFolderCase;
 
     QString StrLogCheckMesh;
+
+    QString logPath;
     //log flag
     int emitflag;
     //declare flag
@@ -95,7 +97,7 @@ private:
 
     bool CheckAndSaveBoundingBoxInput();
     bool CheckAndSaveBoundingDistance();
-    bool AddFaceToList(QString name);
+    bool AddFaceToList(QString name, int type = 0);
     bool SetLocation();
     void Remove_All_Face();
     bool AddSurfaceRegionBox(QString surfaceName, int min, int max);

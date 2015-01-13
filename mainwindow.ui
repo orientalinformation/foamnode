@@ -1538,7 +1538,7 @@
                      <item>
                       <widget class="QLabel" name="label_30">
                        <property name="styleSheet">
-                        <string notr="true">background-color:rgb(255,255,255);</string>
+                        <string notr="true">background-color:rgb(0,0,255);</string>
                        </property>
                        <property name="text">
                         <string/>
@@ -4839,6 +4839,13 @@
                </layout>
               </widget>
              </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_WriteLog">
+               <property name="text">
+                <string>Write log</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -4943,6 +4950,9 @@
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
            </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>

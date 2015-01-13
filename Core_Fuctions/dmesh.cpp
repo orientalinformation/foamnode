@@ -376,6 +376,9 @@ void DMesh::ShowHeighWidthGreen()
         xAverage = (x1+x2)/2;
         yAverage = (y1+y2)/2;
         zAverage = (z1+z2)/2;
+        snappyd->locationInMesh.x = xAverage;
+        snappyd->locationInMesh.y = yAverage;
+        snappyd->locationInMesh.z = zAverage;
 
     }
     else
@@ -597,7 +600,7 @@ void DMesh::DrawGeometry()
             if(snappyd->facetype[i] == 1)
                 glColor3f(1,1,0);
             else if(snappyd->facetype[i] == 0){
-                glColor3f(1,1,1);
+                glColor3f(0,0,1);
             }else
                 glColor3f(0,1,0);
 
@@ -637,7 +640,7 @@ void DMesh::DrawGeometry()
         {
             PointDmesh *p1 = &snappyd->gCylinCellZone.cylins[i].point1;
             PointDmesh *p2 = &snappyd->gCylinCellZone.cylins[i].point2;
-            glColor3f(1,1,1);
+            glColor3f(0,0,1);
             renderCylinder_convenient(p1->x,p1->y,p1->z,p2->x,p2->y,p2->z,snappyd->gCylinCellZone.cylins[i].radius,30);
         }
     }
@@ -669,7 +672,7 @@ void DMesh::DrawGeometry()
             if(this->viewList.contains(snappyd->gSphereCellZone.sphere[i].name))
             {
                 PointDmesh *p = &snappyd->gSphereCellZone.sphere[i].centre;
-                glColor3f(1,1,1);
+                glColor3f(0,0,1);
                 renderSphere(p->x,p->y,p->z,snappyd->gSphereCellZone.sphere[i].radius);
             }
         }

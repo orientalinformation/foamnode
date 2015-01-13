@@ -16,6 +16,8 @@ MyThread::MyThread(QObject *parent) :
     this->subCommand_2 = "";
     this->threadName = "";
     this->emitappend = true;
+    logPath = "";
+    writeLog = false;
 }
 QString MyThread::ThreadName()
 {
@@ -58,7 +60,13 @@ void MyThread::SetSubCommand(QString command, int index)
 }
 void MyThread::run()
 {
-    emit changed(command);
+//    emit changed(command);
+    if(writeLog && this->ThreadName() != "checkMesh" && this->ThreadName() != "paraFoam"){
+        QFile file(logPath);
+        file.open(QIODevice::Append);
+        file.write(command.toAscii().data());
+        file.close();
+    }
     #if defined(Q_OS_WIN)
     {
         process = new QProcess();
@@ -69,6 +77,12 @@ void MyThread::run()
             while(process->canReadLine()){
 //                emit changed(process->readLine());
                 QString temp = process->readLine();
+                if(writeLog && this->ThreadName() != "checkMesh" && this->ThreadName() != "paraFoam"){
+                    QFile file(logPath);
+                    file.open(QIODevice::Append);
+                    file.write(temp.toAscii().data());
+                    file.close();
+                }
                 if(temp.contains("/*-----")){
                     emitappend = false;
                 }
@@ -102,6 +116,12 @@ void MyThread::run()
         while(process->waitForReadyRead(-1))
             while(process->canReadLine()){
                 QString temp = process->readLine();
+                if(writeLog && this->ThreadName() != "checkMesh" && this->ThreadName() != "paraFoam"){
+                    QFile file(logPath);
+                    file.open(QIODevice::Append);
+                    file.write(temp.toAscii().data());
+                    file.close();
+                }
                 if(temp.contains("/*-----")){
                     emitappend = false;
                 }

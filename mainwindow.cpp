@@ -16,11 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
 //    ui->txt_Log->setMaximumBlockCount(300);
     checkMeshThread = new MyThread();
     this->comment = "";
+    this->logPath = "";
     this->table.clear();
     LoadControlItems();
     LoadControlsVisible();
     LoadLocationInMesh();
-
+    ui->actionCheck_mesh->setDisabled(true);
+    ui->actionParaView->setDisabled(true);
+    ui->actionSave->setDisabled(true);
+    ui->checkBox_WriteLog->setChecked(true);
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
 
     SetButtonDefault();
@@ -28,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     if(licenseOK){
         checkDFC();
     }
+    QPushButton *btn = new QPushButton();
+    connect(btn,SIGNAL(clicked()),this,SLOT(setColorBoundary()));
 }
 void MainWindow::CheckLicense()
 {
@@ -210,9 +216,6 @@ void MainWindow::LoadControlsVisible()
     ui->btn_Mesh->show();
     ui->btn_Boundary->show();
     ui->btn_Generate->show();
-    ui->actionCheck_mesh->setDisabled(true);
-    ui->actionParaView->setDisabled(true);
-    ui->actionSave->setDisabled(true);
 }
 void MainWindow::LoadGeometryControlsVisible()
 {
@@ -256,7 +259,7 @@ void MainWindow::LoadColor()
 //    ui->
 }
 
-bool MainWindow::AddFaceToList(QString name)
+bool MainWindow::AddFaceToList(QString name, int type)
 {
     int i = listFaces.indexOf(name);
     if(i > -1)
@@ -270,6 +273,16 @@ bool MainWindow::AddFaceToList(QString name)
     ui->tb_boundary->setColumnWidth(0,300);
     ui->tb_boundary->setRowCount(listFaces.size());
     QTableWidgetItem *temp = new QTableWidgetItem(name);
+    if(type != 0){
+        if(type == 1){
+            temp->setBackgroundColor(QColor(255,255,0));
+        }else if(type == 2){
+            temp->setBackgroundColor(QColor(0,255,0));
+        }else{
+            temp->setBackgroundColor(QColor(0,0,255));
+            temp->setTextColor(QColor(255,255,255));
+        }
+    }
     ui->tb_boundary->setItem(listFaces.size()-1,0,temp);
     ui->tb_boundary->setEditTriggers(QTableWidget::NoEditTriggers);
     //loadData();
@@ -277,7 +290,14 @@ bool MainWindow::AddFaceToList(QString name)
 }
 void MainWindow::Thread_Changed(QString value)
 {
+//    QString logvalue = value;
     value = value.remove("\n");
+//    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
+//        QFile file(logPath);
+//        file.open(QIODevice::Append);
+//        file.write(logvalue.toAscii().data());
+//        file.close();
+//    }
     if(comment == "checkMesh"){
         FilterLogMesh(value);
     }else
@@ -2202,7 +2222,7 @@ void MainWindow::ImportSTLSurface()
             gUserDefine->user_Defines.last().name_file=name;
             gUserDefine->user_Defines.last().type="triSurfaceMesh";
             gUserDefine->user_Defines.last().name=_name;
-            AddFaceToList(_name);
+            AddFaceToList(_name,1);
 
             //add surface
             gUserDefine->refi_Sur.n=gUserDefine->refi_Sur.n+1;
@@ -2310,7 +2330,7 @@ void MainWindow::ImportSTLCellzone()
             gUserDefine->user_Defines.last().name_file=name;
             gUserDefine->user_Defines.last().type="triSurfaceMesh";
             gUserDefine->user_Defines.last().name=_name;
-            AddFaceToList(_name);
+            AddFaceToList(_name,3);
 
             //add surface
             gUserDefine->refi_Sur.n = gUserDefine->refi_Sur.n + 1;
@@ -2555,13 +2575,12 @@ void MainWindow::DefineSimpleSurface()
             snappy->gCylin.refi_Reg.region.last().lv2 = 0;
             snappy->gCylin.refi_Reg.region.last().n = 0;
 
-            AddFaceToList(surfaceName);            
+            AddFaceToList(surfaceName,1);
             listSurfaces.append(surfaceName);
 
             QStringList views = mesh->GetViewList();
             views.append(surfaceName);
             mesh->SetViewList(views);
-
             SetBoundingDistance();
 //            snappy->facename.append(surfaceName);
             mesh->updateGL();
@@ -2740,7 +2759,7 @@ void MainWindow::DefineSimpleSurface()
 
             SetBoundingDistance();
 
-            AddFaceToList(surfaceName);
+            AddFaceToList(surfaceName,1);
             listSurfaces.append(surfaceName);
             ui->txt_Log->append("Successfully create "+ surfaceName +" box");
         }
@@ -2810,7 +2829,7 @@ void MainWindow::DefineSimpleSurface()
              snappy->gSphere.refi_Reg.region.last().lv2 = 0;
              snappy->gSphere.refi_Reg.region.last().n = 0;
 
-             AddFaceToList(surfaceName);
+             AddFaceToList(surfaceName,1);
              listSurfaces.append(surfaceName);
 
              QStringList views = mesh->GetViewList();
@@ -3006,7 +3025,7 @@ void MainWindow::DefineSimpleCellZone()
             gCylin->refi_Reg.region.last().lv2 = 0;
             gCylin->refi_Reg.region.last().n = 0;
 
-            AddFaceToList(surfaceName);
+            AddFaceToList(surfaceName,3);
 
             QStringList views = mesh->GetViewList();
             views.append(surfaceName);
@@ -3189,7 +3208,7 @@ void MainWindow::DefineSimpleCellZone()
 
             SetBoundingDistance();
 
-            AddFaceToList(surfaceName);
+            AddFaceToList(surfaceName,3);
             ui->txt_Log->append("Successfully create "+ surfaceName +" box cell zone");
         }
 
@@ -3261,7 +3280,7 @@ void MainWindow::DefineSimpleCellZone()
              gSphere->refi_Reg.region.last().lv2 = 0;
              gSphere->refi_Reg.region.last().n = 0;
 
-             AddFaceToList(surfaceName);
+             AddFaceToList(surfaceName,3);
 
              QStringList views = mesh->GetViewList();
              views.append(surfaceName);
@@ -3429,7 +3448,7 @@ void MainWindow::DefineSimpleVolume()
             views.append(volumeName);
             mesh->SetViewList(views);
 
-            AddFaceToList(volumeName);
+            AddFaceToList(volumeName,2);
 
             mesh->updateGL();
             ui->txt_Log->append("Defining of "+ volumeName +" box has been done");
@@ -3486,7 +3505,7 @@ void MainWindow::DefineSimpleVolume()
             refi_Reg->region[index].lv2 = 0;
             refi_Reg->region[index].n = 0;
 
-            AddFaceToList(volumeName);
+            AddFaceToList(volumeName,2);
 
             QStringList views = mesh->GetViewList();
             views.append(volumeName);
@@ -3541,7 +3560,7 @@ void MainWindow::DefineSimpleVolume()
             refi_Reg->region[index].lv2 = 0;
             refi_Reg->region[index].n = 0;
 
-            AddFaceToList(volumeName);
+            AddFaceToList(volumeName,2);
 
             QStringList views = mesh->GetViewList();
             views.append(volumeName);
@@ -4188,11 +4207,22 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 break;
         }
     }
+    bool writeLog = false;
     if(flag_YesNo == false)
     {
         QString saveCase = QFileDialog::getSaveFileName(this);
         if(saveCase != "")
         {
+            if(ui->checkBox_WriteLog->isChecked()){
+                QString filelog = "Log_" + QDate::currentDate().toString("yyyyMMdd") + "_" + QTime::currentTime().toString("hhmm") + ".txt";
+                logPath = saveCase + "/" + filelog;
+                QFile *f = new QFile(logPath);
+                if(f->exists())
+                    f->remove();
+                f->open(QIODevice::WriteOnly);
+                f->close();
+                writeLog = true;
+            }
             if(!OpenFoam::CopyDir("Data/OpenFoamDefault",saveCase))
             {
                 ui->txt_Log->append("Can't copy default value to " + saveCase);
@@ -4220,11 +4250,14 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 mesh->patchDict->WritePatchDict(saveCase + "/system");
             }
-            ui->txt_Log->append("Creating mesh...!");
+            ui->txt_Log->append("Creating mesh...!\n\n");
             createrThread = new MyThread();
+            createrThread->logPath = this->logPath;
+            createrThread->writeLog = writeLog;
             connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
             OpenFoam::SetOpenFOAMPath(saveCase);
             createrThread->SetCommand("blockMesh");
+            this->comment = "blockMesh";
             createrThread->ThreadName("blockMesh");
             createrThread->start();
             while(createrThread->isRunning())
@@ -4235,6 +4268,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
                                           " constant/triSurface/" + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name);
+                this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
                 while(createrThread->isRunning())
@@ -4246,6 +4280,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].angle) +
                                           " constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name);
+                this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
                 while(createrThread->isRunning())
@@ -4255,6 +4290,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             }
             createrThread->SetSubCommand("-overwrite",2);
             createrThread->SetCommand("snappyHexMesh");
+            this->comment = "snappyHexMesh";
             createrThread->ThreadName("snappyHexMesh");
             createrThread->start();
             while(createrThread->isRunning())
@@ -4263,6 +4299,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             }
             createrThread->SetSubCommand("-overwrite",2);
             createrThread->SetCommand("createPatch");
+            this->comment = "createPatch";
             createrThread->ThreadName("createPatch");
             createrThread->start();
             while(createrThread->isRunning())
@@ -4271,6 +4308,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             }
             createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
             createrThread->SetCommand("renumberMesh");
+            this->comment = "renumberMesh";
             createrThread->ThreadName("renumberMesh");
             createrThread->start();
             while(createrThread->isRunning())
@@ -4321,6 +4359,16 @@ void MainWindow::on_btn_CreateMesh_clicked()
     }
     else
     {
+        if(ui->checkBox_WriteLog->isChecked()){
+            QString filelog = "Log_" + QDate::currentDate().toString("yyyyMMdd") + "_" + QTime::currentTime().toString("hhmm") + ".txt";
+            logPath = path_Open + "/" + filelog;
+            QFile *f = new QFile(logPath);
+            if(f->exists())
+                f->remove();
+            f->open(QIODevice::WriteOnly);
+            f->close();
+            writeLog = true;
+        }
         //use current folder
         QFile(path_Open + "/constant/polyMesh/blockMeshDict").remove();
 
@@ -4344,11 +4392,14 @@ void MainWindow::on_btn_CreateMesh_clicked()
             QFile(path_Open + "/system/createPatchDict").remove();
             mesh->patchDict->WritePatchDict(path_Open + "/system");
         }
-        ui->txt_Log->append("Creating mesh...!");
+        ui->txt_Log->append("Creating mesh...!\n\n");
         createrThread = new MyThread();
+        createrThread->logPath = this->logPath;
+        createrThread->writeLog = writeLog;
         connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
         OpenFoam::SetOpenFOAMPath(path_Open);
         createrThread->SetCommand("blockMesh");
+        this->comment = "blockMesh";
         createrThread->ThreadName("blockMesh");
         createrThread->start();
         while(createrThread->isRunning())
@@ -4360,6 +4411,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
                                       " constant/triSurface/" + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name);
             createrThread->ThreadName("blockMesh");
+            this->comment = "blockMesh";
             createrThread->start();
             while(createrThread->isRunning())
             {
@@ -4368,6 +4420,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         }
         createrThread->SetSubCommand("-overwrite",2);
         createrThread->SetCommand("snappyHexMesh");
+        this->comment = "snappyHexMesh";
         createrThread->ThreadName("snappyHexMesh");
         createrThread->start();
         while(createrThread->isRunning())
@@ -4376,6 +4429,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         }
         createrThread->SetSubCommand("-overwrite",2);
         createrThread->SetCommand("createPatch");
+        this->comment = "createPatch";
         createrThread->ThreadName("createPatch");
         createrThread->start();
         while(createrThread->isRunning())
@@ -4384,6 +4438,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         }
         createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
         createrThread->SetCommand("renumberMesh");
+        this->comment = "renumberMesh";
         createrThread->ThreadName("renumberMesh");
         createrThread->start();
         while(createrThread->isRunning())
@@ -4391,6 +4446,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             QApplication::processEvents();
         }
         createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
+        this->comment = "topoSetDict";
         createrThread->ThreadName("topoSetDict");
         createrThread->start();
         while(createrThread->isRunning())
@@ -5495,10 +5551,10 @@ void MainWindow::on_actionOpen_triggered()
 
             mesh->snappyd->facetype.resize(mesh->snappyd->facetype.size() + 1);
             mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 1;
-
             mesh->snappyd->facename.append(mesh->snappyd->gBox.boxes[i].name);
 
             views.append(mesh->snappyd->gBox.boxes[i].name);
+            AddFaceToList(mesh->snappyd->gBox.boxes[i].name,1);
             bool flag_Path = false;
             for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
             {
@@ -5541,6 +5597,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gCylin.cylins.size(); i++)
         {
             views.append(mesh->snappyd->gCylin.cylins[i].name);
+            AddFaceToList(mesh->snappyd->gCylin.cylins[i].name,1);
             bool flag_Path = false;
             for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
             {
@@ -5685,6 +5742,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gSphere.sphere.size(); i++)
         {
             views.append(mesh->snappyd->gSphere.sphere[i].name);
+            AddFaceToList(mesh->snappyd->gSphere.sphere[i].name,1);
             bool flag_Path = false;
             for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
             {
@@ -5818,6 +5876,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->facename.append(mesh->snappyd->gBoxRegion.boxes[i].name);
 
             views.append(mesh->snappyd->gBoxRegion.boxes[i].name);
+            AddFaceToList(mesh->snappyd->gBoxRegion.boxes[i].name,3);
             //find min max
             mesh->snappyd->min_Max.min.x = mesh->snappyd->gBoxRegion.boxes[i].min.x;
             mesh->snappyd->min_Max.min.y = mesh->snappyd->gBoxRegion.boxes[i].min.y;
@@ -5844,7 +5903,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gCylinRegion.cylins.size(); i++)
         {
             views.append(mesh->snappyd->gCylinRegion.cylins[i].name);
-
+            AddFaceToList(mesh->snappyd->gCylinRegion.cylins[i].name,3);
             //find minmax
             float x1 = mesh->snappyd->gCylinRegion.cylins[i].point1.x;
             float x2 = mesh->snappyd->gCylinRegion.cylins[i].point2.x;
@@ -5973,7 +6032,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gSphereRegion.sphere.size(); i++)
         {
             views.append(mesh->snappyd->gSphereRegion.sphere[i].name);
-
+            AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name,3);
             //finf min max
             mesh->snappyd->min_Max.min.x = mesh->snappyd->gSphereRegion.sphere[i].centre.x + mesh->snappyd->gSphereRegion.sphere[i].radius;
             mesh->snappyd->min_Max.min.y = mesh->snappyd->gSphereRegion.sphere[i].centre.y + mesh->snappyd->gSphereRegion.sphere[i].radius;
@@ -6543,6 +6602,7 @@ void MainWindow::on_actionClose_triggered()
         ui->tb_boundary->clearSelection();
         ui->tb_boundary->clear();
         Remove_All_Face();
+        ui->tb_boundary->setRowCount(0);
     }
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();
@@ -6563,6 +6623,7 @@ void MainWindow::on_actionClose_triggered()
     ui->actionParaView->setDisabled(true);
     ui->actionParaView->setDisabled(true);
     ui->actionSave->setDisabled(true);
+    ui->checkBox_WriteLog->setChecked(true);
 }
 
 void MainWindow::on_actionCapture_triggered()
