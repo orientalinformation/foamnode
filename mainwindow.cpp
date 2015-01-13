@@ -273,11 +273,11 @@ bool MainWindow::AddFaceToList(QString name, int type)
     QTableWidgetItem *temp = new QTableWidgetItem(name);
     if(type != 0){
         if(type == 1){
-            temp->setBackgroundColor(QColor(255,255,0));
-        }else if(type == 2){
             temp->setBackgroundColor(QColor(0,255,0));
+        }else if(type == 2){
+            temp->setBackgroundColor(QColor(255,220,0));
         }else{
-            temp->setBackgroundColor(QColor(0,0,255));
+            temp->setBackgroundColor(QColor(20,90,255));
             temp->setTextColor(QColor(255,255,255));
         }
     }
