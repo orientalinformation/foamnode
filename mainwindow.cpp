@@ -5181,81 +5181,84 @@ void MainWindow::on_tb_MeshRefineAroundSurface_cellClicked(int row, int column)
 {
     if(ui->tb_boundary->currentRow() < 0)
         return;
-    foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()){
-        QString currentSurface = item->text();
-        if(column == 2)
+    if(column == 2)
+    {
+        if(row < ui->tb_MeshRefineAroundSurface->rowCount() - 1)
         {
-            if(row < ui->tb_MeshRefineAroundSurface->rowCount() - 1)
+            if(QMessageBox::warning(this,tr("Warning"),tr("Do you want to delete this field")))
             {
-                if(QMessageBox::warning(this,tr("Warning"),tr("Do you want to delete this field")))
-                {
-                    float lv1 = ui->tb_MeshRefineAroundSurface->item(row,0)->text().toFloat();
-                    int lv2 = ui->tb_MeshRefineAroundSurface->item(row,1)->text().toInt();
+                float lv1 = ui->tb_MeshRefineAroundSurface->item(row,0)->text().toFloat();
+                int lv2 = ui->tb_MeshRefineAroundSurface->item(row,1)->text().toInt();
+                foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()){
+                    QString currentSurface = item->text();
                     //Foreach Box
                     if(RemoveRefineDistant(&mesh->snappyd->gBox.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach Cilynder
                     if(RemoveRefineDistant(&mesh->snappyd->gCylin.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach Sphere
                     if(RemoveRefineDistant(&mesh->snappyd->gSphere.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach STL
                     if(RemoveRefineDistant(&mesh->snappyd->gUserDefine.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach Box Cell zone
                     if(RemoveRefineDistant(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach Cilynder Cell zone
                     if(RemoveRefineDistant(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach Sphere Cell zone
                     if(RemoveRefineDistant(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                     //Foreach STL Cell zone
                     if(RemoveRefineDistant(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,lv1,lv2))
-                        return;
+                        continue;
                 }
-            }  else {
-                RefinementDistance r;
-                QString c = ui->tb_MeshRefineAroundSurface->item(row,0)->text();
-                QString d = ui->tb_MeshRefineAroundSurface->item(row,1)->text();
-                if(c == "" || d == ""){
-                    QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
-                    return;
-                }
-                bool a,b;
-                float lv1 = c.toFloat(&a);
-                int lv2 = d.toInt(&b);
-                if(!a || !b)
-                {
-                    QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
-                    return;
-                }
+            }
+        }  else {
+            RefinementDistance r;
+            QString c = ui->tb_MeshRefineAroundSurface->item(row,0)->text();
+            QString d = ui->tb_MeshRefineAroundSurface->item(row,1)->text();
+            if(c == "" || d == ""){
+                QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
+                continue;
+            }
+            bool a,b;
+            float lv1 = c.toFloat(&a);
+            int lv2 = d.toInt(&b);
+            if(!a || !b)
+            {
+                QMessageBox::warning(this,tr("Error"),tr("Please input all field...!"));
+                continue;
+            }
+            foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()){
+                QString currentSurface = item->text();
                 //Foreach Box
                 if(AddRefineRegion(&mesh->snappyd->gBox.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach Cilynder
                 if(AddRefineRegion(&mesh->snappyd->gCylin.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach Sphere
                 if(AddRefineRegion(&mesh->snappyd->gSphere.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach STL
                 if(AddRefineRegion(&mesh->snappyd->gUserDefine.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach Box Cell zone
                 if(AddRefineRegion(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach Cilynder Cell zone
                 if(AddRefineRegion(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach Sphere Cell zone
                 if(AddRefineRegion(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
                 //Foreach STL Cell zone
                 if(AddRefineRegion(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,lv1,lv2))
-                    return;
+                    continue;
             }
         }
     }
