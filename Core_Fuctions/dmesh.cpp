@@ -238,26 +238,29 @@ float absf(float value)
 }
 void DMesh::FindVMax()
 {
-    //Center the object
-    xTranslate = (snappyd->defaultBounding.maxBouDef.x - snappyd->defaultBounding.minBouDef.x)/2.0;
-    yTranslate = (snappyd->defaultBounding.maxBouDef.y - snappyd->defaultBounding.minBouDef.y)/2.0;
-    zTranslate = (snappyd->defaultBounding.maxBouDef.z - snappyd->defaultBounding.minBouDef.z)/2.0;
-    //Find the value to scale the object fixable to screen
-    if(vMax == 2000)
-        vMax = 0;
-    if(vMax < absf(snappyd->defaultBounding.maxBouDef.x - xTranslate))
-        vMax = absf(snappyd->defaultBounding.maxBouDef.x - xTranslate);
-    if(vMax < absf(snappyd->defaultBounding.minBouDef.x - xTranslate))
-        vMax = absf(snappyd->defaultBounding.minBouDef.x - xTranslate);
-    if(vMax < absf(snappyd->defaultBounding.maxBouDef.y - yTranslate))
-        vMax = absf(snappyd->defaultBounding.maxBouDef.y - yTranslate);
-    if(vMax < absf(snappyd->defaultBounding.minBouDef.y - yTranslate))
-        absf(snappyd->defaultBounding.minBouDef.y - yTranslate);
-    if(vMax < absf(snappyd->defaultBounding.maxBouDef.z - zTranslate))
-        vMax = absf(snappyd->defaultBounding.maxBouDef.z - zTranslate);
-    if(vMax < absf(snappyd->defaultBounding.minBouDef.z - zTranslate))
-        vMax = absf(snappyd->defaultBounding.minBouDef.z - zTranslate);
-    scalePoint = tan(M_PI/8)/vMax;
+//    //Center the object
+//    xTranslate = (snappyd->defaultBounding.maxBouDef.x - snappyd->defaultBounding.minBouDef.x)/2.0;
+//    yTranslate = (snappyd->defaultBounding.maxBouDef.y - snappyd->defaultBounding.minBouDef.y)/2.0;
+//    zTranslate = (snappyd->defaultBounding.maxBouDef.z - snappyd->defaultBounding.minBouDef.z)/2.0;
+//    //Find the value to scale the object fixable to screen
+//    if(vMax == 2000)
+//        vMax = 0;
+//    if(vMax < absf(snappyd->defaultBounding.maxBouDef.x - xTranslate))
+//        vMax = absf(snappyd->defaultBounding.maxBouDef.x - xTranslate);
+//    if(vMax < absf(snappyd->defaultBounding.minBouDef.x - xTranslate))
+//        vMax = absf(snappyd->defaultBounding.minBouDef.x - xTranslate);
+//    if(vMax < absf(snappyd->defaultBounding.maxBouDef.y - yTranslate))
+//        vMax = absf(snappyd->defaultBounding.maxBouDef.y - yTranslate);
+//    if(vMax < absf(snappyd->defaultBounding.minBouDef.y - yTranslate))
+//        absf(snappyd->defaultBounding.minBouDef.y - yTranslate);
+//    if(vMax < absf(snappyd->defaultBounding.maxBouDef.z - zTranslate))
+//        vMax = absf(snappyd->defaultBounding.maxBouDef.z - zTranslate);
+//    if(vMax < absf(snappyd->defaultBounding.minBouDef.z - zTranslate))
+//        vMax = absf(snappyd->defaultBounding.minBouDef.z - zTranslate);
+//    scalePoint = tan(M_PI/8)/vMax;
+    scalePoint = snappyd->MaxIn(snappyd->defaultBounding.maxBouDef.x,snappyd->defaultBounding.maxBouDef.y,snappyd->defaultBounding.maxBouDef.z)*9;
+    if(scalePoint < 0)
+        scalePoint = -1*scalePoint;
 }
 
 void DMesh::paintGL()
@@ -271,7 +274,7 @@ void DMesh::paintGL()
         glViewport(xMove - screenWidth*1.5 ,
                yMove -screenHeight*1.5 ,
                4*screenWidth , 4*screenHeight);
-        glTranslatef(0,0,zMove);
+        glTranslatef(0,0,zMove - scalePoint);
         glRotatef(xRot,1,0,0);
         glRotatef(yRot,0,1,0);
         glRotatef(zRot,0,0,1);
