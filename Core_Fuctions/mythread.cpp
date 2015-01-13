@@ -4,7 +4,7 @@ MyThread::MyThread(QObject *parent) :
     QThread(parent)
 {
     #if defined(Q_OS_WIN)
-        this->sourceOF = QApplication::applicationDirPath() + "\\..\\" + "\\DOFICore\\setvars.bat";
+        this->sourceOF = QApplication::applicationDirPath() + "/DOFICore/setvars.bat";
 //        this->sourceOF ="C:/Users/Napyidaw/Desktop/DMesh_Working/DMesh-build-desktop/DOFICore\\setvars.bat";
     #else
 //    QString dofidir = "/home/longlp/Desktop/DOFI_Working/OpenFoamGUI-build-desktop";
