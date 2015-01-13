@@ -261,6 +261,8 @@ public:
     //declare surface min max
     QList<Surface_Min_Max> list_Surface_Min_Max;
     Surface_Min_Max min_Max;
+    float MinIn(float a, float b, float c);
+    float MaxIn(float a, float b, float c);
 private:
     QString CreateHeader();
     QString CreateGeometry();

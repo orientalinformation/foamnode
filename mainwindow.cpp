@@ -266,7 +266,7 @@ bool MainWindow::AddFaceToList(QString name, int type)
     if(i > -1)
     {
         ui->tb_boundary->showRow(i);
-        loadData();
+//        loadData();
         return false;
     }
     listFaces.append(name);
@@ -286,7 +286,6 @@ bool MainWindow::AddFaceToList(QString name, int type)
     }
     ui->tb_boundary->setItem(listFaces.size()-1,0,temp);
     ui->tb_boundary->setEditTriggers(QTableWidget::NoEditTriggers);
-    ui->tb_boundary->setCurrentCell(0,0);
     //loadData();
     return true;
 }
@@ -371,6 +370,14 @@ void MainWindow::on_btn_Mesh_clicked()
             ui->btn_MeshVolume->setEnabled(false);
         }
         Remove_All_Face();
+        //Calculate delta in base mesh
+
+        if(mesh->blockd->vertice.n > 5)
+        {
+            mesh->snappyd->deltaBaseMesh.x = (mesh->blockd->vertice.v[6].x - mesh->blockd->vertice.v[0].x)/mesh->blockd->gen_Bounding.element.x;
+            mesh->snappyd->deltaBaseMesh.y = (mesh->blockd->vertice.v[6].y - mesh->blockd->vertice.v[0].y)/mesh->blockd->gen_Bounding.element.y;
+            mesh->snappyd->deltaBaseMesh.z = (mesh->blockd->vertice.v[6].z - mesh->blockd->vertice.v[0].z)/mesh->blockd->gen_Bounding.element.z;
+        }
     }
 }
 void MainWindow::on_btn_Generate_clicked()
@@ -1602,23 +1609,45 @@ void MainWindow::loadData()
     }
     if(flag_btnSurGeometry_Click ==true)
     {
-        for(int i=0; i< mesh->snappyd->gBox.n; i++)
+        GeomeBoxSurface *gBox = &mesh->snappyd->gBox;
+        for(int i=0; i< gBox->n; i++)
         {
-            if(currentSurface==  mesh->snappyd->gBox.boxes[i].name)
+            if(currentSurface==  gBox->boxes[i].name)
             {
                 ui->txt_GeometrySurfaceFileStl->setText("");
 
-                if(mesh->snappyd->gBox.boxes[i].type =="searchableBox")
+                if(gBox->boxes[i].type =="searchableBox")
                     ui->cb_SurfaceType->setCurrentIndex(0);
 
-                ui->txt_GeometrySurfaceName->setText(mesh->snappyd->gBox.boxes[i].name);
-                ui->txt_Min_Box_Sur_X->setText(QString::number(mesh->snappyd->gBox.boxes[i].min.x));
-                ui->txt_Min_Box_Sur_Y->setText(QString::number(mesh->snappyd->gBox.boxes[i].min.y));
-                ui->txt_Min_Box_Sur_Z->setText(QString::number(mesh->snappyd->gBox.boxes[i].min.z));
+                ui->txt_GeometrySurfaceName->setText(gBox->boxes[i].name);
+                ui->txt_Min_Box_Sur_X->setText(QString::number(gBox->boxes[i].min.x));
+                ui->txt_Min_Box_Sur_Y->setText(QString::number(gBox->boxes[i].min.y));
+                ui->txt_Min_Box_Sur_Z->setText(QString::number(gBox->boxes[i].min.z));
 
-                ui->txt_Max_Box_Sur_X->setText(QString::number(mesh->snappyd->gBox.boxes[i].max.x));
-                ui->txt_Max_Box_Sur_Y->setText(QString::number(mesh->snappyd->gBox.boxes[i].max.y));
-                ui->txt_Max_Box_Sur_Z->setText(QString::number(mesh->snappyd->gBox.boxes[i].max.z));
+                ui->txt_Max_Box_Sur_X->setText(QString::number(gBox->boxes[i].max.x));
+                ui->txt_Max_Box_Sur_Y->setText(QString::number(gBox->boxes[i].max.y));
+                ui->txt_Max_Box_Sur_Z->setText(QString::number(gBox->boxes[i].max.z));
+                break;
+            }
+        }
+        gBox = &mesh->snappyd->gBoxCellZone;
+        for(int i=0; i< mesh->snappyd->gBoxCellZone.n; i++)
+        {
+            if(currentSurface==  gBox->boxes[i].name)
+            {
+                ui->txt_GeometrySurfaceFileStl->setText("");
+
+                if(gBox->boxes[i].type =="searchableBox")
+                    ui->cb_SurfaceType->setCurrentIndex(0);
+
+                ui->txt_GeometrySurfaceName->setText(gBox->boxes[i].name);
+                ui->txt_Min_Box_Sur_X->setText(QString::number(gBox->boxes[i].min.x));
+                ui->txt_Min_Box_Sur_Y->setText(QString::number(gBox->boxes[i].min.y));
+                ui->txt_Min_Box_Sur_Z->setText(QString::number(gBox->boxes[i].min.z));
+
+                ui->txt_Max_Box_Sur_X->setText(QString::number(gBox->boxes[i].max.x));
+                ui->txt_Max_Box_Sur_Y->setText(QString::number(gBox->boxes[i].max.y));
+                ui->txt_Max_Box_Sur_Z->setText(QString::number(gBox->boxes[i].max.z));
                 return;
             }
         }
@@ -1666,28 +1695,6 @@ void MainWindow::loadData()
             if(currentSurface==  mesh->snappyd->gUserDefine.user_Defines[i].name)
             {
                 ui->txt_GeometrySurfaceFileStl->setText(mesh->snappyd->gUserDefine.user_Defines[i].direction);
-
-                ui->txt_GeometrySurfaceName->setText("");
-                ui->cb_SurfaceType->setCurrentIndex(0);
-
-                ui->txt_Min_Box_Sur_X->setText("");
-                ui->txt_Min_Box_Sur_Y->setText("");
-                ui->txt_Min_Box_Sur_Z->setText("");
-
-                ui->txt_Max_Box_Sur_X->setText("");
-                ui->txt_Max_Box_Sur_Y->setText("");
-                ui->txt_Max_Box_Sur_Z->setText("");
-
-                ui->txt_P1_Cyl_Sur_X->setText("");
-                ui->txt_P1_Cyl_Sur_Y->setText("");
-                ui->txt_P1_Cyl_Sur_Z->setText("");
-
-                ui->txt_P2_Cyl_Sur_X->setText("");
-                ui->txt_P2_Cyl_Sur_Y->setText("");
-                ui->txt_P2_Cyl_Sur_Z->setText("");
-
-                ui->txt_Radius_Cyl_Sur->setText("");
-
                 return;
             }
         }
@@ -2181,18 +2188,16 @@ void MainWindow::ImportSTLSurface()
     else
     {
         foreach(QString file_name_STL,file_name_STLs) {
+            QFile file(file_name_STL);
             //Get filename and name of folder containds file
-            QStringList file_name = file_name_STL.split("/");
-            if(file_name.length()==1)
-                file_name = file_name_STL.split("\\");
-            QString name = file_name[file_name.length()-1];
-            QString _name = name.split(".")[0];
+            QString name = QFileInfo(file).fileName().append(".stl");
+            QString _name = QFileInfo(file).fileName();
     //        QString folder_STl = file_name_STL.split(file_name[file_name.length()-1])[0];
             //check name exists
             GeomeUserDefine *gUserDefine = &mesh->snappyd->gUserDefine;
             for(int i=0; i< gUserDefine->n; i++)
             {
-                if(name==  gUserDefine->user_Defines[i].name_file)
+                if(name ==  gUserDefine->user_Defines[i].name_file)
                 {
                     QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
                     return;
@@ -2201,7 +2206,6 @@ void MainWindow::ImportSTLSurface()
 
             //read file
             QString file1;
-            QFile file(file_name_STL);
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
                 file1= file.readAll();
@@ -2293,11 +2297,10 @@ void MainWindow::ImportSTLCellzone()
     {
         foreach(QString file_name_STL,file_name_STLs) {
             //Get filename and name of folder containds file
-            QStringList file_name = file_name_STL.split("/");
-            if(file_name.length()==1)
-                file_name = file_name_STL.split("\\");
-            QString name = file_name[file_name.length()-1];
-            QString _name = name.split(".")[0];
+            QFile file(file_name_STL);
+            //Get filename and name of folder containds file
+            QString name = QFileInfo(file).fileName().append(".stl");
+            QString _name = QFileInfo(file).fileName();
     //        QString folder_STl = file_name_STL.split(file_name[file_name.length()-1])[0];
             //check name exists
             GeomeUserDefine *gUserDefine = &mesh->snappyd->gUserDefineCellZone;
@@ -2312,7 +2315,6 @@ void MainWindow::ImportSTLCellzone()
 
             //read file
             QString file1;
-            QFile file(file_name_STL);
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
                  file1= file.readAll();
@@ -2340,7 +2342,7 @@ void MainWindow::ImportSTLCellzone()
             //add reg
             gUserDefine->refi_Reg.n=gUserDefine->refi_Reg.n+1;
             gUserDefine->refi_Reg.region.resize(gUserDefine->refi_Reg.n);
-            gUserDefine->refi_Reg.region.last().mode = "distance";
+            gUserDefine->refi_Reg.region.last().mode = "inside";
             gUserDefine->refi_Reg.region.last().name=_name;
             gUserDefine->refi_Reg.region.last().lv1 = 0;
             gUserDefine->refi_Reg.region.last().lv2 = 0;
@@ -3856,10 +3858,12 @@ void MainWindow::on_btn_MeshBounding_clicked()
     //remove first
     Remove_All_Face();
 
-    //add list faces
-    for(int i =0; i< mesh->blockd->boundMesh.n; i++)
-    {
-        AddFaceToList(mesh->blockd->boundMesh.bounsType[i].name);
+    if(!mesh->blockd->isAutomatic){
+        //add list faces
+        for(int i =0; i< mesh->blockd->boundMesh.n; i++)
+        {
+            AddFaceToList(mesh->blockd->boundMesh.bounsType[i].name);
+        }
     }
     ui->txt_X->setText(QString::number(mesh->blockd->gen_Bounding.element.x));
     ui->txt_Y->setText(QString::number(mesh->blockd->gen_Bounding.element.y));
@@ -3894,24 +3898,6 @@ void MainWindow::on_btn_MeshSurface_clicked()
     {
         AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name);
     }
-
-    for(int i=0; i< mesh->snappyd->gBoxCellZone.n; i++)
-    {
-        AddFaceToList(mesh->snappyd->gBoxCellZone.boxes[i].name);
-    }
-    for(int i=0; i< mesh->snappyd->gCylinCellZone.n; i++)
-    {
-        AddFaceToList(mesh->snappyd->gCylinCellZone.cylins[i].name);
-    }
-    for(int i=0; i< mesh->snappyd->gSphereCellZone.n; i++)
-    {
-        AddFaceToList(mesh->snappyd->gSphereCellZone.sphere[i].name);
-    }
-    for(int i=0; i< mesh->snappyd->gUserDefineCellZone.n; i++)
-    {
-        AddFaceToList(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name);
-    }
-
     //Define mesh refine distance
     int tbSize = ui->tb_MeshRefineAroundSurface->width() - ui->tb_MeshRefineAroundSurface->verticalHeader()->width();
     ui->tb_MeshRefineAroundSurface->setColumnWidth(0,2*tbSize/5);
@@ -4049,7 +4035,7 @@ void MainWindow::on_btn_MeshLayer_clicked()
     }
     for(int i = 0; i<mesh->snappyd->gUserDefine.n; i++)
     {
-        AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name);
+//        AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name);
         for(int j = 0 ; j < mesh->snappyd->gUserDefine.refi_Sur.surfaces[i].n; j++)
         {
             AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name + "_" + mesh->snappyd->gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].name);
@@ -4078,21 +4064,24 @@ void MainWindow::on_btn_RefineLayer_clicked()
     foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()) {
         int n = mesh->snappyd->add_Layers_Controls.nLayer;
         //if exists, update
-        for(int i=0;i< n; i++)
+        int i;
+        for(i=0;i< n; i++)
         {
             if(mesh->snappyd->add_Layers_Controls.layers[i].name ==item->text())
             {
                 mesh->snappyd->add_Layers_Controls.layers[i].nSurfaceLayers =layer;
                 ui->txt_Log->append("Settings for layer of " + item->text() + " have been done");
-                return;
+                break;
             }
         }
-        //add new
-        mesh->snappyd->add_Layers_Controls.nLayer = n + 1;
-        mesh->snappyd->add_Layers_Controls.layers.resize(n+1);
-        mesh->snappyd->add_Layers_Controls.layers[n].name = item->text();
-        mesh->snappyd->add_Layers_Controls.layers[n].nSurfaceLayers = layer;
-        ui->txt_Log->append("Settings for layer of " + item->text() + " have been done");
+        if(i == n) {
+            //add new
+            mesh->snappyd->add_Layers_Controls.nLayer = n + 1;
+            mesh->snappyd->add_Layers_Controls.layers.resize(n+1);
+            mesh->snappyd->add_Layers_Controls.layers[n].name = item->text();
+            mesh->snappyd->add_Layers_Controls.layers[n].nSurfaceLayers = layer;
+            ui->txt_Log->append("Settings for layer of " + item->text() + " have been done");
+        }
     }
 }
 
@@ -4114,7 +4103,8 @@ void MainWindow::on_btn_MeshRefinement_clicked()
     ui->frame_MeshLayer->hide();
     ui->frame_MeshVolume->hide();
     ui->frame_MeshRefinement->show();
-    on_btn_MeshSurface_clicked();
+    if(ui->btn_MeshSurface->isEnabled())
+        on_btn_MeshSurface_clicked();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////// Boundary Area //////////////////////////////////////////////
@@ -4327,17 +4317,16 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 QApplication::processEvents();
             }
             if(mesh->snappyd->gBoxCellZone.boxes.size() > 0 || mesh->snappyd->gCylinCellZone.cylins.size() > 0 ||
-                    mesh->snappyd->gSphereCellZone.sphere.size() > 0 || mesh->snappyd->gUserDefineCellZone.user_Defines.size() > 0)
-            createrThread->SetSubCommand("",2);
-            createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
-            this->comment = "topoSetDict";
-            createrThread->ThreadName("topoSetDict");
-            createrThread->start();
-            while(createrThread->isRunning())
-            {
-                QApplication::processEvents();
+                    mesh->snappyd->gSphereCellZone.sphere.size() > 0 || mesh->snappyd->gUserDefineCellZone.user_Defines.size() > 0) {
+                createrThread->SetSubCommand("",2);
+                createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
+                createrThread->ThreadName("topoSetDict");
+                createrThread->start();
+                while(createrThread->isRunning())
+                {
+                    QApplication::processEvents();
+                }
             }
-
             //save file setting bounding
             QStringList list;
             QString str_para;
@@ -5285,7 +5274,7 @@ void MainWindow::on_txt_Level_Min_Surface_Refine_editingFinished()
     int temp = ui->txt_Level_Min_Surface_Refine->text().toInt(&a);
     if(a ==false)
     {
-        QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
+        QMessageBox::warning(this,tr("Error"),tr("Please enter a valid number!"));
         ui->txt_Level_Min_Surface_Refine->undo();
     }
     else
@@ -5294,12 +5283,14 @@ void MainWindow::on_txt_Level_Min_Surface_Refine_editingFinished()
         {
             QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
             ui->txt_Level_Min_Surface_Refine->undo();
+        } else {
+            float delta = mesh->snappyd->MaxIn(mesh->snappyd->deltaBaseMesh.x,mesh->snappyd->deltaBaseMesh.y,mesh->snappyd->deltaBaseMesh.y)/pow(2.0,temp);
+            ui->txt_Delta_Min_Surface_Refine->setText(QString::number(delta));
         }
     }
 
 
 }
-
 void MainWindow::on_txt_Level_Max_Surface_Refine_editingFinished()
 {
     if(ui->txt_Level_Max_Surface_Refine->text()=="")
@@ -5310,7 +5301,7 @@ void MainWindow::on_txt_Level_Max_Surface_Refine_editingFinished()
     int temp = ui->txt_Level_Max_Surface_Refine->text().toInt(&a);
     if(a ==false)
     {
-        QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
+        QMessageBox::warning(this,tr("Error"),tr("Please enter a valid number!"));
         ui->txt_Level_Max_Surface_Refine->undo();
     }
     else
@@ -5319,6 +5310,9 @@ void MainWindow::on_txt_Level_Max_Surface_Refine_editingFinished()
         {
             QMessageBox::warning(this,tr("Error"),tr("Please enter a number greater than or equal 0!"));
             ui->txt_Level_Max_Surface_Refine->undo();
+        } else {
+            float delta = mesh->snappyd->MinIn(mesh->snappyd->deltaBaseMesh.x,mesh->snappyd->deltaBaseMesh.y,mesh->snappyd->deltaBaseMesh.y)/pow(2.0,temp);
+            ui->txt_Delta_Max_Surface_Refine->setText(QString::number(delta));
         }
     }
 
@@ -6293,6 +6287,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }
         refi_Reg = &mesh->snappyd->gCylinRegion.refi_Reg;
@@ -6305,6 +6300,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }
         refi_Reg = &mesh->snappyd->gSphereRegion.refi_Reg;
@@ -6317,6 +6313,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }refi_Reg = &mesh->snappyd->gBoxCellZone.refi_Reg;
         for(int i = 0; i < refi_Reg->region.size(); i++)
@@ -6328,6 +6325,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }
         refi_Reg = &mesh->snappyd->gCylinCellZone.refi_Reg;
@@ -6340,6 +6338,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }
         refi_Reg = &mesh->snappyd->gSphereCellZone.refi_Reg;
@@ -6352,6 +6351,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }
         refi_Reg = &mesh->snappyd->gUserDefineCellZone.refi_Reg;
@@ -6364,6 +6364,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 else if(refi_Reg->region[i].mode =="outside" )
                     ui->cb_MeshVolumeMode->setCurrentIndex(2);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
+                return;
             }
         }
     }
@@ -6701,14 +6702,18 @@ void MainWindow::on_rbn_Volume_clicked(bool checked)
 
 void MainWindow::on_rbn_Cellzone_clicked(bool checked)
 {
-    if(checked)
+    if(checked){
         ui->cb_GeometryNewMesh->setEnabled(true);
+        ui->cb_GeometryNewMesh->setCurrentIndex(0);
+    }
 }
 
 void MainWindow::on_rbn_Surface_clicked(bool checked)
 {
-    if(checked)
+    if(checked) {
         ui->cb_GeometryNewMesh->setEnabled(true);
+        ui->cb_GeometryNewMesh->setCurrentIndex(0);
+    }
 }
 
 void MainWindow::on_actionCheck_mesh_triggered()
