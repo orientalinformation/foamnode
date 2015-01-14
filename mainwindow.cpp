@@ -4523,12 +4523,12 @@ void MainWindow::on_btn_CreateMesh_clicked()
     bool writeLog = false;
     if(flag_YesNo == false)
     {
-        QString saveCase = QFileDialog::getSaveFileName(this,"",path_Open);
+        QDir dir1(path_Open);
+        dir1.cdUp();
+        QString saveCase = QFileDialog::getSaveFileName(this,"",dir1.path());
         if(saveCase != "")
         {
-            QDir dir(saveCase);
-            dir.cdUp();
-            path_Open = dir.path();
+            path_Open = saveCase;
             if(ui->checkBox_WriteLog->isChecked()){
                 QString filelog = "Log_" + QDate::currentDate().toString("yyyyMMdd") + "_" + QTime::currentTime().toString("hhmm") + ".txt";
                 logPath = saveCase + "/" + filelog;
@@ -4566,7 +4566,6 @@ void MainWindow::on_btn_CreateMesh_clicked()
             ui->txt_Log->append("Creating mesh...!\n");
             ui->txt_Log->append("********** STEP 1: **********");
             ui->txt_Log->append("Blockmesh is running... ");
-            createrThread = new MyThread();
             createrThread->logPath = this->logPath;
             createrThread->writeLog = writeLog;
             OpenFoam::SetOpenFOAMPath(saveCase);
@@ -4586,7 +4585,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
-                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"...");
+                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"...");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
@@ -4599,7 +4598,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
-                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name +"... ");
+                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + "... ");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
@@ -4721,7 +4720,6 @@ void MainWindow::on_btn_CreateMesh_clicked()
             mesh->patchDict->WritePatchDict(path_Open + "/system");
         }
         ui->txt_Log->append("Creating mesh...!\n");
-        createrThread = new MyThread();
         createrThread->logPath = this->logPath;
         createrThread->writeLog = writeLog;
         OpenFoam::SetOpenFOAMPath(path_Open);
@@ -4742,12 +4740,12 @@ void MainWindow::on_btn_CreateMesh_clicked()
             createrThread->ThreadName("blockMesh");
             this->comment = "blockMesh";
             createrThread->start();
-            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"... ");
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"... ");
             while(createrThread->isRunning())
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +" done...");
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + " done...");
         }
         ui->txt_Log->append("**********STEP 2 HAS FINISHED **********\n**********STEP 3: **********");
         createrThread->SetSubCommand("-overwrite",2);
@@ -5682,8 +5680,11 @@ void MainWindow::on_actionOpen_triggered()
     if(lastFolderCase == ""){
         if(lastFileSTL != ""){
             lastFolderCase = lastFileSTL;
-        }else
-            lastFolderCase == QDir::currentPath();
+        }else{
+            QDir dir(QDir::currentPath());
+            dir.cdUp();
+            lastFolderCase == dir.path();
+        }
     }
     QString dir;
 //        dir= QFileDialog::getExistingDirectory(this, tr("Open DMesh"),
@@ -5696,7 +5697,9 @@ void MainWindow::on_actionOpen_triggered()
     dir = QFileInfo(filefull).path();
         if(dir!="")
         {
-            lastFolderCase = dir;
+            QDir dircdUp(dir);
+            dircdUp.cdUp();
+            lastFolderCase = dircdUp.path();
             OpenFoam::SetOpenFOAMPath(dir);
             this->setWindowTitle(dir);
 
