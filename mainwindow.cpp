@@ -4462,7 +4462,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
-                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"...");
+                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"...");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
@@ -4475,7 +4475,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
-                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name +"... ");
+                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + "... ");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
@@ -4617,12 +4617,12 @@ void MainWindow::on_btn_CreateMesh_clicked()
             createrThread->ThreadName("blockMesh");
             this->comment = "blockMesh";
             createrThread->start();
-            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"... ");
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"... ");
             while(createrThread->isRunning())
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +" done...");
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + " done...");
         }
         ui->txt_Log->append("**********STEP 2 HAS FINISHED **********\n**********STEP 3: **********");
         createrThread->SetSubCommand("-overwrite",2);
