@@ -1,6 +1,7 @@
 #ifndef SNAPPY_DMESH_H
 #define SNAPPY_DMESH_H
 #include <Core_Fuctions/block_dmesh.h>
+#include <Core_Fuctions/foamfilenode.h>
 #include <QString>
 #include <math.h>
 #include <QVector>
@@ -34,6 +35,7 @@ struct GeomeBoxTypeDmesh
 {
     QString name;
     QString type;
+    QString tag;
     PointDmesh min;
     PointDmesh max;
 };
@@ -41,6 +43,7 @@ struct GeomeCylinTypeDmesh
 {
     QString name;
     QString type;
+    QString tag;
     float radius;
     PointDmesh point1;
     PointDmesh point2;
@@ -49,6 +52,7 @@ struct GeomeSphereTypeDmesh
 {
     QString name;
     QString type;
+    QString tag;
     float radius;
     PointDmesh centre;
 };
@@ -56,6 +60,7 @@ struct GeomeUserdefineTypeDmesh
 {
     QString name_file;
     QString type;
+    QString tag;
     QString name;
     QString direction;
 };
@@ -246,6 +251,7 @@ public:
     void Write_Snappy(QString path);
     void Write_Topodict(QString path);
     bool Read_Snappy(QString path);
+    bool ReadSnappy(QString path);
     bool ReadSTLFile(QString path_car, int type);
 
     void FindMinMaxDefaultBounding(float x, float y, float z);

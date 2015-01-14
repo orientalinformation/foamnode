@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     License_Function/clsencryption.cpp \
     License_Function/authdialog.cpp \
     License_Function/downloader.cpp \
-    Function_Widget/w_capture.cpp
+    Function_Widget/w_capture.cpp \
+    Core_Fuctions/foamfilenode.cpp
 
 HEADERS  += \
     Core_Fuctions/snappy_dmesh.h \
@@ -49,7 +50,8 @@ HEADERS  += \
     License_Function/clsencryption.h \
     License_Function/authdialog.h \
     License_Function/downloader.h \
-    Function_Widget/w_capture.h
+    Function_Widget/w_capture.h \
+    Core_Fuctions/foamfilenode.h
 
 FORMS += \
     DMesh_Widget/w_meshsurfacerefinegeneral.ui \

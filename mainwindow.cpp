@@ -286,6 +286,83 @@ void MainWindow::LoadColor()
 //    ui->
 }
 
+QString MainWindow::ReadPathDmesh()
+{
+    QString file1;
+    QString pathDmesh = "";
+    QString path = QApplication::applicationDirPath() +  "/Data/setting";
+    QFile file(path);
+    if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+         file1= file.readAll();
+    }
+    if(file1 == "")
+    {
+        file.close();
+        return pathDmesh;
+    }
+    QStringList lines = file1.split("\n",QString::SkipEmptyParts);
+
+    for(int i=0; i< lines.length(); i++)
+    {
+        if(lines[i].contains("pathdmesh"))
+        {
+            pathDmesh = lines[i].trimmed().split("\"")[1];
+            file.close();
+            return pathDmesh;
+        }
+    }
+    file.close();
+    return pathDmesh;
+}
+
+bool MainWindow::WriteDMeshFile(QString path, QString filename)
+{
+    path.append(QDir::separator() + filename + ".dmesh");
+
+    QFile file(path);
+    file.open(QIODevice::WriteOnly);
+    QString str_File_New;
+
+    str_File_New +="DMESH Version 1.x\n";
+    file.write(str_File_New.toAscii().data());
+    file.close();
+    return true;
+}
+
+bool MainWindow::UpdateSettingFile(QString newPath)
+{
+    QString file1;
+    QString path = QApplication::applicationDirPath() +  "/Data/setting";
+    QFile file(path);
+    if(file.open(QIODevice::ReadWrite))
+    {
+         file1= file.readAll();
+    }
+    if(file1 == "")
+    {
+        file.close();
+        return false;
+    }
+    QStringList lines = file1.split("\n",QString::SkipEmptyParts);
+
+    for(int i=0; i< lines.length(); i++)
+    {
+        if(lines[i].contains("pathdmesh"))
+        {
+            lines[i]= "pathdmesh:\"" + newPath + "\"";
+        }
+    }
+    file.close();
+    QFile::remove(path);
+    QFile file2(path);
+    if ( file2.open(QIODevice::ReadWrite) )
+    {
+        file2.write(lines.join("\n").toAscii().data());
+    }
+    return true;
+}
+
 bool MainWindow::AddFaceToList(QString name, int type)
 {
     int i = listFaces.indexOf(name);
@@ -494,6 +571,14 @@ bool MainWindow::CheckNameValid(QString value)
             return false;
         }
     }
+    for(int i=0; i< mesh->snappyd->gBoxCellZone.n; i++)
+    {
+        if(value==  mesh->snappyd->gBoxCellZone.boxes[i].name)
+        {
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
+            return false;
+        }
+    }
     for(int i=0; i< mesh->snappyd->gBoxRegion.n; i++)
     {
         if(value==  mesh->snappyd->gBoxRegion.boxes[i].name)
@@ -505,6 +590,14 @@ bool MainWindow::CheckNameValid(QString value)
     for(int i=0; i< mesh->snappyd->gCylin.n; i++)
     {
         if(value==  mesh->snappyd->gCylin.cylins[i].name)
+        {
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
+            return false;
+        }
+    }
+    for(int i=0; i< mesh->snappyd->gCylinCellZone.n; i++)
+    {
+        if(value==  mesh->snappyd->gCylinCellZone.cylins[i].name)
         {
             QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
@@ -526,6 +619,14 @@ bool MainWindow::CheckNameValid(QString value)
             return false;
         }
     }
+    for(int i=0; i< mesh->snappyd->gSphereCellZone.n; i++)
+    {
+        if(value==  mesh->snappyd->gSphereCellZone.sphere[i].name)
+        {
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
+            return false;
+        }
+    }
     for(int i=0; i< mesh->snappyd->gSphereRegion.n; i++)
     {
         if(value==  mesh->snappyd->gSphereRegion.sphere[i].name)
@@ -537,6 +638,14 @@ bool MainWindow::CheckNameValid(QString value)
     for(int i=0; i< mesh->snappyd->gUserDefine.n; i++)
     {
         if(value==  mesh->snappyd->gUserDefine.user_Defines[i].name)
+        {
+            QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
+            return false;
+        }
+    }
+    for(int i=0; i< mesh->snappyd->gUserDefineCellZone.n; i++)
+    {
+        if(value==  mesh->snappyd->gUserDefineCellZone.user_Defines[i].name)
         {
             QMessageBox::critical(this,tr("Error"),tr("This name is already existed, this will be replaced by new values (Coming soon)...!"));
             return false;
@@ -2256,8 +2365,8 @@ void MainWindow::ImportSTLSurface()
                 {
                     QString mess = "This file: " + _name + " is already exists";
                     QMessageBox::information(this,tr("Error"),tr(mess.toAscii().data()));
-					this->cancelImport = true;
-                    continue;
+                    this->cancelImport = true;
+                    return;
                 }
             }
             GeomeUserDefine *gUserDefineCellzone = &mesh->snappyd->gUserDefineCellZone;
@@ -2297,7 +2406,7 @@ void MainWindow::ImportSTLSurface()
                     AddFaceToList(_name,1);
                     mesh->update();
                     ui->txt_Log->append("Changing "+ _name +" from cell zone to surface has been done");
-                    continue;
+                    return;
                 }
             }
 
@@ -2309,11 +2418,11 @@ void MainWindow::ImportSTLSurface()
             }
             if(file1 == "")
             {
-                QMessageBox::information(this,tr("Error"),tr("File is empty!"));
+                QString mess = "This file: " + _name + " is empty!";
+                QMessageBox::critical(this,tr("Error"),tr(mess.toAscii().data()));
                 this->cancelImport = true;
                 continue;
             }
-
 
             gUserDefine->n= gUserDefine->n+1;
             gUserDefine->user_Defines.resize(gUserDefine->n);
@@ -2414,7 +2523,7 @@ void MainWindow::ImportSTLCellzone()
                     QString mess = "This file: " + _name + " is already exists";
                     QMessageBox::information(this,tr("Error"),tr(mess.toAscii().data()));
                     this->cancelImport = true;
-                    continue;
+                    return;
                 }
             }
             GeomeUserDefine *gUserDefineSurface = &mesh->snappyd->gUserDefine;
@@ -2455,7 +2564,7 @@ void MainWindow::ImportSTLCellzone()
                     mesh->update();
 
                     ui->txt_Log->append("Changing "+ _name +" from surface to cell zone has been done");
-                    continue;
+                    return;
                 }
             }
             //read file
@@ -2466,7 +2575,8 @@ void MainWindow::ImportSTLCellzone()
             }
             if(file1 == "")
             {
-                QMessageBox::information(this,tr("Error"),tr("File is empty!"));
+                QString mess = "This file: " + _name + " is empty!";
+                QMessageBox::critical(this,tr("Error"),tr(mess.toAscii().data()));
                 this->cancelImport = true;
                 continue;
             }
@@ -2476,6 +2586,7 @@ void MainWindow::ImportSTLCellzone()
             gUserDefine->user_Defines.last().direction= file_name_STL;
             gUserDefine->user_Defines.last().name_file=name;
             gUserDefine->user_Defines.last().type="triSurfaceMesh";
+            gUserDefine->user_Defines.last().tag = "cellzone";
             gUserDefine->user_Defines.last().name=_name;
             AddFaceToList(_name,3);
 
@@ -2544,9 +2655,10 @@ void MainWindow::ImportSTLCellzone()
 void MainWindow::DefineSimpleSurface()
 {
     QString surfaceName = ui->txt_GeometrySurfaceName->text();
-    if(!CheckNameValid(surfaceName))
+    if(!CheckNameValid(surfaceName)){
         this->cancelImport = true;
         return;
+    }
     //Save value for each type
     Snappy_Dmesh *snappy = mesh->snappyd;
     if(ui->cb_SurfaceType->currentText() == "Cylinder")
@@ -2704,6 +2816,7 @@ void MainWindow::DefineSimpleSurface()
             snappy->gCylin.cylins.resize(snappy->gCylin.n);
             snappy->gCylin.cylins.last().name=surfaceName;
             snappy->gCylin.cylins.last().type = "searchableCylinder";
+            snappy->gCylin.cylins.last().tag = "surface";
             snappy->gCylin.cylins.last().point2.x=x2;
             snappy->gCylin.cylins.last().point2.y=y2;
             snappy->gCylin.cylins.last().point2.z=z2;
@@ -2789,6 +2902,7 @@ void MainWindow::DefineSimpleSurface()
             snappy->gBox.boxes.resize(snappy->gBox.n);
             snappy->gBox.boxes.last().name=surfaceName;
             snappy->gBox.boxes.last().type="searchableBox";
+            snappy->gBox.boxes.last().tag = "surface";
             snappy->gBox.boxes.last().max.x=x2;
             snappy->gBox.boxes.last().max.y=y2;
             snappy->gBox.boxes.last().max.z=z2;
@@ -2967,6 +3081,7 @@ void MainWindow::DefineSimpleSurface()
              snappy->gSphere.sphere.resize(snappy->gSphere.n);
              snappy->gSphere.sphere.last().name = surfaceName;
              snappy->gSphere.sphere.last().type = "searchableSphere";
+             snappy->gSphere.sphere.last().tag = "surface";
              snappy->gSphere.sphere.last().centre.x = x;
              snappy->gSphere.sphere.last().centre.y = y;
              snappy->gSphere.sphere.last().centre.z = z;
@@ -3007,9 +3122,10 @@ void MainWindow::DefineSimpleSurface()
 void MainWindow::DefineSimpleCellZone()
 {
     QString surfaceName = ui->txt_GeometrySurfaceName->text();
-    if(!CheckNameValid(surfaceName))
+    if(!CheckNameValid(surfaceName)){
         this->cancelImport = true;
         return;
+    }
     //Save value for each type
     Snappy_Dmesh *snappy = mesh->snappyd;
     if(ui->cb_SurfaceType->currentText() == "Cylinder")
@@ -3164,6 +3280,7 @@ void MainWindow::DefineSimpleCellZone()
             gCylin->cylins.resize(gCylin->n);
             gCylin->cylins.last().name=surfaceName;
             gCylin->cylins.last().type = "searchableCylinder";
+            gCylin->cylins.last().tag = "cellzone";
             gCylin->cylins.last().point2.x=x2;
             gCylin->cylins.last().point2.y=y2;
             gCylin->cylins.last().point2.z=z2;
@@ -3247,6 +3364,7 @@ void MainWindow::DefineSimpleCellZone()
             gBox->boxes.resize(gBox->n);
             gBox->boxes.last().name=surfaceName;
             gBox->boxes.last().type="searchableBox";
+            gBox->boxes.last().tag = "cellzone";
             gBox->boxes.last().max.x=x2;
             gBox->boxes.last().max.y=y2;
             gBox->boxes.last().max.z=z2;
@@ -3428,6 +3546,7 @@ void MainWindow::DefineSimpleCellZone()
              gSphere->sphere.resize(gSphere->n);
              gSphere->sphere[gSphere->n-1].name = surfaceName;
              gSphere->sphere[gSphere->n-1].type = "searchableSphere";
+             gSphere->sphere[gSphere->n-1].tag = "cellzone";
              gSphere->sphere[gSphere->n-1].centre.x = x;
              gSphere->sphere[gSphere->n-1].centre.y = y;
              gSphere->sphere[gSphere->n-1].centre.z = z;
@@ -3466,9 +3585,10 @@ void MainWindow::DefineSimpleCellZone()
 void MainWindow::DefineSimpleVolume()
 {
     QString volumeName = ui->txt_GeometrySurfaceName->text();
-    if(!CheckNameValid(volumeName))
+    if(!CheckNameValid(volumeName)){
         this->cancelImport = true;
         return;
+    }
     //Save value for each type
     if(ui->cb_SurfaceType->currentText() == "Box")
     {
@@ -3503,6 +3623,7 @@ void MainWindow::DefineSimpleVolume()
             gBoxRegion->boxes.resize(gBoxRegion->n);
             gBoxRegion->boxes[index].name = volumeName;
             gBoxRegion->boxes[index].type = "searchableBox";
+            gBoxRegion->boxes[index].tag = "volume";
             gBoxRegion->boxes[index].max.x=x2;
             gBoxRegion->boxes[index].max.y=y2;
             gBoxRegion->boxes[index].max.z=z2;
@@ -3662,6 +3783,7 @@ void MainWindow::DefineSimpleVolume()
             gCylinRegion->cylins.resize(gCylinRegion->n);
             gCylinRegion->cylins[index].name=volumeName;
             gCylinRegion->cylins[index].type = "searchableCylinder";
+            gCylinRegion->cylins[index].tag = "volume";
             gCylinRegion->cylins[index].point2.x=x2;
             gCylinRegion->cylins[index].point2.y=y2;
             gCylinRegion->cylins[index].point2.z=z2;
@@ -3723,6 +3845,7 @@ void MainWindow::DefineSimpleVolume()
             gSphereRegion->sphere.resize(gSphereRegion->n);
             gSphereRegion->sphere[index].name=volumeName;
             gSphereRegion->sphere[index].type = "searchableSphere";
+            gSphereRegion->sphere[index].tag = "volume";
             gSphereRegion->sphere[index].centre.x=x;
             gSphereRegion->sphere[index].centre.y=y;
             gSphereRegion->sphere[index].centre.z=z;
@@ -4168,26 +4291,30 @@ bool MainWindow::AddRefineVolume(RefinementRegions *refi_Reg, QString currentSur
 
 void MainWindow::on_btn_MeshRefineVolume_clicked()
 {
-    if(ui->tb_boundary->currentRow() == -1)
+    if(ui->tb_boundary->selectedItems().size() == 0){
+        QMessageBox::warning(this,"Error","Please select a volume!");
         return;
+    }
     bool a;
     float lv = ui->txt_Level_Volume->text().toInt(&a);
-    QString currentSurface = ui->tb_boundary->currentItem()->text();
-    QString mode = ui->cb_MeshVolumeMode->currentText();
-    if(AddRefineVolume(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,mode,lv))
-        return;
-    if(AddRefineVolume(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,mode,lv))
-        return;
-    if(AddRefineVolume(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,mode,lv))
-        return;
-    if(AddRefineVolume(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,mode,lv) && AddUserDefine(currentSurface,lv,lv))
-        return;
-    if(AddRefineVolume(&mesh->snappyd->gBoxRegion.refi_Reg,currentSurface,mode,lv))
-        return;
-    if(AddRefineVolume(&mesh->snappyd->gCylinRegion.refi_Reg,currentSurface,mode,lv))
-        return;
-    if(AddRefineVolume(&mesh->snappyd->gSphereRegion.refi_Reg,currentSurface,mode,lv))
-        return;
+    foreach(QTableWidgetItem *item,ui->tb_boundary->selectedItems()) {
+        QString currentSurface = item->text();
+        QString mode = ui->cb_MeshVolumeMode->currentText();
+        if(AddRefineVolume(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,mode,lv))
+            return;
+        if(AddRefineVolume(&mesh->snappyd->gCylinCellZone.refi_Reg,currentSurface,mode,lv))
+            return;
+        if(AddRefineVolume(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,mode,lv))
+            return;
+        if(AddRefineVolume(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,mode,lv) && AddUserDefine(currentSurface,lv,lv))
+            return;
+        if(AddRefineVolume(&mesh->snappyd->gBoxRegion.refi_Reg,currentSurface,mode,lv))
+            return;
+        if(AddRefineVolume(&mesh->snappyd->gCylinRegion.refi_Reg,currentSurface,mode,lv))
+            return;
+        if(AddRefineVolume(&mesh->snappyd->gSphereRegion.refi_Reg,currentSurface,mode,lv))
+            return;
+    }
 }
 
 void MainWindow::on_btn_MeshLayer_clicked()
@@ -4435,10 +4562,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(saveCase + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
             }
-            if(mesh->patchDict->boundaries.size() > 0)
-            {
-                mesh->patchDict->WritePatchDict(saveCase + "/system");
-            }
+            mesh->patchDict->WritePatchDict(saveCase + "/system");
             ui->txt_Log->append("Creating mesh...!\n");
             ui->txt_Log->append("********** STEP 1: **********");
             ui->txt_Log->append("Blockmesh is running... ");
@@ -5182,11 +5306,7 @@ void MainWindow::on_actionSave_triggered()
         {
             QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
         }
-        if(mesh->patchDict->boundaries.size() > 0)
-        {
-            QFile(path_Open + "/system/createPatchDict").remove();
-            mesh->patchDict->WritePatchDict(path_Open + "/system");
-        }
+        mesh->patchDict->WritePatchDict(path_Open + "/system");
         QMessageBox::information(
                 this,
                 tr("DMESH"), "Save file successfully!");
@@ -5249,11 +5369,11 @@ void MainWindow::on_actionSave_triggered()
         {
             QFile(mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction).copy(path_Open + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file);
         }
-        if(mesh->patchDict->boundaries.size() > 0)
-        {
-            mesh->patchDict->WritePatchDict(saveCase + "/system");
-        }
+        mesh->patchDict->WritePatchDict(saveCase + "/system");
         OpenFoam::SetOpenFOAMPath(saveCase);
+        QFileInfo caseDir(saveCase);
+        WriteDMeshFile(saveCase, caseDir.fileName());
+        UpdateSettingFile(saveCase);
     }
 }
 
@@ -5555,6 +5675,10 @@ void MainWindow::on_txt_Level_Volume_editingFinished()
 
 void MainWindow::on_actionOpen_triggered()
 {
+    if(!isClose)
+        on_actionClose_triggered();
+    //get path save in
+    lastFolderCase = ReadPathDmesh();
     if(lastFolderCase == ""){
         if(lastFileSTL != ""){
             lastFolderCase = lastFileSTL;
@@ -5562,10 +5686,14 @@ void MainWindow::on_actionOpen_triggered()
             lastFolderCase == QDir::currentPath();
     }
     QString dir;
-        dir= QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                               lastFolderCase,
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
+//        dir= QFileDialog::getExistingDirectory(this, tr("Open DMesh"),
+//                                               lastFolderCase,
+//                                                 QFileDialog::ShowDirsOnly
+//                                                 | QFileDialog::DontResolveSymlinks);
+    QString filefull = QFileDialog::getOpenFileName(this,tr("Open DMesh"), lastFolderCase, tr("Image Files (*.dmesh)"));
+    if (filefull == "")
+        return;
+    dir = QFileInfo(filefull).path();
         if(dir!="")
         {
             lastFolderCase = dir;
@@ -5671,6 +5799,39 @@ void MainWindow::on_actionOpen_triggered()
             }
             mesh->snappyd->gUserDefine.user_Defines[i].direction = path;
             views.append(mesh->snappyd->gUserDefine.user_Defines[i].name);
+            AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name,1);
+        }
+        for(int i = 0; i < mesh->snappyd->gUserDefineCellZone.user_Defines.size(); i++)
+        {
+            QString path = dir + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file;
+            //temp = mesh->snappyd->ReadSTLFile(path);
+            //Read file STL
+            if(mesh->snappyd->ReadSTLFile(path,-1))
+            {
+                QString _name = mesh->snappyd->gUserDefineCellZone.user_Defines[i].name;
+                foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
+                {
+                    bool flag_Path = false;
+                    for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
+                    {
+                        for(int k = 0; k< mesh->patchDict->boundaries[j].patches.surfaces.length(); k++)
+                        {
+                            if(mesh->patchDict->boundaries[j].patches.surfaces[k] == _name + "_" + solid.name)
+                            {
+                                flag_Path = true;
+                            }
+                        }
+                    }
+                    if(flag_Path == false)
+                    {
+                        listSurfaces.append(_name + "_" + solid.name);
+                    }
+
+                }
+            }
+            mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction = path;
+            views.append(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name);
+            AddFaceToList(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name,3);
         }
         for(int i = 0; i < mesh->snappyd->gBox.boxes.size(); i++)
         {
@@ -5798,6 +5959,143 @@ void MainWindow::on_actionOpen_triggered()
 
             //add min_Max temp to list min max;
             mesh->snappyd->min_Max.name_Surface = mesh->snappyd->gBox.boxes[i].name;
+            mesh->snappyd->list_Surface_Min_Max.append(mesh->snappyd->min_Max);
+            mesh->snappyd->min_Max.name_Surface="";
+            mesh->snappyd->min_Max.min.x=1000000;
+            mesh->snappyd->min_Max.min.y=1000000;
+            mesh->snappyd->min_Max.min.z=1000000;
+            mesh->snappyd->min_Max.max.x=-1000000;
+            mesh->snappyd->min_Max.max.y=-1000000;
+            mesh->snappyd->min_Max.max.z=-1000000;
+            mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
+        }
+
+        for(int i = 0; i < mesh->snappyd->gBoxCellZone.boxes.size(); i++)
+        {
+            //draw box
+            int plus = mesh->snappyd->points.size();
+            mesh->snappyd->points.resize(8+plus);
+            mesh->snappyd->points[0+plus] = new  float[3];
+            mesh->snappyd->points[0+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].min.x;//x1
+            mesh->snappyd->points[0+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].min.y;//y1;
+            mesh->snappyd->points[0+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].min.z;//z1;
+
+
+            mesh->snappyd->points[1+plus] = new  float[3];
+            mesh->snappyd->points[1+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].max.x;//x2;
+            mesh->snappyd->points[1+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].min.y;//y1;
+            mesh->snappyd->points[1+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].min.z;//z1;
+
+            mesh->snappyd->points[2+plus] = new  float[3];
+            mesh->snappyd->points[2+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].max.x;//x2;
+            mesh->snappyd->points[2+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].max.y;//y2;
+            mesh->snappyd->points[2+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].min.z;//z1;
+
+            mesh->snappyd->points[3+plus] = new  float[3];
+            mesh->snappyd->points[3+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].min.x;//x1;
+            mesh->snappyd->points[3+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].max.y;//y2;
+            mesh->snappyd->points[3+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].min.z;//z1;
+
+            mesh->snappyd->points[4+plus] = new  float[3];
+            mesh->snappyd->points[4+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].min.x;//x1;
+            mesh->snappyd->points[4+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].min.y;//y1;
+            mesh->snappyd->points[4+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].max.z;//z2;
+
+            mesh->snappyd->points[5+plus] = new  float[3];
+            mesh->snappyd->points[5+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].max.x;//x2;
+            mesh->snappyd->points[5+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].min.y;//y1;
+            mesh->snappyd->points[5+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].max.z;//z2;
+
+            mesh->snappyd->points[6+plus] = new  float[3];
+            mesh->snappyd->points[6+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].max.x;//x2;
+            mesh->snappyd->points[6+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].max.y;//y2;
+            mesh->snappyd->points[6+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].max.z;//z2;
+
+            mesh->snappyd->points[7+plus] = new  float[3];
+            mesh->snappyd->points[7+plus][0] = mesh->snappyd->gBoxCellZone.boxes[i].min.x;//x1;
+            mesh->snappyd->points[7+plus][1] = mesh->snappyd->gBoxCellZone.boxes[i].max.y;//y2;
+            mesh->snappyd->points[7+plus][2] = mesh->snappyd->gBoxCellZone.boxes[i].max.z;//z2;
+
+            int starend[2];
+            starend[0] = mesh->snappyd->faces.size();
+
+            mesh->snappyd->faces.resize(6+starend[0]);
+            mesh->snappyd->faces[0+starend[0]] = new int[4];
+            mesh->snappyd->faces[0+starend[0]][0] = 3 + plus;
+            mesh->snappyd->faces[0+starend[0]][1] = 7 + plus;
+            mesh->snappyd->faces[0+starend[0]][2] = 6 + plus;
+            mesh->snappyd->faces[0+starend[0]][3] = 2 + plus;
+
+            mesh->snappyd->faces[1+starend[0]] = new int[4];
+            mesh->snappyd->faces[1+starend[0]][0] = 1 + plus;
+            mesh->snappyd->faces[1+starend[0]][1] = 5 + plus;
+            mesh->snappyd->faces[1+starend[0]][2] = 4 + plus;
+            mesh->snappyd->faces[1+starend[0]][3] = 0 + plus;
+
+            mesh->snappyd->faces[2+starend[0]] = new int[4];
+            mesh->snappyd->faces[2+starend[0]][0] = 4 + plus;
+            mesh->snappyd->faces[2+starend[0]][1] = 5 + plus;
+            mesh->snappyd->faces[2+starend[0]][2] = 6 + plus;
+            mesh->snappyd->faces[2+starend[0]][3] = 7 + plus;
+
+            mesh->snappyd->faces[3+starend[0]] = new int[4];
+            mesh->snappyd->faces[3+starend[0]][0] = 0 + plus;
+            mesh->snappyd->faces[3+starend[0]][1] = 3 + plus;
+            mesh->snappyd->faces[3+starend[0]][2] = 2 + plus;
+            mesh->snappyd->faces[3+starend[0]][3] = 1 + plus;
+
+            mesh->snappyd->faces[4+starend[0]] = new int[4];
+            mesh->snappyd->faces[4+starend[0]][0] = 0 + plus;
+            mesh->snappyd->faces[4+starend[0]][1] = 4 + plus;
+            mesh->snappyd->faces[4+starend[0]][2] = 7 + plus;
+            mesh->snappyd->faces[4+starend[0]][3] = 3 + plus;
+
+            mesh->snappyd->faces[5+starend[0]] = new int[4];
+            mesh->snappyd->faces[5+starend[0]][0] = 2 + plus;
+            mesh->snappyd->faces[5+starend[0]][1] = 6 + plus;
+            mesh->snappyd->faces[5+starend[0]][2] = 5 + plus;
+            mesh->snappyd->faces[5+starend[0]][3] = 1 + plus;
+
+            starend[1] = mesh->snappyd->faces.size();
+
+            mesh->snappyd->facezones.resize( mesh->snappyd->facezones.size()+1);
+            mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1]= new int[2];
+            mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1][0]= starend[0];
+            mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1][1]= starend[1];
+
+            mesh->snappyd->facetype.resize(mesh->snappyd->facetype.size() + 1);
+            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 1;
+            mesh->snappyd->facename.append(mesh->snappyd->gBoxCellZone.boxes[i].name);
+
+            views.append(mesh->snappyd->gBoxCellZone.boxes[i].name);
+            AddFaceToList(mesh->snappyd->gBoxCellZone.boxes[i].name,3);
+            bool flag_Path = false;
+            for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
+            {
+                for(int k = 0; k< mesh->patchDict->boundaries[j].patches.surfaces.length(); k++)
+                {
+                    if(mesh->patchDict->boundaries[j].patches.surfaces[k] == mesh->snappyd->gBoxCellZone.boxes[i].name)
+                    {
+                        flag_Path = true;
+                    }
+                }
+            }
+            if(flag_Path == false)
+            {
+                listSurfaces.append(mesh->snappyd->gBoxCellZone.boxes[i].name);
+            }
+
+            //find min max
+            mesh->snappyd->min_Max.min.x = mesh->snappyd->gBoxCellZone.boxes[i].min.x;
+            mesh->snappyd->min_Max.min.y = mesh->snappyd->gBoxCellZone.boxes[i].min.y;
+            mesh->snappyd->min_Max.min.z = mesh->snappyd->gBoxCellZone.boxes[i].min.z;
+
+            mesh->snappyd->min_Max.max.x = mesh->snappyd->gBoxCellZone.boxes[i].max.x;
+            mesh->snappyd->min_Max.max.y = mesh->snappyd->gBoxCellZone.boxes[i].max.y;
+            mesh->snappyd->min_Max.max.z = mesh->snappyd->gBoxCellZone.boxes[i].max.z;
+
+            //add min_Max temp to list min max;
+            mesh->snappyd->min_Max.name_Surface = mesh->snappyd->gBoxCellZone.boxes[i].name;
             mesh->snappyd->list_Surface_Min_Max.append(mesh->snappyd->min_Max);
             mesh->snappyd->min_Max.name_Surface="";
             mesh->snappyd->min_Max.min.x=1000000;
@@ -5954,6 +6252,150 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->min_Max.name_Surface="";
             mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
         }
+        for(int i = 0; i < mesh->snappyd->gCylinCellZone.cylins.size(); i++)
+        {
+            views.append(mesh->snappyd->gCylinCellZone.cylins[i].name);
+            AddFaceToList(mesh->snappyd->gCylinCellZone.cylins[i].name,3);
+            bool flag_Path = false;
+            for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
+            {
+                for(int k = 0; k< mesh->patchDict->boundaries[j].patches.surfaces.length(); k++)
+                {
+                    if(mesh->patchDict->boundaries[j].patches.surfaces[k] == mesh->snappyd->gCylinCellZone.cylins[i].name)
+                    {
+                        flag_Path = true;
+                    }
+                }
+            }
+            if(flag_Path == false)
+            {
+                listSurfaces.append(mesh->snappyd->gCylinCellZone.cylins[i].name);
+            }
+
+            //find minmax
+            float x1 = mesh->snappyd->gCylinCellZone.cylins[i].point1.x;
+            float x2 = mesh->snappyd->gCylinCellZone.cylins[i].point2.x;
+            float y1 = mesh->snappyd->gCylinCellZone.cylins[i].point1.y;
+            float y2 = mesh->snappyd->gCylinCellZone.cylins[i].point2.y;
+            float z1 = mesh->snappyd->gCylinCellZone.cylins[i].point1.z;
+            float z2 = mesh->snappyd->gCylinCellZone.cylins[i].point2.z;
+
+            float radius_cyl = mesh->snappyd->gCylinCellZone.cylins[i].radius;
+            //find min max default bouding
+            float P1,P2,P3,P4;
+
+            P1 = x1 + radius_cyl;//*costemp;
+            P2 = x1 - radius_cyl;//*costemp;
+            P3 = x2 + radius_cyl;//*costemp;
+            P4 = x2 - radius_cyl;//*costemp;
+
+            float minx= P1;
+            float maxx = P1;
+            if(minx>P2)
+            {
+                minx = P2;
+            }
+            if(minx>P3)
+            {
+                minx = P3;
+            }
+            if(minx>P4)
+            {
+                minx = P4;
+            }
+            if(maxx<P2)
+            {
+                maxx = P2;
+            }
+            if(maxx<P3)
+            {
+                maxx = P3;
+            }
+            if(maxx<P4)
+            {
+                maxx = P4;
+            }
+
+            P1 = y1 + radius_cyl;//*costemp;
+            P2 = y1 - radius_cyl;//*costemp;
+            P3 = y2 + radius_cyl;//*costemp;
+            P4 = y2 - radius_cyl;//*costemp;
+
+            float miny= P1;
+            float maxy = P1;
+            if(miny>P2)
+            {
+                miny = P2;
+            }
+            if(miny>P3)
+            {
+                miny = P3;
+            }
+            if(miny>P4)
+            {
+                miny = P4;
+            }
+
+            if(maxy<P2)
+            {
+                maxy = P2;
+            }
+            if(maxy<P3)
+            {
+                maxy = P3;
+            }
+            if(maxy<P4)
+            {
+                maxy = P4;
+            }
+
+            P1 = z1 + radius_cyl;//*costemp;
+            P2 = z1 - radius_cyl;//*costemp;
+            P3 = z2 + radius_cyl;//*costemp;
+            P4 = z2 - radius_cyl;//*costemp;
+
+            float minz= P1;
+            float maxz = P1;
+            if(minz>P2)
+            {
+                minz = P2;
+            }
+            if(minz>P3)
+            {
+                minz = P3;
+            }
+            if(minz>P4)
+            {
+                minz = P4;
+            }
+
+            if(maxz<P2)
+            {
+                maxz = P2;
+            }
+            if(maxz<P3)
+            {
+                maxz = P3;
+            }
+            if(maxz<P4)
+            {
+                maxz = P4;
+            }
+
+            mesh->snappyd->min_Max.min.x = minx;
+            mesh->snappyd->min_Max.min.y = miny;
+            mesh->snappyd->min_Max.min.z = minz;
+
+            mesh->snappyd->min_Max.max.x = maxx;
+            mesh->snappyd->min_Max.max.y = maxy;
+            mesh->snappyd->min_Max.max.z = maxz;
+
+            //add min_Max temp to list min max;
+            mesh->snappyd->min_Max.name_Surface = mesh->snappyd->gCylinCellZone.cylins[i].name;
+            mesh->snappyd->list_Surface_Min_Max.append(mesh->snappyd->min_Max);
+            mesh->snappyd->min_Max.name_Surface="";
+            mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
+        }
         //Sphere
         for(int i = 0; i < mesh->snappyd->gSphere.sphere.size(); i++)
         {
@@ -5986,6 +6428,41 @@ void MainWindow::on_actionOpen_triggered()
 
             //add min_Max temp to list min max;
             mesh->snappyd->min_Max.name_Surface = mesh->snappyd->gSphere.sphere[i].name;
+            mesh->snappyd->list_Surface_Min_Max.append(mesh->snappyd->min_Max);
+            mesh->snappyd->min_Max.name_Surface = "";
+            mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
+        }
+        for(int i = 0; i < mesh->snappyd->gSphereCellZone.sphere.size(); i++)
+        {
+            views.append(mesh->snappyd->gSphereCellZone.sphere[i].name);
+            AddFaceToList(mesh->snappyd->gSphereCellZone.sphere[i].name,3);
+            bool flag_Path = false;
+            for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
+            {
+                for(int k = 0; k< mesh->patchDict->boundaries[j].patches.surfaces.length(); k++)
+                {
+                    if(mesh->patchDict->boundaries[j].patches.surfaces[k] == mesh->snappyd->gSphereCellZone.sphere[i].name)
+                    {
+                        flag_Path = true;
+                    }
+                }
+            }
+            if(flag_Path == false)
+            {
+                listSurfaces.append(mesh->snappyd->gSphereCellZone.sphere[i].name);
+            }
+
+            //finf min max
+            mesh->snappyd->min_Max.min.x = mesh->snappyd->gSphereCellZone.sphere[i].centre.x + mesh->snappyd->gSphereCellZone.sphere[i].radius;
+            mesh->snappyd->min_Max.min.y = mesh->snappyd->gSphereCellZone.sphere[i].centre.y + mesh->snappyd->gSphereCellZone.sphere[i].radius;
+            mesh->snappyd->min_Max.min.z = mesh->snappyd->gSphereCellZone.sphere[i].centre.z + mesh->snappyd->gSphereCellZone.sphere[i].radius;
+
+            mesh->snappyd->min_Max.max.x = mesh->snappyd->gSphereCellZone.sphere[i].centre.x - mesh->snappyd->gSphereCellZone.sphere[i].radius;
+            mesh->snappyd->min_Max.max.y = mesh->snappyd->gSphereCellZone.sphere[i].centre.y - mesh->snappyd->gSphereCellZone.sphere[i].radius;
+            mesh->snappyd->min_Max.max.z = mesh->snappyd->gSphereCellZone.sphere[i].centre.z - mesh->snappyd->gSphereCellZone.sphere[i].radius;
+
+            //add min_Max temp to list min max;
+            mesh->snappyd->min_Max.name_Surface = mesh->snappyd->gSphereCellZone.sphere[i].name;
             mesh->snappyd->list_Surface_Min_Max.append(mesh->snappyd->min_Max);
             mesh->snappyd->min_Max.name_Surface = "";
             mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
@@ -6848,6 +7325,8 @@ void MainWindow::on_actionClose_triggered()
     ui->btn_Boundary->setDisabled(true);
     ui->btn_Generate->setDisabled(true);
     ui->btn_Mesh->setDisabled(true);
+	ui->txt_Log->clear();
+    path_Open = "";
 }
 
 void MainWindow::on_actionCapture_triggered()
