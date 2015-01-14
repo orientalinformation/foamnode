@@ -2297,7 +2297,7 @@ void MainWindow::ImportSTLSurface()
                     AddFaceToList(_name,1);
                     mesh->update();
                     ui->txt_Log->append("Changing "+ _name +" from cell zone to surface has been done");
-                    return;
+                    continue;
                 }
             }
 
@@ -2414,7 +2414,7 @@ void MainWindow::ImportSTLCellzone()
                     QString mess = "This file: " + _name + " is already exists";
                     QMessageBox::information(this,tr("Error"),tr(mess.toAscii().data()));
                     this->cancelImport = true;
-                    return;
+                    continue;
                 }
             }
             GeomeUserDefine *gUserDefineSurface = &mesh->snappyd->gUserDefine;
@@ -2455,7 +2455,7 @@ void MainWindow::ImportSTLCellzone()
                     mesh->update();
 
                     ui->txt_Log->append("Changing "+ _name +" from surface to cell zone has been done");
-                    return;
+                    continue;
                 }
             }
             //read file
