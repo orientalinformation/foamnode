@@ -4396,6 +4396,9 @@ void MainWindow::on_btn_CreateMesh_clicked()
     bool writeLog = false;
     if(flag_YesNo == false)
     {
+        QDir dir1(path_Open);
+        dir1.cdUp();
+        path_Open = dir1.path();
         QString saveCase = QFileDialog::getSaveFileName(this,"",path_Open);
         if(saveCase != "")
         {
@@ -5558,8 +5561,11 @@ void MainWindow::on_actionOpen_triggered()
     if(lastFolderCase == ""){
         if(lastFileSTL != ""){
             lastFolderCase = lastFileSTL;
-        }else
-            lastFolderCase == QDir::currentPath();
+        }else{
+            QDir dir(QDir::currentPath());
+            dir.cdUp();
+            lastFolderCase == dir.path();
+        }
     }
     QString dir;
         dir= QFileDialog::getExistingDirectory(this, tr("Open Directory"),
@@ -5568,7 +5574,9 @@ void MainWindow::on_actionOpen_triggered()
                                                  | QFileDialog::DontResolveSymlinks);
         if(dir!="")
         {
-            lastFolderCase = dir;
+            QDir dircdUp(dir);
+            dircdUp.cdUp();
+            lastFolderCase = dircdUp.path();
             OpenFoam::SetOpenFOAMPath(dir);
             this->setWindowTitle(dir);
 
