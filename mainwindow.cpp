@@ -291,7 +291,15 @@ bool MainWindow::AddFaceToList(QString name, int type)
     if(i > -1)
     {
         ui->tb_boundary->showRow(i);
-//        loadData();
+        if(type != 0){
+            if(type == 1){
+                ui->tb_boundary->item(i,0)->setBackgroundColor(QColor(255,255,255));
+            }else if(type == 2){
+                ui->tb_boundary->item(i,0)->setBackgroundColor(QColor(255,170,0));
+            }else{
+                ui->tb_boundary->item(i,0)->setBackgroundColor(QColor(0,255,0));
+            }
+        }
         return false;
     }
     listFaces.append(name);
@@ -306,7 +314,6 @@ bool MainWindow::AddFaceToList(QString name, int type)
             temp->setBackgroundColor(QColor(255,170,0));
         }else{
             temp->setBackgroundColor(QColor(0,255,0));
-//            temp->setTextColor(QColor(255,255,255));
         }
     }
     ui->tb_boundary->setItem(listFaces.size()-1,0,temp);
@@ -2223,7 +2230,9 @@ void MainWindow::on_btn_Browse_clicked()
 }
 void MainWindow::ImportSTLSurface()
 {
-    if(ui->txt_GeometrySurfaceFileStl->text() == "")
+    if(QFile(ui->txt_GeometrySurfaceFileStl->text()).exists())
+        file_name_STLs.append(ui->txt_GeometrySurfaceFileStl->text());
+    if(file_name_STLs.size() == 0)
     {
         QMessageBox::information(this,tr("Error"),tr("Please select a STL file!"));
         return;
@@ -2242,7 +2251,48 @@ void MainWindow::ImportSTLSurface()
             {
                 if(name ==  gUserDefine->user_Defines[i].name_file)
                 {
-                    QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                    QString mess = "This file: " + _name + " is already exists";
+                    QMessageBox::information(this,tr("Error"),tr(mess.toAscii().data()));
+                    continue;
+                }
+            }
+            GeomeUserDefine *gUserDefineCellzone = &mesh->snappyd->gUserDefineCellZone;
+            for(int i=0; i< gUserDefineCellzone->n; i++)
+            {
+                if(name ==  gUserDefineCellzone->user_Defines[i].name_file)
+                {
+                    gUserDefine->n= gUserDefine->n+1;
+                    gUserDefine->user_Defines.resize(gUserDefine->n);
+                    gUserDefine->user_Defines.last() = gUserDefineCellzone->user_Defines[i];
+                    gUserDefineCellzone->n = gUserDefineCellzone->n - 1;
+                    gUserDefineCellzone->user_Defines.remove(i);
+                    gUserDefine->refi_Sur.n=gUserDefine->refi_Sur.n+1;
+                    gUserDefine->refi_Sur.surfaces.resize(gUserDefine->refi_Sur.n);
+                    gUserDefine->refi_Sur.surfaces.last() = gUserDefineCellzone->refi_Sur.surfaces[i];
+                    gUserDefineCellzone->refi_Sur.n = gUserDefineCellzone->refi_Sur.n - 1;
+                    gUserDefineCellzone->refi_Sur.surfaces.remove(i);
+                    gUserDefine->refi_Reg.n=gUserDefine->refi_Reg.n+1;
+                    gUserDefine->refi_Reg.region.resize(gUserDefine->refi_Reg.n);
+                    gUserDefine->refi_Reg.region.last() = gUserDefineCellzone->refi_Reg.region[i];
+                    gUserDefineCellzone->refi_Reg.n = gUserDefineCellzone->refi_Reg.n - 1;
+                    gUserDefineCellzone->refi_Reg.region.remove(i);
+                    gUserDefine->refi_Fea.n = gUserDefine->refi_Fea.n + 1;
+                    gUserDefine->refi_Fea.feature.resize(gUserDefine->refi_Fea.n);
+                    gUserDefine->refi_Fea.feature.last() = gUserDefineCellzone->refi_Fea.feature[i];
+                    gUserDefineCellzone->refi_Fea.n = gUserDefine->refi_Fea.n - 1;
+                    gUserDefineCellzone->refi_Fea.feature.remove(i);
+                    for(int j = 0; j < mesh->snappyd->sTL.size(); j ++){
+                        if(mesh->snappyd->sTL[j].name == _name){
+                            for(int k = 0; k < mesh->snappyd->sTL[j].solids.size(); k ++) {
+                                mesh->snappyd->sTL[j].solids[k].color.x = 1.0;
+                                mesh->snappyd->sTL[j].solids[k].color.y = 1.0;
+                                mesh->snappyd->sTL[j].solids[k].color.z = 1.0;
+                            }
+                        }
+                    }
+                    AddFaceToList(_name,1);
+                    mesh->update();
+                    ui->txt_Log->append("Changing "+ _name +" from cell zone to surface has been done");
                     return;
                 }
             }
@@ -2325,13 +2375,16 @@ void MainWindow::ImportSTLSurface()
                 SetBoundingDistance();
                 ui->cb_BoundingType->setCurrentIndex(0);
             }
+            ui->txt_Log->append("Importing "+ _name +" file as surface has been done");
         }
         file_name_STLs.clear();
     }
 }
 void MainWindow::ImportSTLCellzone()
 {
-    if(ui->txt_GeometrySurfaceFileStl->text()=="")
+    if(QFile(ui->txt_GeometrySurfaceFileStl->text()).exists())
+        file_name_STLs.append(ui->txt_GeometrySurfaceFileStl->text());
+    if(file_name_STLs.size() == 0)
     {
         QMessageBox::information(this,tr("Error"),tr("Please select a STL file!"));
         return;
@@ -2351,11 +2404,52 @@ void MainWindow::ImportSTLCellzone()
             {
                 if(name==  gUserDefine->user_Defines[i].name_file)
                 {
-                    QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                    QString mess = "This file: " + _name + " is already exists";
+                    QMessageBox::information(this,tr("Error"),tr(mess.toAscii().data()));
                     return;
                 }
             }
+            GeomeUserDefine *gUserDefineSurface = &mesh->snappyd->gUserDefine;
+            for(int i=0; i< gUserDefineSurface->n; i++)
+            {
+                if(name ==  gUserDefineSurface->user_Defines[i].name_file)
+                {
+                    gUserDefine->n= gUserDefine->n+1;
+                    gUserDefine->user_Defines.resize(gUserDefine->n);
+                    gUserDefine->user_Defines.last() = gUserDefineSurface->user_Defines[i];
+                    gUserDefineSurface->n = gUserDefineSurface->n - 1;
+                    gUserDefineSurface->user_Defines.remove(i);
+                    gUserDefine->refi_Sur.n=gUserDefine->refi_Sur.n+1;
+                    gUserDefine->refi_Sur.surfaces.resize(gUserDefine->refi_Sur.n);
+                    gUserDefine->refi_Sur.surfaces.last() = gUserDefineSurface->refi_Sur.surfaces[i];
+                    gUserDefineSurface->refi_Sur.n = gUserDefineSurface->refi_Sur.n - 1;
+                    gUserDefineSurface->refi_Sur.surfaces.remove(i);
+                    gUserDefine->refi_Reg.n=gUserDefine->refi_Reg.n+1;
+                    gUserDefine->refi_Reg.region.resize(gUserDefine->refi_Reg.n);
+                    gUserDefine->refi_Reg.region.last() = gUserDefineSurface->refi_Reg.region[i];
+                    gUserDefineSurface->refi_Reg.n = gUserDefineSurface->refi_Reg.n - 1;
+                    gUserDefineSurface->refi_Reg.region.remove(i);
+                    gUserDefine->refi_Fea.n = gUserDefine->refi_Fea.n + 1;
+                    gUserDefine->refi_Fea.feature.resize(gUserDefine->refi_Fea.n);
+                    gUserDefine->refi_Fea.feature.last() = gUserDefineSurface->refi_Fea.feature[i];
+                    gUserDefineSurface->refi_Fea.n = gUserDefine->refi_Fea.n - 1;
+                    gUserDefineSurface->refi_Fea.feature.remove(i);
+                    for(int j = 0; j < mesh->snappyd->sTL.size(); j ++){
+                        if(mesh->snappyd->sTL[j].name == _name){
+                            for(int k = 0; k < mesh->snappyd->sTL[j].solids.size(); k ++) {
+                                mesh->snappyd->sTL[j].solids[k].color.x = 0.0;
+                                mesh->snappyd->sTL[j].solids[k].color.y = 1.0;
+                                mesh->snappyd->sTL[j].solids[k].color.z = 0.0;
+                            }
+                        }
+                    }
+                    AddFaceToList(_name,3);
+                    mesh->update();
 
+                    ui->txt_Log->append("Changing "+ _name +" from surface to cell zone has been done");
+                    return;
+                }
+            }
             //read file
             QString file1;
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -2431,6 +2525,7 @@ void MainWindow::ImportSTLCellzone()
                 SetBoundingDistance();
                 ui->cb_BoundingType->setCurrentIndex(0);
             }
+            ui->txt_Log->append("Importing "+ _name +" file as cell zone has been done");
         }
         file_name_STLs.clear();
     }

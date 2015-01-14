@@ -580,7 +580,7 @@ QString Snappy_Dmesh::CreateMeshQualityControls()
         maxLevel = 1;
     float minVol = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),3)/1000;
     str_File_New +="minVol " + QString::number(minVol) + ";\n";
-    str_File_New +="minTetQuality -1e30;\n";
+    str_File_New +="minTetQuality 1e-30;\n";
     float minArea = pow(MinIn(deltaBaseMesh.x,deltaBaseMesh.y,deltaBaseMesh.z)/pow(2.0,maxLevel),2)/300;
     str_File_New +="minArea " + QString::number(minArea) + ";\n";
     str_File_New +="minTwist 0.02;\n";
@@ -785,12 +785,12 @@ bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
                 if(line.size() > 0)
                 {
                     //Add color if existed
-                    if(line[0] == "color")
-                    {
-                        sTemp->color.x = line[1].toFloat();
-                        sTemp->color.y = line[2].toFloat();
-                        sTemp->color.z = line[3].toFloat();
-                    }
+//                    if(line[0] == "color")
+//                    {
+//                        sTemp->color.x = line[1].toFloat();
+//                        sTemp->color.y = line[2].toFloat();
+//                        sTemp->color.z = line[3].toFloat();
+//                    }
                     //Add Normal vector
                     if(line[0] == "facet")
                     {
