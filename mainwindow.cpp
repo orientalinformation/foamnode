@@ -2176,6 +2176,18 @@ void MainWindow::on_btn_Surface_clicked()
     {
         AddFaceToList(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name);
     }
+    for(int i=0; i< mesh->snappyd->gBoxRegion.n; i++)
+    {
+        AddFaceToList(mesh->snappyd->gBoxRegion.boxes[i].name);
+    }
+    for(int i=0; i< mesh->snappyd->gCylinRegion.n; i++)
+    {
+        AddFaceToList(mesh->snappyd->gCylinRegion.cylins[i].name);
+    }
+    for(int i=0; i< mesh->snappyd->gSphereRegion.n; i++)
+    {
+        AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name);
+    }
 }
 void MainWindow::on_btn_Bounding_clicked()
 {
@@ -3955,6 +3967,10 @@ void MainWindow::on_btn_MeshVolume_clicked()
     for(int i=0; i< mesh->snappyd->gCylinRegion.n; i++)
     {
         AddFaceToList(mesh->snappyd->gCylinRegion.cylins[i].name);
+    }
+    for(int i=0; i< mesh->snappyd->gSphereRegion.n; i++)
+    {
+        AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name);
     }
     for(int i=0; i< mesh->snappyd->gBoxCellZone.n; i++)
     {
