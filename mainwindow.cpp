@@ -2544,9 +2544,10 @@ void MainWindow::ImportSTLCellzone()
 void MainWindow::DefineSimpleSurface()
 {
     QString surfaceName = ui->txt_GeometrySurfaceName->text();
-    if(!CheckNameValid(surfaceName))
+    if(!CheckNameValid(surfaceName)){
         this->cancelImport = true;
         return;
+    }
     //Save value for each type
     Snappy_Dmesh *snappy = mesh->snappyd;
     if(ui->cb_SurfaceType->currentText() == "Cylinder")
@@ -4398,13 +4399,10 @@ void MainWindow::on_btn_CreateMesh_clicked()
     {
         QDir dir1(path_Open);
         dir1.cdUp();
-        path_Open = dir1.path();
-        QString saveCase = QFileDialog::getSaveFileName(this,"",path_Open);
+        QString saveCase = QFileDialog::getSaveFileName(this,"",dir1.path());
         if(saveCase != "")
         {
-            QDir dir(saveCase);
-            dir.cdUp();
-            path_Open = dir.path();
+            path_Open = saveCase;
             if(ui->checkBox_WriteLog->isChecked()){
                 QString filelog = "Log_" + QDate::currentDate().toString("yyyyMMdd") + "_" + QTime::currentTime().toString("hhmm") + ".txt";
                 logPath = saveCase + "/" + filelog;
@@ -4445,7 +4443,6 @@ void MainWindow::on_btn_CreateMesh_clicked()
             ui->txt_Log->append("Creating mesh...!\n");
             ui->txt_Log->append("********** STEP 1: **********");
             ui->txt_Log->append("Blockmesh is running... ");
-            createrThread = new MyThread();
             createrThread->logPath = this->logPath;
             createrThread->writeLog = writeLog;
             OpenFoam::SetOpenFOAMPath(saveCase);
@@ -4600,7 +4597,6 @@ void MainWindow::on_btn_CreateMesh_clicked()
             mesh->patchDict->WritePatchDict(path_Open + "/system");
         }
         ui->txt_Log->append("Creating mesh...!\n");
-        createrThread = new MyThread();
         createrThread->logPath = this->logPath;
         createrThread->writeLog = writeLog;
         OpenFoam::SetOpenFOAMPath(path_Open);
