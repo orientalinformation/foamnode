@@ -1568,9 +1568,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -1580,9 +1580,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -1592,9 +1592,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -1604,9 +1604,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -1616,9 +1616,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -1628,9 +1628,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -1640,9 +1640,9 @@ void MainWindow::loadData()
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
             }
         }
@@ -2311,7 +2311,7 @@ void MainWindow::ImportSTLSurface()
             {
                 QMessageBox::information(this,tr("Error"),tr("File is empty!"));
                 this->cancelImport = true;
-                return;
+                continue;
             }
 
 
@@ -2468,7 +2468,7 @@ void MainWindow::ImportSTLCellzone()
             {
                 QMessageBox::information(this,tr("Error"),tr("File is empty!"));
                 this->cancelImport = true;
-                return;
+                continue;
             }
 
             gUserDefine->n= gUserDefine->n+1;
@@ -6501,9 +6501,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
@@ -6514,9 +6514,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
@@ -6527,9 +6527,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
@@ -6539,9 +6539,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
@@ -6552,9 +6552,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
@@ -6565,9 +6565,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
@@ -6578,9 +6578,9 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             if(refi_Reg->region[i].name == currentSurface)
             {
                 if(refi_Reg->region[i].mode =="inside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(0);
                 else if(refi_Reg->region[i].mode =="outside" )
-                    ui->cb_MeshVolumeMode->setCurrentIndex(2);
+                    ui->cb_MeshVolumeMode->setCurrentIndex(1);
                 ui->txt_Level_Volume->setText(QString::number(refi_Reg->region[i].lv2));
                 return;
             }
