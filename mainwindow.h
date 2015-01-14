@@ -78,6 +78,7 @@ private:
     //enable Close trigger
     bool isOpen;
     bool isClose;
+    bool isCloseApp;
 
     bool keepBoundary;
 
@@ -124,10 +125,13 @@ private:
     void DefineSimpleVolume();
     void DefineSimpleCellZone();
 
-    bool AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface, QString mode, float lv);
+    bool AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface, QString mode, int lv);
     bool RemoveRefineDistant(RefinementRegions *refi_Reg,QString currentSurface,float lv1,int lv2);
     bool AddRefineRegion(RefinementRegions *refi_Reg, QString currentSurface,float lv1,int lv2);
 private slots:
+    void closeEvent(QCloseEvent *event);
+    void threadStarted();
+    void threadFinished();
     void on_actionOpen_triggered();
     void on_txt_Level_Volume_editingFinished();
     void on_txt_Z_textChanged(QString );

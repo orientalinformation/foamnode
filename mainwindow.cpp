@@ -11,9 +11,13 @@ MainWindow::MainWindow(QWidget *parent) :
     emitflag = 0;
     mesh = new DMesh();
     this->isClose = false;
+    this->isCloseApp = false;
     this->keepBoundary = false;
     ui->layout_Mesh->addWidget(mesh);
 //    ui->txt_Log->setMaximumBlockCount(300);
+    createrThread = new MyThread();
+    connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
+    connect(createrThread,SIGNAL(finished()),this,SLOT(threadFinished()));
     checkMeshThread = new MyThread();
     this->comment = "";
     this->logPath = "";
@@ -27,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->checkBox_WriteLog->setChecked(true);
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
     ui->tb_boundary->setRowCount(0);
-
     SetButtonDefault();
     CheckLicense();
     if(licenseOK){
@@ -135,6 +138,29 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(createrThread->isRunning() || checkMeshThread->isRunning())
+    {
+        if(QMessageBox::warning(this,tr("Warning"),tr("This case will be terminate...!"),QMessageBox::Ok,QMessageBox::No) == QMessageBox::Ok) {
+            createrThread->Terminate();
+            isCloseApp = true;
+        } else {
+            event->ignore();
+        }
+    }
+}
+
+void MainWindow::threadStarted()
+{
+}
+
+void MainWindow::threadFinished()
+{
+    if(isCloseApp)
+        this->close();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////  Default Value  ///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +224,6 @@ void MainWindow::LoadBoundaryControlItems()
 
 void MainWindow::LoadMeshControlItems()
 {
-    ui->cb_MeshVolumeMode->addItem("---Mode---");
     ui->cb_MeshVolumeMode->addItem("inside");
     ui->cb_MeshVolumeMode->addItem("outside");
 }
@@ -427,7 +452,11 @@ void MainWindow::on_btn_Boundary_clicked()
         }
         for(int i=0; i< mesh->snappyd->gUserDefine.n; i++)
         {
-            AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name);
+//            AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name);
+            for(int j = 0 ; j < mesh->snappyd->gUserDefine.refi_Sur.surfaces[i].n; j++)
+            {
+                AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name + "_" + mesh->snappyd->gUserDefine.refi_Sur.surfaces[i].regionSTLs[j].name);
+            }
         }
     }
 }
@@ -3965,7 +3994,7 @@ void MainWindow::on_btn_MeshRefineSurface_clicked()
 }
 
 
-bool MainWindow::AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface,QString mode, float lv)
+bool MainWindow::AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface,QString mode, int lv)
 {
     for(int i = 0; i< refi_Reg->n; i++)
     {
@@ -3985,7 +4014,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
     if(ui->tb_boundary->currentRow() == -1)
         return;
     bool a;
-    float lv = ui->txt_Level_Volume->text().toFloat(&a);
+    float lv = ui->txt_Level_Volume->text().toInt(&a);
     QString currentSurface = ui->tb_boundary->currentItem()->text();
     QString mode = ui->cb_MeshVolumeMode->currentText();
     if(AddRefineVolume(&mesh->snappyd->gBoxCellZone.refi_Reg,currentSurface,mode,lv))
@@ -3994,7 +4023,7 @@ void MainWindow::on_btn_MeshRefineVolume_clicked()
         return;
     if(AddRefineVolume(&mesh->snappyd->gSphereCellZone.refi_Reg,currentSurface,mode,lv))
         return;
-    if(AddRefineVolume(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,mode,lv))
+    if(AddRefineVolume(&mesh->snappyd->gUserDefineCellZone.refi_Reg,currentSurface,mode,lv) && AddUserDefine(currentSurface,lv,lv))
         return;
     if(AddRefineVolume(&mesh->snappyd->gBoxRegion.refi_Reg,currentSurface,mode,lv))
         return;
@@ -4251,10 +4280,8 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 mesh->patchDict->WritePatchDict(saveCase + "/system");
             }
             ui->txt_Log->append("Creating mesh...!\n\n");
-            createrThread = new MyThread();
             createrThread->logPath = this->logPath;
             createrThread->writeLog = writeLog;
-            connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
             OpenFoam::SetOpenFOAMPath(saveCase);
             createrThread->SetCommand("blockMesh");
             this->comment = "blockMesh";
@@ -4393,10 +4420,8 @@ void MainWindow::on_btn_CreateMesh_clicked()
             mesh->patchDict->WritePatchDict(path_Open + "/system");
         }
         ui->txt_Log->append("Creating mesh...!\n\n");
-        createrThread = new MyThread();
         createrThread->logPath = this->logPath;
         createrThread->writeLog = writeLog;
-        connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
         OpenFoam::SetOpenFOAMPath(path_Open);
         createrThread->SetCommand("blockMesh");
         this->comment = "blockMesh";
