@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mesh = new DMesh();
     this->isClose = false;
     this->keepBoundary = false;
+    this->cancelImport = false;
     ui->layout_Mesh->addWidget(mesh);
 //    ui->txt_Log->setMaximumBlockCount(300);
     checkMeshThread = new MyThread();
@@ -293,7 +294,7 @@ void MainWindow::Thread_Changed(QString value)
 {
 //    QString logvalue = value;
     if(comment != "blockMesh"){
-        value = value.remove("\n");
+//        value = value.remove("\n");
     //    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
     //        QFile file(logPath);
     //        file.open(QIODevice::Append);
@@ -303,6 +304,7 @@ void MainWindow::Thread_Changed(QString value)
         if(comment == "checkMesh"){
             FilterLogMesh(value);
         }else
+            value = value.trimmed();
             ui->txt_Log->append(value);
     }
 }
@@ -2185,6 +2187,7 @@ void MainWindow::ImportSTLSurface()
     if(ui->txt_GeometrySurfaceFileStl->text() == "")
     {
         QMessageBox::information(this,tr("Error"),tr("Please select a STL file!"));
+        this->cancelImport = true;
         return;
     }
     else
@@ -2202,6 +2205,7 @@ void MainWindow::ImportSTLSurface()
                 if(name ==  gUserDefine->user_Defines[i].name_file)
                 {
                     QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                    this->cancelImport = true;
                     return;
                 }
             }
@@ -2215,6 +2219,7 @@ void MainWindow::ImportSTLSurface()
             if(file1 == "")
             {
                 QMessageBox::information(this,tr("Error"),tr("File is empty!"));
+                this->cancelImport = true;
                 return;
             }
 
@@ -2286,6 +2291,7 @@ void MainWindow::ImportSTLSurface()
             }
         }
         file_name_STLs.clear();
+        this->cancelImport = false;
     }
 }
 void MainWindow::ImportSTLCellzone()
@@ -2293,6 +2299,7 @@ void MainWindow::ImportSTLCellzone()
     if(ui->txt_GeometrySurfaceFileStl->text()=="")
     {
         QMessageBox::information(this,tr("Error"),tr("Please select a STL file!"));
+        this->cancelImport = true;
         return;
     }
     else
@@ -2311,6 +2318,7 @@ void MainWindow::ImportSTLCellzone()
                 if(name==  gUserDefine->user_Defines[i].name_file)
                 {
                     QMessageBox::information(this,tr("Error"),tr("This name is already exists"));
+                    this->cancelImport = true;
                     return;
                 }
             }
@@ -2324,6 +2332,7 @@ void MainWindow::ImportSTLCellzone()
             if(file1 == "")
             {
                 QMessageBox::information(this,tr("Error"),tr("File is empty!"));
+                this->cancelImport = true;
                 return;
             }
 
@@ -2392,6 +2401,7 @@ void MainWindow::ImportSTLCellzone()
             }
         }
         file_name_STLs.clear();
+        this->cancelImport = false;
     }
 }
 
@@ -2399,6 +2409,7 @@ void MainWindow::DefineSimpleSurface()
 {
     QString surfaceName = ui->txt_GeometrySurfaceName->text();
     if(!CheckNameValid(surfaceName))
+        this->cancelImport = true;
         return;
     //Save value for each type
     Snappy_Dmesh *snappy = mesh->snappyd;
@@ -2409,6 +2420,7 @@ void MainWindow::DefineSimpleSurface()
            ||ui->txt_P2_Cyl_Sur_Y->text()=="" || ui->txt_P2_Cyl_Sur_Z->text()=="" || ui->txt_Radius_Cyl_Sur->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -2425,6 +2437,7 @@ void MainWindow::DefineSimpleSurface()
             if(!a || !b || !c || !d ||!d || !e || !k || !l)
             {
                 QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                this->cancelImport = true;
                 return;
             }
             //find min max default bouding
@@ -2588,6 +2601,7 @@ void MainWindow::DefineSimpleSurface()
 //            snappy->facename.append(surfaceName);
             mesh->updateGL();
             ui->txt_Log->append("Defining "+ surfaceName +" cylinder has been done");
+            this->cancelImport = false;
         }
     }
     else if(ui->cb_SurfaceType->currentText() == "Box")
@@ -2597,6 +2611,7 @@ void MainWindow::DefineSimpleSurface()
            ui->txt_Min_Box_Sur_X->text()=="" || ui->txt_Min_Box_Sur_Y->text()=="" || ui->txt_Min_Box_Sur_Z->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -2612,6 +2627,7 @@ void MainWindow::DefineSimpleSurface()
             if(!a || !b || !c || !d ||!d || !e || !k)
             {
                 QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                this->cancelImport = true;
                 return;
             }
             //find min max default bouding
@@ -2765,6 +2781,7 @@ void MainWindow::DefineSimpleSurface()
             AddFaceToList(surfaceName,1);
             listSurfaces.append(surfaceName);
             ui->txt_Log->append("Successfully create "+ surfaceName +" box");
+            this->cancelImport = false;
         }
 
     }
@@ -2774,6 +2791,7 @@ void MainWindow::DefineSimpleSurface()
          if(ui->txt_P_Sphe_Sur_X->text()=="" || ui->txt_P_Sphe_Sur_Y->text()=="" || ui->txt_P_Sphe_Sur_Z->text()=="" || ui->txt_Radius_Sphe_Sur->text()=="")
          {
              QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+             this->cancelImport = true;
              return;
          }
          else
@@ -2788,6 +2806,7 @@ void MainWindow::DefineSimpleSurface()
              if(!a || !b || !c || !d  )
              {
                  QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                 this->cancelImport = true;
                  return;
              }
              //find min max default bouding
@@ -2843,6 +2862,7 @@ void MainWindow::DefineSimpleSurface()
  //            snappy->facename.append(surfaceName);
              mesh->updateGL();
              ui->txt_Log->append("Defining "+ surfaceName +" sphere has been done");
+             this->cancelImport = false;
          }
     }
     ui->cb_BoundingType->setCurrentIndex(0);
@@ -2852,6 +2872,7 @@ void MainWindow::DefineSimpleCellZone()
 {
     QString surfaceName = ui->txt_GeometrySurfaceName->text();
     if(!CheckNameValid(surfaceName))
+        this->cancelImport = true;
         return;
     //Save value for each type
     Snappy_Dmesh *snappy = mesh->snappyd;
@@ -2862,6 +2883,7 @@ void MainWindow::DefineSimpleCellZone()
            ||ui->txt_P2_Cyl_Sur_Y->text()=="" || ui->txt_P2_Cyl_Sur_Z->text()=="" || ui->txt_Radius_Cyl_Sur->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -2878,6 +2900,7 @@ void MainWindow::DefineSimpleCellZone()
             if(!a || !b || !c || !d ||!d || !e || !k || !l)
             {
                 QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                this->cancelImport = true;
                 return;
             }
             //find min max default bouding
@@ -3037,6 +3060,7 @@ void MainWindow::DefineSimpleCellZone()
             SetBoundingDistance();
             mesh->updateGL();
             ui->txt_Log->append("Defining "+ surfaceName +" cylinder cell zone has been done");
+            this->cancelImport = false;
         }
     }
     else if(ui->cb_SurfaceType->currentText() == "Box")
@@ -3046,6 +3070,7 @@ void MainWindow::DefineSimpleCellZone()
            ui->txt_Min_Box_Sur_X->text()=="" || ui->txt_Min_Box_Sur_Y->text()=="" || ui->txt_Min_Box_Sur_Z->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -3061,6 +3086,7 @@ void MainWindow::DefineSimpleCellZone()
             if(!a || !b || !c || !d ||!d || !e || !k)
             {
                 QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                this->cancelImport = true;
                 return;
             }
 
@@ -3213,6 +3239,7 @@ void MainWindow::DefineSimpleCellZone()
 
             AddFaceToList(surfaceName,3);
             ui->txt_Log->append("Successfully create "+ surfaceName +" box cell zone");
+            this->cancelImport = false;
         }
 
     }
@@ -3222,6 +3249,7 @@ void MainWindow::DefineSimpleCellZone()
          if(ui->txt_P_Sphe_Sur_X->text()=="" || ui->txt_P_Sphe_Sur_Y->text()=="" || ui->txt_P_Sphe_Sur_Z->text()=="" || ui->txt_Radius_Sphe_Sur->text()=="")
          {
              QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+             this->cancelImport = true;
              return;
          }
          else
@@ -3236,6 +3264,7 @@ void MainWindow::DefineSimpleCellZone()
              if(!a || !b || !c || !d  )
              {
                  QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                 this->cancelImport = true;
                  return;
              }
              //find min max default bouding
@@ -3292,15 +3321,27 @@ void MainWindow::DefineSimpleCellZone()
              SetBoundingDistance();
              mesh->updateGL();
              ui->txt_Log->append("Defining "+ surfaceName +" sphere cell zone has been done");
+             this->cancelImport = false;
          }
     }
     ui->cb_BoundingType->setCurrentIndex(0);
+}
+
+void MainWindow::ViewLog(QString value)
+{
+    if(value.contains("--> FOAM FATAL IO ERROR:")){
+        viewLog = 1;
+    }
+    if(viewLog == 1){
+        ui->txt_Log->append(value);
+    }
 }
 
 void MainWindow::DefineSimpleVolume()
 {
     QString volumeName = ui->txt_GeometrySurfaceName->text();
     if(!CheckNameValid(volumeName))
+        this->cancelImport = true;
         return;
     //Save value for each type
     if(ui->cb_SurfaceType->currentText() == "Box")
@@ -3310,6 +3351,7 @@ void MainWindow::DefineSimpleVolume()
            ui->txt_Min_Box_Sur_X->text()=="" || ui->txt_Min_Box_Sur_Y->text()=="" || ui->txt_Min_Box_Sur_Z->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -3325,6 +3367,7 @@ void MainWindow::DefineSimpleVolume()
             if(!a || !b || !c || !d ||!d || !e || !k)
             {
                 QMessageBox::information(this,tr("Error"),tr("Values are incorrect!"));
+                this->cancelImport = true;
                 return;
             }
 
@@ -3455,6 +3498,7 @@ void MainWindow::DefineSimpleVolume()
 
             mesh->updateGL();
             ui->txt_Log->append("Defining of "+ volumeName +" box has been done");
+            this->cancelImport = false;
         }
 
     }
@@ -3465,6 +3509,7 @@ void MainWindow::DefineSimpleVolume()
            ||ui->txt_P2_Cyl_Sur_Y->text()=="" || ui->txt_P2_Cyl_Sur_Z->text()=="" || ui->txt_Radius_Cyl_Sur->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are invalid!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -3481,6 +3526,7 @@ void MainWindow::DefineSimpleVolume()
             if(!a || !b || !c || !d ||!d || !e || !k || !l)
             {
                 QMessageBox::information(this,tr("Error"),tr("Values are invalid!"));
+                this->cancelImport = true;
                 return;
             }
             GeomeCylinderRegion *gCylinRegion = &mesh->snappyd->gCylinRegion;
@@ -3516,6 +3562,7 @@ void MainWindow::DefineSimpleVolume()
 
             mesh->updateGL();
             ui->txt_Log->append("Defining  of "+ volumeName +" cylinder has been done");
+            this->cancelImport = false;
         }
 
     }
@@ -3525,6 +3572,7 @@ void MainWindow::DefineSimpleVolume()
         if(ui->txt_P_Sphe_Sur_X->text()=="" || ui->txt_P_Sphe_Sur_Y->text()=="" || ui->txt_P_Sphe_Sur_Z->text()=="" || ui->txt_Radius_Sphe_Sur->text()=="")
         {
             QMessageBox::information(this,tr("Error"),tr("Values are invalid!"));
+            this->cancelImport = true;
             return;
         }
         else
@@ -3538,6 +3586,7 @@ void MainWindow::DefineSimpleVolume()
             if(!a || !b || !c || !d)
             {
                 QMessageBox::information(this,"Error","Values are invalid!");
+                this->cancelImport = true;
                 return;
             }
 
@@ -3571,6 +3620,7 @@ void MainWindow::DefineSimpleVolume()
 
             mesh->updateGL();
             ui->txt_Log->append("Defining of "+ volumeName +" sphere has been done");
+            this->cancelImport = false;
         }
     }
 }
@@ -4219,6 +4269,9 @@ void MainWindow::on_btn_CreateMesh_clicked()
         QString saveCase = QFileDialog::getSaveFileName(this,"",path_Open);
         if(saveCase != "")
         {
+            QDir dir(saveCase);
+            dir.cdUp();
+            path_Open = dir.path();
             if(ui->checkBox_WriteLog->isChecked()){
                 QString filelog = "Log_" + QDate::currentDate().toString("yyyyMMdd") + "_" + QTime::currentTime().toString("hhmm") + ".txt";
                 logPath = saveCase + "/" + filelog;
@@ -4256,7 +4309,9 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 mesh->patchDict->WritePatchDict(saveCase + "/system");
             }
-            ui->txt_Log->append("Creating mesh...!\n\n");
+            ui->txt_Log->append("Creating mesh...!\n");
+            ui->txt_Log->append("********** STEP 1: **********");
+            ui->txt_Log->append("Blockmesh is running... ");
             createrThread = new MyThread();
             createrThread->logPath = this->logPath;
             createrThread->writeLog = writeLog;
@@ -4270,6 +4325,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
+            ui->txt_Log->append("Blockmesh has finished... \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
             for(int i = 0; i < mesh->snappyd->gUserDefine.refi_Fea.n; i++)
             {
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
@@ -4277,6 +4333,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
+                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"...");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
@@ -4289,49 +4346,61 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 this->comment = "blockMesh";
                 createrThread->ThreadName("blockMesh");
                 createrThread->start();
+                ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name +"... ");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
                 }
             }
+            ui->txt_Log->append("Surface feature extract has finished...");
+            ui->txt_Log->append("**********STEP 2 HAS FINISHED **********\n**********STEP 3: **********");
             createrThread->SetSubCommand("-overwrite",2);
             createrThread->SetCommand("snappyHexMesh");
             this->comment = "snappyHexMesh";
             createrThread->ThreadName("snappyHexMesh");
+            ui->txt_Log->append("SnappyHexMesh is running...");
             createrThread->start();
             while(createrThread->isRunning())
             {
                 QApplication::processEvents();
             }
+            ui->txt_Log->append("SnappyHexMesh has finished...");
             createrThread->SetSubCommand("-overwrite",2);
             createrThread->SetCommand("createPatch");
             this->comment = "createPatch";
             createrThread->ThreadName("createPatch");
             createrThread->start();
+            ui->txt_Log->append("********** STEP 3 HAS FINISHED **********\n********** STEP 4: **********\nCreatePatch is running...");
             while(createrThread->isRunning())
             {
                 QApplication::processEvents();
             }
+            ui->txt_Log->append("**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
             createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
             createrThread->SetCommand("renumberMesh");
             this->comment = "renumberMesh";
             createrThread->ThreadName("renumberMesh");
             createrThread->start();
+            ui->txt_Log->append("RenumberMesh is running...");
             while(createrThread->isRunning())
             {
                 QApplication::processEvents();
             }
+            ui->txt_Log->append("RenumberMesh has finished...");
             if(mesh->snappyd->gBoxCellZone.boxes.size() > 0 || mesh->snappyd->gCylinCellZone.cylins.size() > 0 ||
                     mesh->snappyd->gSphereCellZone.sphere.size() > 0 || mesh->snappyd->gUserDefineCellZone.user_Defines.size() > 0) {
                 createrThread->SetSubCommand("",2);
                 createrThread->SetCommand("topoSet -dict system/DMESH.topoSetDict");
                 createrThread->ThreadName("topoSet");
                 createrThread->start();
+                ui->txt_Log->append("TopoSet is running...");
                 while(createrThread->isRunning())
                 {
                     QApplication::processEvents();
                 }
+                ui->txt_Log->append("TopoSet has finished...");
             }
+            ui->txt_Log->append("********* STEP 5 HAS FINISHED **********");
             //save file setting bounding
             QStringList list;
             QString str_para;
@@ -4353,7 +4422,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 str_para = "distance " + x1 + " " + y1 + " " + z1 + " " + x2 + " " + y2 + " " + z2;
                 list.append(str_para);
             }
-            else if(ui->cb_BoundingType->currentIndex() ==2)
+            else if(ui->cb_BoundingType->currentIndex() == 2)
             {
                 str_para = "define";
                 list.append(str_para);
@@ -4398,7 +4467,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             QFile(path_Open + "/system/createPatchDict").remove();
             mesh->patchDict->WritePatchDict(path_Open + "/system");
         }
-        ui->txt_Log->append("Creating mesh...!\n\n");
+        ui->txt_Log->append("Creating mesh...!\n");
         createrThread = new MyThread();
         createrThread->logPath = this->logPath;
         createrThread->writeLog = writeLog;
@@ -4408,10 +4477,12 @@ void MainWindow::on_btn_CreateMesh_clicked()
         this->comment = "blockMesh";
         createrThread->ThreadName("blockMesh");
         createrThread->start();
+        ui->txt_Log->append("********** STEP 1: **********\nBlockmesh is running...");
         while(createrThread->isRunning())
         {
             QApplication::processEvents();
         }
+        ui->txt_Log->append("Blockmesh has finished... \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
         for(int i = 0; i < mesh->snappyd->gUserDefine.refi_Fea.n; i++)
         {
             createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
@@ -4419,16 +4490,20 @@ void MainWindow::on_btn_CreateMesh_clicked()
             createrThread->ThreadName("blockMesh");
             this->comment = "blockMesh";
             createrThread->start();
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"... ");
             while(createrThread->isRunning())
             {
                 QApplication::processEvents();
             }
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +" done...");
         }
+        ui->txt_Log->append("**********STEP 2 HAS FINISHED **********\n**********STEP 3: **********");
         createrThread->SetSubCommand("-overwrite",2);
         createrThread->SetCommand("snappyHexMesh");
         this->comment = "snappyHexMesh";
         createrThread->ThreadName("snappyHexMesh");
         createrThread->start();
+        ui->txt_Log->append("SnappyHexMesh is running...");
         while(createrThread->isRunning())
         {
             QApplication::processEvents();
@@ -4437,20 +4512,24 @@ void MainWindow::on_btn_CreateMesh_clicked()
         createrThread->SetCommand("createPatch");
         this->comment = "createPatch";
         createrThread->ThreadName("createPatch");
+        ui->txt_Log->append("********** STEP 3 HAS FINISHED **********\n********** STEP 4: **********\nCreatePatch is running...");
         createrThread->start();
         while(createrThread->isRunning())
         {
             QApplication::processEvents();
         }
+        ui->txt_Log->append("**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
         createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
         createrThread->SetCommand("renumberMesh");
         this->comment = "renumberMesh";
         createrThread->ThreadName("renumberMesh");
         createrThread->start();
+        ui->txt_Log->append("RenumberMesh is running...");
         while(createrThread->isRunning())
         {
             QApplication::processEvents();
         }
+        ui->txt_Log->append("RenumberMesh has finished...\nTopoSet is running..");
         createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
         this->comment = "topoSetDict";
         createrThread->ThreadName("topoSetDict");
@@ -4459,7 +4538,8 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-
+        ui->txt_Log->append("TopoSet has finished...");
+        ui->txt_Log->append("********* STEP 5 HAS FINISHED **********");
         //save file setting bounding
         QStringList list;
         QString str_para;
@@ -6698,14 +6778,16 @@ void MainWindow::on_btn_GeoDefineNew_clicked()
         if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
             DefineSimpleVolume();
     }
-    this->isClose = false;
-    ui->actionClose->setEnabled(true);
-    ui->actionCheck_mesh->setEnabled(true);
-    ui->actionParaView->setEnabled(true);
-    ui->actionSave->setDisabled(false);
-    ui->btn_Boundary->setDisabled(false);
-    ui->btn_Generate->setDisabled(false);
-    ui->btn_Mesh->setDisabled(false);
+    if(!this->cancelImport){
+        this->isClose = false;
+        ui->actionClose->setEnabled(true);
+        ui->actionCheck_mesh->setEnabled(true);
+        ui->actionParaView->setEnabled(true);
+        ui->actionSave->setDisabled(false);
+        ui->btn_Boundary->setDisabled(false);
+        ui->btn_Generate->setDisabled(false);
+        ui->btn_Mesh->setDisabled(false);
+    }
 }
 
 void MainWindow::on_rbn_Volume_clicked(bool checked)

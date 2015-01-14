@@ -27,41 +27,74 @@ QString MyThread::ThreadName()
 
 QString MyThread::FilterLog(QString value)
 {
-//    if(flag == true){
-        if(value.contains("Read mesh in")){
-            checkFlag = 1;
-            return value;
-        }
-        if(value.trimmed() == ""){
-            return "NULL-NONE";
-        }
-        if(value.contains("Marked for refinement due to") || value.contains("Keeping all cells in region")
-                || value.contains("markFacesOnProblemCells") || value.contains("markFacesOnProblemCells")
-                || value.contains("Introducing baffles for")){
-            checkFlag = 0;
-            return "NULL-NONE";
-        }
-        if(value.contains("Selected for refinement : 0 cells") || value.contains("Number of intersected edges"))
-        {
-            checkFlag = 1;
-            return "NULL-NONE";
-        }
-        if(value.contains("Checking faces in error :") || value.contains("Moving mesh using diplacement scaling")){
-            checkFlag = 0;
-            return "NULL-NONE";
-        }
-        if(value.contains("faces on cells with determinant"))
-        {
-            checkFlag = 1;
-            return "NULL-NONE";
-        }
-        if(checkFlag == 0){
-            return "NULL-NONE";
-        }
-        if(checkFlag == 1){
-            return value;
-        }
+//    if(value.contains("Read mesh in")){
+//        checkFlag = 1;
+//        return value;
 //    }
+    if(value.trimmed() == "" || value.contains("// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //")){
+        return "NULL-NONE";
+    }
+    if(value.contains("--> FOAM FATAL IO ERROR:")){
+        checkFlag = 2;
+    }
+    if(value.trimmed() == "Create time"){
+        checkFlag = 1;
+    }
+//    if(value.contains("Marked for refinement due to") || value.contains("Keeping all cells in region")
+//            || value.contains("markFacesOnProblemCells") || value.contains("markFacesOnProblemCells")
+//            || value.contains("Introducing baffles for")){
+//        checkFlag = 0;
+//        return "NULL-NONE";
+//    }
+//    if(value.contains("Selected for refinement : 0 cells") || value.contains("Number of intersected edges"))
+//    {
+//        checkFlag = 1;
+//        return "NULL-NONE";
+//    }
+//    if(value.contains("Checking faces in error :") || value.contains("Moving mesh using diplacement scaling")){
+//        checkFlag = 0;
+//        return "NULL-NONE";
+//    }
+//    if(value.contains("faces on cells with determinant"))
+//    {
+//        checkFlag = 1;
+//        return "NULL-NONE";
+//    }
+//    if(checkFlag == 0){
+//        return "NULL-NONE";
+//    }
+    if(checkFlag == 2){
+        return value;
+    }
+    if(allString.count() > 10){
+        if(value.trimmed().contains("-----------------")){
+            QString temp = allString.last() + value;
+            allString.clear();
+            checkFlag = 1;
+            return temp;
+        }else{
+            allString.append(value);
+            return "NULL-NONE";
+        }
+    }else{
+        if(allString.count() > 0){
+            if(value.trimmed().contains("-----------------")){
+                QString temp = allString.last() + value;
+                allString.clear();
+                checkFlag = 1;
+                return temp;
+            }else{
+                allString.append(value);
+                return "NULL-NONE";
+            }
+        }else{
+            allString.append(value);
+            return "NULL-NONE";
+        }
+    }
+    if(checkFlag == 1){
+        return value;
+    }
 }
 void MyThread::ThreadName(QString name)
 {
@@ -136,7 +169,8 @@ void MyThread::run()
                             PID= temps[1];
                         }
                     }
-                    temp = FilterLog(temp);
+                    QString temp1 = temp;
+                    temp = FilterLog(temp1);
                     if(emitappend && temp != "NULL-NONE"){
                         emit changed(temp);
                     }

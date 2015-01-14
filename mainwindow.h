@@ -81,6 +81,10 @@ private:
 
     bool keepBoundary;
 
+    bool cancelImport;
+    //Check output to view log
+    int viewLog;
+
     void LoadLocationInMesh();
     void LoadControlItems();
     void LoadMeshControlItems();
@@ -123,6 +127,9 @@ private:
     void DefineSimpleSurface();
     void DefineSimpleVolume();
     void DefineSimpleCellZone();
+
+    //Control text log
+    void ViewLog(QString value);
 
     bool AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface, QString mode, float lv);
     bool RemoveRefineDistant(RefinementRegions *refi_Reg,QString currentSurface,float lv1,int lv2);
