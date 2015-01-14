@@ -221,24 +221,22 @@ void MyThread::run()
 }
 void MyThread::Terminate()
 {
-    if(OpenFoam::PID() == "-1")
+    if(this->PID == "-1")
         return;
     QProcess *taskKill;
     taskKill = new QProcess();
     QString command;
-    if(this->threadName == "calculator")
-        mainCommand = OpenFoam::Solver();
     #if defined(Q_OS_WIN)
     {
-        command = "taskkill /PID " + OpenFoam::PID() + " /F /T";
+        command = "taskkill /PID " + this->PID + " /F /T";
         taskKill->start(command,QIODevice::ReadOnly);
         process->kill();
     }
     #else
     {
-        command = "kill " + OpenFoam::PID();
+        command = "kill " + this->PID;
         system(command.toAscii().data());
     }
     #endif
-    OpenFoam::PID("-1");
+    this->PID = -1;
 }

@@ -13,6 +13,7 @@ DMesh::DMesh(QGLWidget *parent) : QGLWidget(parent)
     zAverage = 0;
     flagFirstStart = false;
     zoomScale =100;
+    scalePoint = 0;
     //declare dmesh
     blockd = new Block_Dmesh();
     blockd->boundMesh.n=0;
@@ -265,7 +266,6 @@ void DMesh::FindVMax()
 
 void DMesh::paintGL()
 {
-    FindVMax();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    
     glLoadIdentity();
     glTranslatef(0,0,-6);
@@ -280,8 +280,8 @@ void DMesh::paintGL()
         glRotatef(zRot,0,0,1);
 
         glTranslatef(-xCenter/4,-yCenter/4,-zCenter/4);
-        DrawEdges();
         DrawLocationPoint();
+        DrawEdges();
 
     glPopMatrix();
 
@@ -289,7 +289,6 @@ void DMesh::paintGL()
 
     DrawCenterCoordinate();
     DrawNoteCoordinate();
-
 }
 
 void DMesh::ShowHeighWidthGreen()
@@ -297,6 +296,7 @@ void DMesh::ShowHeighWidthGreen()
     QString textshow;
     if(snappyd->list_Surface_Min_Max.length() !=0)
     {
+        FindVMax();
         float x1, x2, y1, y2, z1, z2;
         x1 = 1000000;
         y1 = 1000000;
@@ -406,13 +406,17 @@ void DMesh::DrawCenterCoordinate()
         return;
     QVector <float*> coordinate;
     coordinate.resize(4);
+    int length = scalePoint/12;
+    if(length == 0){
+        length = 1;
+    }
     for (int i = 0; i < 4; i++)
     {
         coordinate[i] = new float[3];
         for (int j = 0; j < 3; j++)
         {
             if(i == j + 1)
-                coordinate[i][j] = 1;
+                coordinate[i][j] = length;
             else
                 coordinate[i][j] = 0;
         }
@@ -422,11 +426,14 @@ void DMesh::DrawCenterCoordinate()
 
         //Draw the center coordinate
         glPushMatrix();
-            glViewport(xMove,yMove, screenWidth, screenHeight);
-            glTranslatef(0,0,zMove);
+            glViewport(xMove - screenWidth*1.5 ,
+                   yMove -screenHeight*1.5 ,
+                   4*screenWidth , 4*screenHeight);
+            glTranslatef(0,0,zMove - scalePoint);
             glRotatef(xRot,1,0,0);
             glRotatef(yRot,0,1,0);
             glRotatef(zRot,0,0,1);
+
             glBegin(GL_LINES);
             for (int i = 1; i < 4; i++)
             {
@@ -520,7 +527,7 @@ void DMesh::DrawLocationPoint()
 {
     glPushMatrix();
         glColor3f(1.0,0.0,0.0);
-        glPointSize(5);
+        glPointSize(6);
         glBegin(GL_POINTS);
             glVertex3d(snappyd->locationInMesh.x,snappyd->locationInMesh.y,snappyd->locationInMesh.z);
         glEnd();
@@ -706,7 +713,6 @@ void DMesh::DrawSTL()
             {
                 Solid *sTemp = &snappyd->sTL[k].solids[i];
                 glColor3f(sTemp->color.x,sTemp->color.y,sTemp->color.z);
-        //        glColor3f(0.8,0.8,0.8);
                 int nFacet = sTemp->n;
                 for(int j = 0; j < nFacet; j ++)
                 {
@@ -715,15 +721,26 @@ void DMesh::DrawSTL()
                         glVertex3f(sTemp->facets[j].vertexs[k].x, sTemp->facets[j].vertexs[k].y,sTemp->facets[j].vertexs[k].z);
                     glEnd();
                 }
-        //        glColor3f(0,0,1);
-        //        glLineWidth(1.0);
-        //        for(int j = 0; j < nFacet; j ++)
-        //        {
-        //            glBegin(GL_LINE_LOOP);
-        //            for(int k = 0; k < sTemp->facets[j].n; k++)
-        //                glVertex3f(sTemp->facets[j].vertexs[k].x, sTemp->facets[j].vertexs[k].y,sTemp->facets[j].vertexs[k].z);
-        //            glEnd();
-        //        }
+            }
+        }
+        if(this->viewList.filter(snappyd->sTL[k].name).size() > 0)
+        {
+            int nSolid  = snappyd->sTL[k].n ;
+            //For each STL geometry
+            for(int i = 0; i < nSolid; i ++)
+            {
+                Solid *sTemp = &snappyd->sTL[k].solids[i];
+                    if(this->viewList.contains(snappyd->sTL[k].name + "_" + sTemp->name)){
+                    glColor3f(sTemp->color.x,sTemp->color.y,sTemp->color.z);
+                    int nFacet = sTemp->n;
+                    for(int j = 0; j < nFacet; j ++)
+                    {
+                        glBegin(GL_LINE_LOOP);
+                        for(int k = 0; k < sTemp->facets[j].n; k++)
+                            glVertex3f(sTemp->facets[j].vertexs[k].x, sTemp->facets[j].vertexs[k].y,sTemp->facets[j].vertexs[k].z);
+                        glEnd();
+                    }
+                }
             }
         }
     }
