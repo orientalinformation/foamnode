@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->comment = "";
     this->logPath = "";
     this->table.clear();
-    LoadControlItems();
     LoadControlsVisible();
     LoadLocationInMesh();
+    LoadControlItems();
     ui->actionCheck_mesh->setDisabled(true);
     ui->actionParaView->setDisabled(true);
     ui->actionSave->setDisabled(true);
@@ -149,6 +149,9 @@ void MainWindow::LoadControlItems()
 {
     LoadGeometryControlItems();
     LoadMeshControlItems();
+    ui->btn_Boundary->setDisabled(true);
+    ui->btn_Generate->setDisabled(true);
+    ui->btn_Mesh->setDisabled(true);
 }
 void MainWindow::LoadGeometryControlItems()
 {
@@ -273,12 +276,12 @@ bool MainWindow::AddFaceToList(QString name, int type)
     QTableWidgetItem *temp = new QTableWidgetItem(name);
     if(type != 0){
         if(type == 1){
-            temp->setBackgroundColor(QColor(0,255,0));
+            temp->setBackgroundColor(QColor(255,255,255));
         }else if(type == 2){
-            temp->setBackgroundColor(QColor(255,220,0));
+            temp->setBackgroundColor(QColor(255,170,0));
         }else{
-            temp->setBackgroundColor(QColor(20,90,255));
-            temp->setTextColor(QColor(255,255,255));
+            temp->setBackgroundColor(QColor(0,255,0));
+//            temp->setTextColor(QColor(255,255,255));
         }
     }
     ui->tb_boundary->setItem(listFaces.size()-1,0,temp);
@@ -6058,6 +6061,9 @@ void MainWindow::on_actionOpen_triggered()
         ui->actionCheck_mesh->setDisabled(false);
         ui->actionParaView->setDisabled(false);
         ui->actionSave->setDisabled(false);
+        ui->btn_Boundary->setDisabled(false);
+        ui->btn_Generate->setDisabled(false);
+        ui->btn_Mesh->setDisabled(false);
         mesh->SetViewList(views);
         mesh->updateGL();
 }
@@ -6088,9 +6094,9 @@ void MainWindow::SetButtonEnable(bool value)
     ui->actionOpen->setEnabled(value);
 //    ui->actionSave->setEnabled(value);
 
-    ui->btn_Boundary->setEnabled(value);
-    ui->btn_Mesh->setEnabled(value);
-    ui->btn_Generate->setEnabled(value);
+//    ui->btn_Boundary->setEnabled(value);
+//    ui->btn_Mesh->setEnabled(value);
+//    ui->btn_Generate->setEnabled(value);
     ui->btn_Geometry->setEnabled(value);
 }
 
@@ -6631,6 +6637,9 @@ void MainWindow::on_actionClose_triggered()
     ui->actionParaView->setDisabled(true);
     ui->actionSave->setDisabled(true);
     ui->checkBox_WriteLog->setChecked(true);
+    ui->btn_Boundary->setDisabled(true);
+    ui->btn_Generate->setDisabled(true);
+    ui->btn_Mesh->setDisabled(true);
 }
 
 void MainWindow::on_actionCapture_triggered()
@@ -6694,6 +6703,9 @@ void MainWindow::on_btn_GeoDefineNew_clicked()
     ui->actionCheck_mesh->setEnabled(true);
     ui->actionParaView->setEnabled(true);
     ui->actionSave->setDisabled(false);
+    ui->btn_Boundary->setDisabled(false);
+    ui->btn_Generate->setDisabled(false);
+    ui->btn_Mesh->setDisabled(false);
 }
 
 void MainWindow::on_rbn_Volume_clicked(bool checked)
