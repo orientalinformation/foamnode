@@ -17,9 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->layout_Mesh->addWidget(mesh);
 //    ui->txt_Log->setMaximumBlockCount(300);
     createrThread = new MyThread();
+    checkMeshThread = new MyThread();
+    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
     connect(createrThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
     connect(createrThread,SIGNAL(finished()),this,SLOT(threadFinished()));
-    checkMeshThread = new MyThread();
     this->comment = "";
     this->logPath = "";
     this->table.clear();
@@ -402,7 +403,7 @@ bool MainWindow::AddFaceToList(QString name, int type)
 void MainWindow::Thread_Changed(QString value)
 {
 //    QString logvalue = value;
-    if(comment != "blockMesh"){
+    if(comment != "blockMesh" && comment != "paraFoam"){
 //        value = value.remove("\n");
     //    if(ui->checkBox_WriteLog->isChecked() && comment != "checkMesh" && comment != "paraFoam"){
     //        QFile file(logPath);
@@ -411,10 +412,12 @@ void MainWindow::Thread_Changed(QString value)
     //        file.close();
     //    }
         if(comment == "checkMesh"){
+            value = value.remove("\n");
             FilterLogMesh(value);
-        }else
+        }else{
             value = value.trimmed();
             ui->txt_Log->append(value);
+        }
     }
 }
 void MainWindow::Remove_All_Face()
@@ -7440,11 +7443,10 @@ void MainWindow::on_actionCheck_mesh_triggered()
     if(checkMeshThread->isRunning() && comment == "checkMesh"){
         return;
     }
-    checkMeshThread = new MyThread();
+//    checkMeshThread = new MyThread();
     checkMeshThread->SetCommand("checkMesh");
     this->comment = "checkMesh";
-    checkMeshThread->ThreadName("check mesh");
-    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
+    checkMeshThread->ThreadName("checkMesh");
     checkMeshThread->start();
 }
 
