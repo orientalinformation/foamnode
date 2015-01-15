@@ -4577,7 +4577,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("Blockmesh has finished... \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
+            ui->txt_Log->append("Blockmesh has finished. \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
             for(int i = 0; i < mesh->snappyd->gUserDefine.refi_Fea.n; i++)
             {
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
@@ -4604,7 +4604,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                     QApplication::processEvents();
                 }
             }
-            ui->txt_Log->append("Surface feature extract has finished...");
+            ui->txt_Log->append("Surface feature extract finished.");
             ui->txt_Log->append("**********STEP 2 HAS FINISHED **********\n**********STEP 3: **********");
             createrThread->SetSubCommand("-overwrite",2);
             createrThread->SetCommand("snappyHexMesh");
@@ -4616,7 +4616,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("SnappyHexMesh has finished...");
+            ui->txt_Log->append("SnappyHexMesh has finished.");
             createrThread->SetSubCommand("-overwrite",2);
             createrThread->SetCommand("createPatch");
             this->comment = "createPatch";
@@ -4627,7 +4627,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("CreatePatch has finished...\n**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
+            ui->txt_Log->append("CreatePatch has finished.\n**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
             createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
             createrThread->SetCommand("renumberMesh");
             this->comment = "renumberMesh";
@@ -4638,7 +4638,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("RenumberMesh has finished...");
+            ui->txt_Log->append("RenumberMesh has finished.");
             if(mesh->snappyd->gBoxCellZone.boxes.size() > 0 || mesh->snappyd->gCylinCellZone.cylins.size() > 0 ||
                     mesh->snappyd->gSphereCellZone.sphere.size() > 0 || mesh->snappyd->gUserDefineCellZone.user_Defines.size() > 0) {
                 createrThread->SetSubCommand("",2);
@@ -4650,7 +4650,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 {
                     QApplication::processEvents();
                 }
-                ui->txt_Log->append("TopoSet has finished...");
+                ui->txt_Log->append("TopoSet has finished.");
             }
             ui->txt_Log->append("********* STEP 5 HAS FINISHED **********");
             //save file setting bounding
@@ -4732,7 +4732,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-        ui->txt_Log->append("Blockmesh has finished... \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
+        ui->txt_Log->append("Blockmesh has finished. \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
         for(int i = 0; i < mesh->snappyd->gUserDefine.refi_Fea.n; i++)
         {
             createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
@@ -4745,7 +4745,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + " done...");
+            ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + " done.");
         }
         ui->txt_Log->append("**********STEP 2 HAS FINISHED **********\n**********STEP 3: **********");
         createrThread->SetSubCommand("-overwrite",2);
@@ -4758,6 +4758,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
+        ui->txt_Log->append("SnappyHexMesh has finished.");
         createrThread->SetSubCommand("-overwrite",2);
         createrThread->SetCommand("createPatch");
         this->comment = "createPatch";
@@ -4768,7 +4769,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-        ui->txt_Log->append("CreatePatch has finished...\n**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
+        ui->txt_Log->append("CreatePatch has finished.\n**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
         createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
         createrThread->SetCommand("renumberMesh");
         this->comment = "renumberMesh";
@@ -4779,7 +4780,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-        ui->txt_Log->append("RenumberMesh has finished...\nTopoSet is running..");
+        ui->txt_Log->append("RenumberMesh has finished.\nTopoSet is running..");
         createrThread->SetCommand("topoSetDict -dict system/DMESH.topoSetDict");
         this->comment = "topoSetDict";
         createrThread->ThreadName("topoSetDict");
@@ -4788,7 +4789,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-        ui->txt_Log->append("TopoSet has finished...");
+        ui->txt_Log->append("TopoSet has finished.");
         ui->txt_Log->append("********* STEP 5 HAS FINISHED **********");
         //save file setting bounding
         QStringList list;
