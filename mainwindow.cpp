@@ -168,7 +168,6 @@ void MainWindow::threadFinished()
 
 void MainWindow::LoadLocationInMesh()
 {
-    if(mesh->snappyd->locationInMesh.z == 0 && mesh->snappyd->locationInMesh.z == 0 && mesh->snappyd->locationInMesh.z == 0 )
     ui->txt_X_Location->setText(QString::number(mesh->snappyd->locationInMesh.x));
     ui->txt_Y_Location->setText(QString::number(mesh->snappyd->locationInMesh.y));
     ui->txt_Z_Location->setText(QString::number(mesh->snappyd->locationInMesh.z));
