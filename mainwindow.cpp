@@ -4627,7 +4627,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             {
                 QApplication::processEvents();
             }
-            ui->txt_Log->append("**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
+            ui->txt_Log->append("CreatePatch has finished...\n**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
             createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
             createrThread->SetCommand("renumberMesh");
             this->comment = "renumberMesh";
@@ -4768,7 +4768,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
         {
             QApplication::processEvents();
         }
-        ui->txt_Log->append("**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
+        ui->txt_Log->append("CreatePatch has finished...\n**********STEP 4 HAS FINISHED **********\n*********STEP 5: **********");
         createrThread->SetSubCommand("-blockOrder -orderPoints -overwrite",2);
         createrThread->SetCommand("renumberMesh");
         this->comment = "renumberMesh";
