@@ -726,10 +726,9 @@ QString Snappy_Dmesh::FormatSnappyFile(QString value)
     return lines.join("\n");
 }
 
-bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
+bool Snappy_Dmesh::ReadSTLFile(QString path, int type,bool isOpen)
 {
     //read file
-
     QString file1;
     QFile file(path);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -745,7 +744,8 @@ bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
 
     //create STL
     QString name = QFileInfo(file).fileName();
-
+    if(isOpen)
+        name = QFileInfo(file).baseName().append(".stl");
     int size_sTL =  sTL.size()+1;
     sTL.resize(size_sTL);
     sTL[size_sTL -1].n =0;
@@ -1121,11 +1121,11 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     QString name =  lines[i].trimmed();
 
                     GeomeUserdefineTypeDmesh user;
-                    user.name  = name;
+                    user.name_file  = name;
                     user.type = type.remove(";");
                     user.tag = tag.remove(";");
 
-                    user.name_file = lines[i+4].trimmed().remove(";").split(" ")[1];
+                    user.name = lines[i+4].trimmed().remove(";").split(" ")[1];
 
                     if(user.tag == "surface")
                     {

@@ -5777,7 +5777,7 @@ void MainWindow::on_actionOpen_triggered()
             QString path = dir + "/constant/triSurface/" + mesh->snappyd->gUserDefine.user_Defines[i].name_file;
             //temp = mesh->snappyd->ReadSTLFile(path);
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(path,-1))
+            if(mesh->snappyd->ReadSTLFile(path,1,true))
             {
                 QString _name = mesh->snappyd->gUserDefine.user_Defines[i].name;
                 foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
@@ -5797,11 +5797,11 @@ void MainWindow::on_actionOpen_triggered()
                     {
                         listSurfaces.append(_name + "_" + solid.name);
                     }
-
                 }
             }
             mesh->snappyd->gUserDefine.user_Defines[i].direction = path;
             views.append(mesh->snappyd->gUserDefine.user_Defines[i].name);
+            mesh->SetViewList(views);
             AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name,1);
         }
         for(int i = 0; i < mesh->snappyd->gUserDefineCellZone.user_Defines.size(); i++)
@@ -5809,7 +5809,7 @@ void MainWindow::on_actionOpen_triggered()
             QString path = dir + "/constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.user_Defines[i].name_file;
             //temp = mesh->snappyd->ReadSTLFile(path);
             //Read file STL
-            if(mesh->snappyd->ReadSTLFile(path,-1))
+            if(mesh->snappyd->ReadSTLFile(path,3,true))
             {
                 QString _name = mesh->snappyd->gUserDefineCellZone.user_Defines[i].name;
                 foreach(Solid solid, mesh->snappyd->sTL[mesh->snappyd->sTL.size() - 1].solids)
@@ -5834,6 +5834,7 @@ void MainWindow::on_actionOpen_triggered()
             }
             mesh->snappyd->gUserDefineCellZone.user_Defines[i].direction = path;
             views.append(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name);
+            mesh->SetViewList(views);
             AddFaceToList(mesh->snappyd->gUserDefineCellZone.user_Defines[i].name,3);
         }
         for(int i = 0; i < mesh->snappyd->gBox.boxes.size(); i++)
@@ -5934,6 +5935,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->facename.append(mesh->snappyd->gBox.boxes[i].name);
 
             views.append(mesh->snappyd->gBox.boxes[i].name);
+            mesh->SetViewList(views);
             AddFaceToList(mesh->snappyd->gBox.boxes[i].name,1);
             bool flag_Path = false;
             for(int j= 0; j< mesh->patchDict->boundaries.length(); j++)
@@ -6067,7 +6069,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1][1]= starend[1];
 
             mesh->snappyd->facetype.resize(mesh->snappyd->facetype.size() + 1);
-            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 1;
+            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 0;
             mesh->snappyd->facename.append(mesh->snappyd->gBoxCellZone.boxes[i].name);
 
             views.append(mesh->snappyd->gBoxCellZone.boxes[i].name);
@@ -6567,7 +6569,7 @@ void MainWindow::on_actionOpen_triggered()
             mesh->snappyd->facezones[mesh->snappyd->facezones.size()-1][1]= starend[1];
 
             mesh->snappyd->facetype.resize(mesh->snappyd->facetype.size() + 1);
-            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 1;
+            mesh->snappyd->facetype[mesh->snappyd->facetype.size() - 1] = 2;
 
             mesh->snappyd->facename.append(mesh->snappyd->gBoxRegion.boxes[i].name);
 
@@ -6599,6 +6601,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gCylinRegion.cylins.size(); i++)
         {
             views.append(mesh->snappyd->gCylinRegion.cylins[i].name);
+            mesh->SetViewList(views);
             AddFaceToList(mesh->snappyd->gCylinRegion.cylins[i].name,2);
             //find minmax
             float x1 = mesh->snappyd->gCylinRegion.cylins[i].point1.x;
@@ -6728,6 +6731,7 @@ void MainWindow::on_actionOpen_triggered()
         for(int i = 0; i < mesh->snappyd->gSphereRegion.sphere.size(); i++)
         {
             views.append(mesh->snappyd->gSphereRegion.sphere[i].name);
+            mesh->SetViewList(views);
             AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name,2);
             //finf min max
             mesh->snappyd->min_Max.min.x = mesh->snappyd->gSphereRegion.sphere[i].centre.x + mesh->snappyd->gSphereRegion.sphere[i].radius;

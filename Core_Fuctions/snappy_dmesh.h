@@ -252,7 +252,7 @@ public:
     void Write_Topodict(QString path);
     bool Read_Snappy(QString path);
     bool ReadSnappy(QString path);
-    bool ReadSTLFile(QString path_car, int type);
+    bool ReadSTLFile(QString path_car, int type, bool isOpen = false);
 
     void FindMinMaxDefaultBounding(float x, float y, float z);
     void FindMinMax(QList<Surface_Min_Max> l);
@@ -260,7 +260,7 @@ public:
     QVector <float *> points;
     QVector <int *> faces;
     QVector <int *> facezones;
-    QVector <int> facetype;// 0/-1.Cell zone/Default -*- 1.Surface -*- 2.Volume
+    QVector <int> facetype;// 0.Cell zone/Default -*- 1.Surface -*- 2.Volume
     QStringList facename;
 
     PointDmesh deltaBaseMesh;
