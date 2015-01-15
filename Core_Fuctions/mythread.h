@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include "openfoam.h"
+#include <QProcessEnvironment>
 
 class MyThread : public QThread
 {
@@ -38,7 +39,7 @@ private:
 protected:
     void run();
 signals:
-    emit void changed(QString value);
+    void changed(QString value);
 
 };
 

@@ -386,7 +386,6 @@ void DMesh::ShowHeighWidthGreen()
         xAverage = (x1+x2)/2;
         yAverage = (y1+y2)/2;
         zAverage = (z1+z2)/2;
-
     }
     else
     {

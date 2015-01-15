@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     licenseOK = true;
     emitflag = 0;
     mesh = new DMesh();
-    this->isClose = false;
+    this->isClose = true;
     this->isCloseApp = false;
     this->keepBoundary = false;
     this->cancelImport = false;
@@ -412,9 +412,11 @@ void MainWindow::Thread_Changed(QString value)
     //    }
         if(comment == "checkMesh"){
             FilterLogMesh(value);
-        }else
+        } else {
             value = value.trimmed();
             ui->txt_Log->append(value);
+            ui->txt_Log->ensureCursorVisible();
+        }
     }
 }
 void MainWindow::Remove_All_Face()
@@ -1984,9 +1986,9 @@ void MainWindow::FilterLogMesh(QString value)
             str_value += "</table>";
             StrLogCheckMesh.append(str_value);
             ui->txt_Log->append(StrLogCheckMesh);
+            ui->txt_Log->ensureCursorVisible();
             ui->txt_Log->toHtml();
             emitflag = 0;
-
         }
     }
 
@@ -2077,6 +2079,7 @@ void MainWindow::FilterLogMesh(QString value)
             str_value += "</table>";
             StrLogCheckMesh.append(str_value);
             ui->txt_Log->append(StrLogCheckMesh);
+            ui->txt_Log->ensureCursorVisible();
             ui->txt_Log->toHtml();
             emitflag = 0;
 
@@ -2213,6 +2216,7 @@ void MainWindow::FilterLogMesh(QString value)
             max=0;
             StrLogCheckMesh.append(str_value);
             ui->txt_Log->append(StrLogCheckMesh);
+            ui->txt_Log->ensureCursorVisible();
             emitflag = 0;
 
         }
@@ -2220,6 +2224,7 @@ void MainWindow::FilterLogMesh(QString value)
 
     if(emitflag == 4){
         ui->txt_Log->append("\t"+StrLogCheckMesh);
+        ui->txt_Log->ensureCursorVisible();
         emitflag = 0;
 
     }
@@ -2305,6 +2310,9 @@ void MainWindow::on_btn_Surface_clicked()
     for(int i=0; i< mesh->snappyd->gSphereRegion.n; i++)
     {
         AddFaceToList(mesh->snappyd->gSphereRegion.sphere[i].name);
+    }
+    if(ui->tb_boundary->rowCount() > 0){
+        ui->tb_boundary->selectRow(0);
     }
 }
 void MainWindow::on_btn_Bounding_clicked()
@@ -4204,7 +4212,14 @@ void MainWindow::on_btn_MeshSurface_clicked()
     ui->tb_MeshRefineAroundSurface->setColumnWidth(0,2*tbSize/5);
     ui->tb_MeshRefineAroundSurface->setColumnWidth(1,2*tbSize/5);
     ui->tb_MeshRefineAroundSurface->setColumnWidth(2,0.7*tbSize/5);
-
+    if(ui->tb_boundary->rowCount() > 0){
+        for(int i = 0; i < ui->tb_boundary->rowCount(); i++){
+            if(!ui->tb_boundary->isRowHidden(i)){
+                ui->tb_boundary->selectRow(i);
+                return;
+            }
+        }
+    }
 }
 void MainWindow::on_btn_MeshVolume_clicked()
 {
@@ -4248,7 +4263,12 @@ void MainWindow::on_btn_MeshVolume_clicked()
     }
     ui->cb_MeshVolumeMode->setCurrentIndex(0);
     if(ui->tb_boundary->rowCount() > 0){
-        ui->tb_boundary->setCurrentCell(0,0);
+        for(int i = 0; i < ui->tb_boundary->rowCount(); i++){
+            if(!ui->tb_boundary->isRowHidden(i)){
+                ui->tb_boundary->selectRow(i);
+                return;
+            }
+        }
     }
 }
 
@@ -4358,6 +4378,14 @@ void MainWindow::on_btn_MeshLayer_clicked()
         for(int i = 0; i< mesh->blockd->boundMesh.n; i++)
         {
             AddFaceToList(mesh->blockd->boundMesh.bounsType[i].name);
+        }
+    }
+    if(ui->tb_boundary->rowCount() > 0){
+        for(int i = 0; i < ui->tb_boundary->rowCount(); i++){
+            if(!ui->tb_boundary->isRowHidden(i)){
+                ui->tb_boundary->selectRow(i);
+                return;
+            }
         }
     }
 }
@@ -4496,6 +4524,14 @@ void MainWindow::on_btn_DeleteBoundary_clicked()
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////  Create Mesh  //////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
+void MainWindow::RemoveBoundaryConditions(QString path){
+    QStringList allSub = QDir(path + "/0").entryList();
+    foreach(QString sub, allSub){
+        if(sub == "." || sub == "..")
+            continue;
+        QFile::remove(OpenFoam::OpenFOAMPath() + "/0/" + allSub[0]);
+    }
+}
 
 void MainWindow::on_btn_CreateMesh_clicked()
 {
@@ -4545,7 +4581,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
                 return;
             }
             QFile(saveCase + "/constant/polyMesh/blockMeshDict").remove();
-            OpenFoam::RemoveDir(saveCase + QDir::separator() + "0");
+            RemoveBoundaryConditions(saveCase);
             QDir a;
             a.mkdir(saveCase + QDir::separator() + "0");
 
@@ -4569,6 +4605,7 @@ void MainWindow::on_btn_CreateMesh_clicked()
             createrThread->logPath = this->logPath;
             createrThread->writeLog = writeLog;
             OpenFoam::SetOpenFOAMPath(saveCase);
+            createrThread->SetSubCommand("",2);
             createrThread->SetCommand("blockMesh");
             this->comment = "blockMesh";
             createrThread->ThreadName("blockMesh");
@@ -4580,10 +4617,11 @@ void MainWindow::on_btn_CreateMesh_clicked()
             ui->txt_Log->append("Blockmesh has finished... \n********** STEP 1 HAS FINISHED **********\n**********STEP 2: **********\nSurface feature extract...");
             for(int i = 0; i < mesh->snappyd->gUserDefine.refi_Fea.n; i++)
             {
+                createrThread->SetSubCommand("",2);
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefine.refi_Fea.feature[i].angle) +
                                           " constant/triSurface/" + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefine.refi_Fea.feature[i].name);
-                this->comment = "blockMesh";
-                createrThread->ThreadName("blockMesh");
+                this->comment = "surfaceFeatureExtract";
+                createrThread->ThreadName("surfaceFeatureExtract");
                 createrThread->start();
                 ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefine.refi_Fea.feature[i].name +"...");
                 while(createrThread->isRunning())
@@ -4593,10 +4631,11 @@ void MainWindow::on_btn_CreateMesh_clicked()
             }
             for(int i = 0; i < mesh->snappyd->gUserDefineCellZone.refi_Fea.n; i++)
             {
+                createrThread->SetSubCommand("",2);
                 createrThread->SetCommand("surfaceFeatureExtract -includedAngle " + QString::number(mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].angle) +
                                           " constant/triSurface/" + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + ".stl " + mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name);
-                this->comment = "blockMesh";
-                createrThread->ThreadName("blockMesh");
+                this->comment = "surfaceFeatureExtract";
+                createrThread->ThreadName("surfaceFeatureExtract");
                 createrThread->start();
                 ui->txt_Log->append("Surface feature extract for "+ mesh->snappyd->gUserDefineCellZone.refi_Fea.feature[i].name + "... ");
                 while(createrThread->isRunning())
@@ -4696,9 +4735,9 @@ void MainWindow::on_btn_CreateMesh_clicked()
             f->close();
             writeLog = true;
         }
-        //use current folder
+                //use current folder
         QFile(path_Open + "/constant/polyMesh/blockMeshDict").remove();
-
+        RemoveBoundaryConditions(path_Open);
         mesh->blockd->Write_Block_Dmesh(path_Open + "/constant/polyMesh/");
 
         QFile(path_Open + "/system/snappyHexMeshDict").remove();
@@ -4826,7 +4865,6 @@ void MainWindow::on_btn_GenerateLocation_clicked()
     if(SetLocation())
         ui->txt_Log->append("Settings for location vetices have been done");
 }
-
 void MainWindow::on_btn_DeleteSurface_clicked()
 {
     if(ui->tb_boundary->selectedItems().count() > 0)
@@ -4835,7 +4873,6 @@ void MainWindow::on_btn_DeleteSurface_clicked()
         bool flag_delete = false;
         //Delete simple surface - Box
         QString name = ui->tb_boundary->currentItem()->text();
-        int n  = mesh->snappyd->gBox.n;
         //Delele layer
         for(int j=0; j < mesh->snappyd->add_Layers_Controls.nLayer; j++)
         {
@@ -4860,7 +4897,9 @@ void MainWindow::on_btn_DeleteSurface_clicked()
         }
         //Update min max
         mesh->snappyd->FindMinMax(mesh->snappyd->list_Surface_Min_Max);
+
         //Delete Geometry And Refinements
+        int n  = mesh->snappyd->gBox.n;
         for(int i=0; i < n; i++)
         {
             if(mesh->snappyd->gBox.boxes[i].name ==name)
@@ -5259,6 +5298,7 @@ void MainWindow::on_actionSave_triggered()
     if(path_Open != "")
     {
         QFile(path_Open + "/constant/polyMesh/blockMeshDict").remove();
+        RemoveBoundaryConditions(path_Open);
 
         mesh->blockd->Write_Block_Dmesh(path_Open + "/constant/polyMesh");
         //save file setting bounding
@@ -5321,9 +5361,7 @@ void MainWindow::on_actionSave_triggered()
             return;
         }
         QFile(saveCase + "/constant/polyMesh/blockMeshDict").remove();
-        OpenFoam::RemoveDir(saveCase + QDir::separator() + "0");
-        QDir a;
-        a.mkdir(saveCase + QDir::separator() + "0");
+        RemoveBoundaryConditions(saveCase);
 
         mesh->blockd->Write_Block_Dmesh(saveCase + "/constant/polyMesh");
         //save file setting bounding
@@ -5673,8 +5711,6 @@ void MainWindow::on_txt_Level_Volume_editingFinished()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    if(!isClose)
-        on_actionClose_triggered();
     //get path save in
     lastFolderCase = ReadPathDmesh();
     if(lastFolderCase == ""){
@@ -5702,7 +5738,9 @@ void MainWindow::on_actionOpen_triggered()
             lastFolderCase = dircdUp.path();
             OpenFoam::SetOpenFOAMPath(dir);
             this->setWindowTitle(dir);
-
+            //close
+            if(isClose == false)
+                on_actionClose_triggered();
             bool temp1 = mesh->blockd->Read_Block_Dmesh(dir + "/constant/polyMesh/blockMeshDict");
             if(temp1== false)
             {
@@ -5801,7 +5839,6 @@ void MainWindow::on_actionOpen_triggered()
             }
             mesh->snappyd->gUserDefine.user_Defines[i].direction = path;
             views.append(mesh->snappyd->gUserDefine.user_Defines[i].name);
-            mesh->SetViewList(views);
             AddFaceToList(mesh->snappyd->gUserDefine.user_Defines[i].name,1);
         }
         for(int i = 0; i < mesh->snappyd->gUserDefineCellZone.user_Defines.size(); i++)
@@ -6835,8 +6872,199 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
+
+void MainWindow::on_tb_boundary_itemClicked(QTableWidgetItem *item)
+{
+
+}
 void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
+}
+
+void MainWindow::on_tb_MeshSurface_itemSelectionChanged()
+{
+    if(ui->tb_MeshSurface->selectedItems().size() == 1){
+        ui->txt_BoundaryName->setText(ui->tb_MeshSurface->currentItem()->text());
+    }
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+//    on_actionSave_triggered();
+    if(ui->tb_boundary->rowCount() > 0){
+        this->isClose = true;
+        int nRow = ui->tb_boundary->rowCount();
+        for(int i =nRow -1 ; i >=0 ; i--){
+            ui->tb_boundary->removeRow(i);
+        }
+        ui->tb_boundary->clearSelection();
+        ui->tb_boundary->clear();
+        Remove_All_Face();
+        ui->tb_boundary->setRowCount(0);
+    }
+    ui->layout_Mesh->removeWidget(mesh);
+    listSurfaces.clear();
+    listFaces.clear();
+
+    mesh = new DMesh();
+    ui->layout_Mesh->addWidget(mesh);
+    LoadControlsVisible();
+//    ui->tb_MeshSurface->clear();
+//    ui->tb_boundary->viewport()->update();
+//    ui->tb_MeshSurface->viewport()->update();
+//    ui->cb_BoundingType->clear();
+//    ui->cb_MeshVolumeMode->clear();
+//    ui->cb_VolumeType->clear();
+//    LoadControlItems();
+//    LoadLocationInMesh();
+    ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
+    ui->actionClose->setEnabled(false);
+    ui->actionParaView->setDisabled(true);
+    ui->actionParaView->setDisabled(true);
+    ui->actionSave->setDisabled(true);
+    ui->checkBox_WriteLog->setChecked(true);
+    ui->btn_Boundary->setDisabled(true);
+    ui->btn_Generate->setDisabled(true);
+    ui->btn_Mesh->setDisabled(true);
+	ui->txt_Log->clear();
+    path_Open = "";
+}
+
+void MainWindow::on_actionCapture_triggered()
+{
+    W_Capture *w_cap = new W_Capture();
+    QString CapName;
+    if(w_cap->exec()){
+        CapName = w_cap->saveFileName;
+    }
+    if(w_cap->result() == 0)
+        return;
+    QString iPath = w_cap->GetFilePath();
+    QString iFormat = w_cap->GetFormat();
+    QString image = iPath+iFormat;
+    QPixmap *pixmap;
+    if (mesh != NULL && mesh->isVisible())
+    {
+        pixmap = new QPixmap(mesh->renderPixmap(mesh->width(),mesh->height()));
+//        vtkMesh->render(pixmap);
+        image = CapName + iFormat;
+    }
+//    if(isCreated == true && frm_ChartResidual->isVisible())
+//    {
+//        pixmap = new QPixmap(frm_ChartResidual->size());
+//        frm_ChartResidual->render(pixmap);
+//        image = iPath + "_Residual_" + iFormat;
+//    }
+    if(pixmap->save(image,0,100))
+        QMessageBox::information(this,tr("Save picture"),tr("The picture %1 has been saved.").arg(image),QMessageBox::Ok,QMessageBox::NoButton);
+}
+
+void MainWindow::on_cb_GeometryNewMesh_currentIndexChanged(const QString &arg1)
+{
+    if(arg1 == "STL") {
+        ui->groupBox_GeometryImportSTL->show();
+        ui->groupBox_GeometrySimpleSurface->hide();
+    } else {
+        ui->groupBox_GeometryImportSTL->hide();
+        ui->groupBox_GeometrySimpleSurface->show();
+    }
+}
+
+void MainWindow::on_btn_GeoDefineNew_clicked()
+{
+    if(ui->rbn_Surface->isChecked()) {
+        if(ui->cb_GeometryNewMesh->currentText() == "STL")
+            ImportSTLSurface();
+        if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
+            DefineSimpleSurface();
+    } else if(ui->rbn_Cellzone->isChecked()) {
+        if(ui->cb_GeometryNewMesh->currentText() == "STL")
+            ImportSTLCellzone();
+        if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
+            DefineSimpleCellZone();
+    } else if(ui->rbn_Volume->isChecked()) {
+        if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
+            DefineSimpleVolume();
+    }
+    if(!this->cancelImport){
+        this->isClose = false;
+        ui->actionClose->setEnabled(true);
+        ui->actionCheck_mesh->setEnabled(true);
+        ui->actionParaView->setEnabled(true);
+        ui->actionSave->setDisabled(false);
+        ui->btn_Boundary->setDisabled(false);
+        ui->btn_Generate->setDisabled(false);
+        ui->btn_Mesh->setDisabled(false);
+        mesh->ResetLocation();
+    }
+}
+
+void MainWindow::on_rbn_Volume_clicked(bool checked)
+{
+    if(checked) {
+        ui->cb_GeometryNewMesh->setCurrentIndex(1);
+        ui->cb_GeometryNewMesh->setEnabled(false);
+    } else {
+        ui->cb_GeometryNewMesh->setEnabled(true);
+    }
+}
+
+void MainWindow::on_rbn_Cellzone_clicked(bool checked)
+{
+    if(checked){
+        ui->cb_GeometryNewMesh->setEnabled(true);
+        ui->cb_GeometryNewMesh->setCurrentIndex(0);
+    }
+}
+
+void MainWindow::on_rbn_Surface_clicked(bool checked)
+{
+    if(checked) {
+        ui->cb_GeometryNewMesh->setEnabled(true);
+        ui->cb_GeometryNewMesh->setCurrentIndex(0);
+    }
+}
+
+void MainWindow::on_actionCheck_mesh_triggered()
+{
+    if(!CheckDFC){
+        return;
+    }
+    if(checkMeshThread->isRunning() && comment == "checkMesh"){
+        return;
+    }
+    checkMeshThread = new MyThread();
+    checkMeshThread->SetCommand("checkMesh");
+    this->comment = "checkMesh";
+    checkMeshThread->ThreadName("check mesh");
+    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
+    checkMeshThread->start();
+}
+
+void MainWindow::on_actionParaView_triggered()
+{
+
+    if(checkMeshThread->isRunning() && comment == "paraFoam"){
+        return;
+    }
+    checkMeshThread = new MyThread();
+    checkMeshThread->SetCommand("paraFoam");
+    this->comment = "paraFoam";
+    checkMeshThread->ThreadName("paraFoam");
+//    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
+    ui->txt_Log->append("ParaView run...");
+    checkMeshThread->start();
+}
+
+void MainWindow::on_tb_boundary_itemSelectionChanged()
+{
+    if(ui->tb_boundary->selectedItems().count() > 0){
+        ui->btn_DeleteSurface->setEnabled(true);
+        ui->btn_ViewMesh->setEnabled(true);
+    }else{
+        ui->btn_DeleteSurface->setDisabled(true);
+        ui->btn_ViewMesh->setDisabled(true);
+    }
     if(isClose){
         return;
     }
@@ -6892,7 +7120,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 return;
             }
         }
-        //snappy userdefine        
+        //snappy userdefine
         RefinementSurfacesSTL *refi_SurSTL = &mesh->snappyd->gUserDefine.refi_Sur;
         for(int i = 0; i< refi_SurSTL->n; i++)
         {
@@ -7110,7 +7338,7 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
                 ui->txt_P2_Cyl_Sur_Y->setText(QString::number(mesh->snappyd->gCylin.cylins[i].point2.y));
                 ui->txt_P2_Cyl_Sur_Z->setText(QString::number(mesh->snappyd->gCylin.cylins[i].point2.z));
 
-                ui->txt_Radius_Cyl_Sur->setText(QString::number(mesh->snappyd->gCylin.cylins[i].radius));                
+                ui->txt_Radius_Cyl_Sur->setText(QString::number(mesh->snappyd->gCylin.cylins[i].radius));
                 return;
             }
         }
@@ -7284,191 +7512,5 @@ void MainWindow::on_tb_boundary_currentItemChanged(QTableWidgetItem *current, QT
             }
         }
         ui->txt_Layer_Bounding_2->setText("0");
-    }
-}
-
-void MainWindow::on_tb_MeshSurface_itemSelectionChanged()
-{
-    if(ui->tb_MeshSurface->selectedItems().size() == 1){
-        ui->txt_BoundaryName->setText(ui->tb_MeshSurface->currentItem()->text());
-    }
-}
-
-void MainWindow::on_actionClose_triggered()
-{
-//    on_actionSave_triggered();
-    if(ui->tb_boundary->rowCount() > 0){
-        this->isClose = true;
-        int nRow = ui->tb_boundary->rowCount();
-        for(int i =nRow -1 ; i >=0 ; i--){
-            ui->tb_boundary->removeRow(i);
-        }
-        ui->tb_boundary->clearSelection();
-        ui->tb_boundary->clear();
-        Remove_All_Face();
-        ui->tb_boundary->setRowCount(0);
-    }
-    ui->layout_Mesh->removeWidget(mesh);
-    listSurfaces.clear();
-    listFaces.clear();
-
-    mesh = new DMesh();
-    ui->layout_Mesh->addWidget(mesh);
-    LoadControlsVisible();
-//    ui->tb_MeshSurface->clear();
-//    ui->tb_boundary->viewport()->update();
-//    ui->tb_MeshSurface->viewport()->update();
-//    ui->cb_BoundingType->clear();
-//    ui->cb_MeshVolumeMode->clear();
-//    ui->cb_VolumeType->clear();
-//    LoadControlItems();
-//    LoadLocationInMesh();
-    ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
-    ui->actionClose->setEnabled(false);
-    ui->actionParaView->setDisabled(true);
-    ui->actionParaView->setDisabled(true);
-    ui->actionSave->setDisabled(true);
-    ui->checkBox_WriteLog->setChecked(true);
-    ui->btn_Boundary->setDisabled(true);
-    ui->btn_Generate->setDisabled(true);
-    ui->btn_Mesh->setDisabled(true);
-	ui->txt_Log->clear();
-    path_Open = "";
-}
-
-void MainWindow::on_actionCapture_triggered()
-{
-    W_Capture *w_cap = new W_Capture();
-    QString CapName;
-    if(w_cap->exec()){
-        CapName = w_cap->saveFileName;
-    }
-    if(w_cap->result() == 0)
-        return;
-    QString iPath = w_cap->GetFilePath();
-    QString iFormat = w_cap->GetFormat();
-    QString image = iPath+iFormat;
-    QPixmap *pixmap;
-    if (mesh != NULL && mesh->isVisible())
-    {
-        pixmap = new QPixmap(mesh->renderPixmap(mesh->width(),mesh->height()));
-//        vtkMesh->render(pixmap);
-        image = CapName + iFormat;
-    }
-//    if(isCreated == true && frm_ChartResidual->isVisible())
-//    {
-//        pixmap = new QPixmap(frm_ChartResidual->size());
-//        frm_ChartResidual->render(pixmap);
-//        image = iPath + "_Residual_" + iFormat;
-//    }
-    if(pixmap->save(image,0,100))
-        QMessageBox::information(this,tr("Save picture"),tr("The picture %1 has been saved.").arg(image),QMessageBox::Ok,QMessageBox::NoButton);
-}
-
-void MainWindow::on_cb_GeometryNewMesh_currentIndexChanged(const QString &arg1)
-{
-    if(arg1 == "STL") {
-        ui->groupBox_GeometryImportSTL->show();
-        ui->groupBox_GeometrySimpleSurface->hide();
-    } else {
-        ui->groupBox_GeometryImportSTL->hide();
-        ui->groupBox_GeometrySimpleSurface->show();
-    }
-}
-
-void MainWindow::on_btn_GeoDefineNew_clicked()
-{
-    if(ui->rbn_Surface->isChecked()) {
-        if(ui->cb_GeometryNewMesh->currentText() == "STL")
-            ImportSTLSurface();
-        if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
-            DefineSimpleSurface();
-    } else if(ui->rbn_Cellzone->isChecked()) {
-        if(ui->cb_GeometryNewMesh->currentText() == "STL")
-            ImportSTLCellzone();
-        if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
-            DefineSimpleCellZone();
-    } else if(ui->rbn_Volume->isChecked()) {
-        if(ui->cb_GeometryNewMesh->currentText() == "Simple surface")
-            DefineSimpleVolume();
-    }
-    if(!this->cancelImport){
-        this->isClose = false;
-        ui->actionClose->setEnabled(true);
-        ui->actionCheck_mesh->setEnabled(true);
-        ui->actionParaView->setEnabled(true);
-        ui->actionSave->setDisabled(false);
-        ui->btn_Boundary->setDisabled(false);
-        ui->btn_Generate->setDisabled(false);
-        ui->btn_Mesh->setDisabled(false);
-        mesh->ResetLocation();
-    }
-}
-
-void MainWindow::on_rbn_Volume_clicked(bool checked)
-{
-    if(checked) {
-        ui->cb_GeometryNewMesh->setCurrentIndex(1);
-        ui->cb_GeometryNewMesh->setEnabled(false);
-    } else {
-        ui->cb_GeometryNewMesh->setEnabled(true);
-    }
-}
-
-void MainWindow::on_rbn_Cellzone_clicked(bool checked)
-{
-    if(checked){
-        ui->cb_GeometryNewMesh->setEnabled(true);
-        ui->cb_GeometryNewMesh->setCurrentIndex(0);
-    }
-}
-
-void MainWindow::on_rbn_Surface_clicked(bool checked)
-{
-    if(checked) {
-        ui->cb_GeometryNewMesh->setEnabled(true);
-        ui->cb_GeometryNewMesh->setCurrentIndex(0);
-    }
-}
-
-void MainWindow::on_actionCheck_mesh_triggered()
-{
-    if(!CheckDFC){
-        return;
-    }
-    if(checkMeshThread->isRunning() && comment == "checkMesh"){
-        return;
-    }
-    checkMeshThread = new MyThread();
-    checkMeshThread->SetCommand("checkMesh");
-    this->comment = "checkMesh";
-    checkMeshThread->ThreadName("check mesh");
-    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
-    checkMeshThread->start();
-}
-
-void MainWindow::on_actionParaView_triggered()
-{
-
-    if(checkMeshThread->isRunning() && comment == "paraFoam"){
-        return;
-    }
-    checkMeshThread = new MyThread();
-    checkMeshThread->SetCommand("paraFoam");
-    this->comment = "paraFoam";
-    checkMeshThread->ThreadName("paraFoam");
-//    connect(checkMeshThread,SIGNAL(changed(QString)),this,SLOT(Thread_Changed(QString)));
-    ui->txt_Log->append("ParaView run...");
-    checkMeshThread->start();
-}
-
-void MainWindow::on_tb_boundary_itemSelectionChanged()
-{
-    if(ui->tb_boundary->selectedItems().count() > 0){
-        ui->btn_DeleteSurface->setEnabled(true);
-        ui->btn_ViewMesh->setEnabled(true);
-    }else{
-        ui->btn_DeleteSurface->setDisabled(true);
-        ui->btn_ViewMesh->setDisabled(true);
     }
 }

@@ -135,6 +135,7 @@ private:
     bool AddRefineVolume(RefinementRegions *refi_Reg, QString currentSurface, QString mode, int lv);
     bool RemoveRefineDistant(RefinementRegions *refi_Reg,QString currentSurface,float lv1,int lv2);
     bool AddRefineRegion(RefinementRegions *refi_Reg, QString currentSurface,float lv1,int lv2);
+    void RemoveBoundaryConditions(QString path);
 private slots:
     void closeEvent(QCloseEvent *event);
     void threadStarted();
@@ -206,6 +207,7 @@ private slots:
     void on_tb_boundary_itemSelectionChanged();
     void on_txt_Level_Min_Surface_Refine_textChanged(const QString &arg1);
     void on_txt_Level_Max_Surface_Refine_textChanged(const QString &arg1);
+    void on_tb_boundary_itemClicked(QTableWidgetItem *item);
 };
 
 #endif // MAINWINDOW_H

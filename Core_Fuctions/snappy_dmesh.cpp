@@ -111,6 +111,7 @@ void Snappy_Dmesh::FindMinMax(QList<Surface_Min_Max> l)
 
     defaultBounding.maxBouDef.z = defaultBounding.maxBouDef.z +lz;
     defaultBounding.minBouDef.z = defaultBounding.minBouDef.z -lz;
+
 }
 
 QString Snappy_Dmesh::CreateHeader()
@@ -694,6 +695,7 @@ QString Snappy_Dmesh::CreateMeshRefinementSurfaceSTL(RefinementSurfacesSTL ref,i
                     isDefinedRegion = true;
                 }
             }
+            str_File_Regions +="}\n";
             if(isDefinedRegion)
                 str_File_STL.append(str_File_Regions);
         }
@@ -998,16 +1000,55 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
 
                     if(box.tag == "surface")
                     {
+                        //add surface and region default
+                        gBox.refi_Sur.n =gBox.refi_Sur.n+1;
+                        gBox.refi_Sur.surfaces.resize(gBox.refi_Sur.n);
+                        gBox.refi_Sur.surfaces.last().lv1= 0;
+                        gBox.refi_Sur.surfaces.last().lv2= 0;
+                        gBox.refi_Sur.surfaces.last().name=name;
+
+                        gBox.refi_Reg.n = gBox.refi_Reg.n+1;
+                        gBox.refi_Reg.region.resize(gBox.refi_Reg.n);
+                        gBox.refi_Reg.region.last().name = name;
+                        gBox.refi_Reg.region.last().mode = "distance";
+                        gBox.refi_Reg.region.last().lv1 = 0;
+                        gBox.refi_Reg.region.last().lv2 = 0;
+                        gBox.refi_Reg.region.last().n = 0;
+
+
                         gBox.boxes.append(box);
                         gBox.n =  gBox.boxes.size();
                     }
                     else if(box.tag == "cellZone")
                     {
+                        //add surface and region default
+                        gBoxCellZone.refi_Sur.n = gBoxCellZone.refi_Sur.n + 1;
+                        gBoxCellZone.refi_Sur.surfaces.resize(gBoxCellZone.refi_Sur.n);
+                        gBoxCellZone.refi_Sur.surfaces.last().name = name;
+                        gBoxCellZone.refi_Sur.surfaces.last().lv1 = 0;
+                        gBoxCellZone.refi_Sur.surfaces.last().lv2 = 0;
+
+                        gBoxCellZone.refi_Reg.n = gBoxCellZone.refi_Reg.n + 1;
+                        gBoxCellZone.refi_Reg.region.resize(gBoxCellZone.refi_Reg.n);
+                        gBoxCellZone.refi_Reg.region.last().name = name;
+                        gBoxCellZone.refi_Reg.region.last().mode = "inside";
+                        gBoxCellZone.refi_Reg.region.last().lv1 = 0;
+                        gBoxCellZone.refi_Reg.region.last().lv2 = 0;
+                        gBoxCellZone.refi_Reg.region.last().n = 0;
+
                         gBoxCellZone.boxes.append(box);
                         gBoxCellZone.n =  gBoxCellZone.boxes.size();
                     }
                     else if (box.tag == "volume")
                     {
+                        gBoxRegion.refi_Reg.n = gBoxRegion.refi_Reg.n + 1;
+                        gBoxRegion.refi_Reg.region.resize(gBoxRegion.refi_Reg.n);
+                        gBoxRegion.refi_Reg.region[gBoxRegion.refi_Reg.n -1].name = name;
+                        gBoxRegion.refi_Reg.region[gBoxRegion.refi_Reg.n -1].mode = "inside";
+                        gBoxRegion.refi_Reg.region[gBoxRegion.refi_Reg.n -1].lv1 = 0;
+                        gBoxRegion.refi_Reg.region[gBoxRegion.refi_Reg.n -1].lv2 = 0;
+                        gBoxRegion.refi_Reg.region[gBoxRegion.refi_Reg.n -1].n = 0;
+
                         int n = gBoxRegion.boxes.size()+1;
                         gBoxRegion.boxes.resize(n);
                         gBoxRegion.boxes[n-1].name = box.name;
@@ -1049,16 +1090,57 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
 
                     if(cyl.tag == "surface")
                     {
+                        //add surface and region default
+                        gCylin.refi_Sur.n =gCylin.refi_Sur.n+1;
+                        gCylin.refi_Sur.surfaces.resize(gCylin.refi_Sur.n);
+                        gCylin.refi_Sur.surfaces.last().lv1= 0;
+                        gCylin.refi_Sur.surfaces.last().lv2= 0;
+                        gCylin.refi_Sur.surfaces.last().name=name;
+
+                        gCylin.refi_Reg.n = gCylin.refi_Reg.n+1;
+                        gCylin.refi_Reg.region.resize(gCylin.refi_Reg.n);
+                        gCylin.refi_Reg.region.last().name = name;
+                        gCylin.refi_Reg.region.last().mode = "distance";
+                        gCylin.refi_Reg.region.last().lv1 = 0;
+                        gCylin.refi_Reg.region.last().lv2 = 0;
+                        gCylin.refi_Reg.region.last().n = 0;
+
                         gCylin.cylins.append(cyl);
                         gCylin.n =  gCylin.cylins.size();
                     }
                     else if(cyl.tag == "cellZone")
                     {
+                        //add surface and region default
+                        gCylinCellZone.refi_Sur.n =gCylinCellZone.refi_Sur.n+1;
+                        gCylinCellZone.refi_Sur.surfaces.resize(gCylinCellZone.refi_Sur.n);
+                        gCylinCellZone.refi_Sur.surfaces.last().lv1= 0;
+                        gCylinCellZone.refi_Sur.surfaces.last().lv2= 0;
+                        gCylinCellZone.refi_Sur.surfaces.last().name=name;
+
+                        gCylinCellZone.refi_Reg.n = gCylinCellZone.refi_Reg.n+1;
+                        gCylinCellZone.refi_Reg.region.resize(gCylinCellZone.refi_Reg.n);
+                        gCylinCellZone.refi_Reg.region.last().name = name;
+                        gCylinCellZone.refi_Reg.region.last().mode = "inside";
+                        gCylinCellZone.refi_Reg.region.last().lv1 = 0;
+                        gCylinCellZone.refi_Reg.region.last().lv2 = 0;
+                        gCylinCellZone.refi_Reg.region.last().n = 0;
+
+
                         gCylinCellZone.cylins.append(cyl);
                         gCylinCellZone.n =  gCylinCellZone.cylins.size();
                     }
                     else if (cyl.tag == "volume")
                     {
+                        //add surface and region default
+                        gCylinRegion.refi_Reg.n = gCylinRegion.refi_Reg.n+1;
+                        gCylinRegion.refi_Reg.region.resize(gCylinRegion.refi_Reg.n);
+                        gCylinRegion.refi_Reg.region.last().name = name;
+                        gCylinRegion.refi_Reg.region.last().mode = "inside";
+                        gCylinRegion.refi_Reg.region.last().lv1 = 0;
+                        gCylinRegion.refi_Reg.region.last().lv2 = 0;
+                        gCylinRegion.refi_Reg.region.last().n = 0;
+
+
                         int n = gCylinRegion.cylins.size()+1;
                         gCylinRegion.cylins.resize(n);
                         gCylinRegion.cylins[n-1].name = cyl.name;
@@ -1093,16 +1175,56 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
 
                     if(sph.tag == "surface")
                     {
+                        //add surface and region default
+                        gSphere.refi_Sur.n =gSphere.refi_Sur.n+1;
+                        gSphere.refi_Sur.surfaces.resize(gSphere.refi_Sur.n);
+                        gSphere.refi_Sur.surfaces.last().lv1= 0;
+                        gSphere.refi_Sur.surfaces.last().lv2= 0;
+                        gSphere.refi_Sur.surfaces.last().name=name;
+
+                        gSphere.refi_Reg.n = gSphere.refi_Reg.n+1;
+                        gSphere.refi_Reg.region.resize(gSphere.refi_Reg.n);
+                        gSphere.refi_Reg.region.last().name = name;
+                        gSphere.refi_Reg.region.last().mode = "distance";
+                        gSphere.refi_Reg.region.last().lv1 = 0;
+                        gSphere.refi_Reg.region.last().lv2 = 0;
+                        gSphere.refi_Reg.region.last().n = 0;
+
+
                         gSphere.sphere.append(sph);
                         gSphere.n =  gSphere.sphere.size();
                     }
                     else if(sph.tag == "cellZone")
                     {
+                        //add surface and region default
+                        gSphere.refi_Sur.n =gSphere.refi_Sur.n+1;
+                        gSphere.refi_Sur.surfaces.resize(gSphere.refi_Sur.n);
+                        gSphere.refi_Sur.surfaces.last().lv1= 0;
+                        gSphere.refi_Sur.surfaces.last().lv2= 0;
+                        gSphere.refi_Sur.surfaces.last().name=name;
+
+                        gSphere.refi_Reg.n = gSphere.refi_Reg.n+1;
+                        gSphere.refi_Reg.region.resize(gSphere.refi_Reg.n);
+                        gSphere.refi_Reg.region.last().name = name;
+                        gSphere.refi_Reg.region.last().mode = "inside";
+                        gSphere.refi_Reg.region.last().lv1 = 0;
+                        gSphere.refi_Reg.region.last().lv2 = 0;
+                        gSphere.refi_Reg.region.last().n = 0;
+
+
                         gSphereCellZone.sphere.append(sph);
                         gSphereCellZone.n =  gSphereCellZone.sphere.size();
                     }
                     else if (sph.tag == "volume")
                     {
+                        gSphereRegion.refi_Reg.n = gSphereRegion.refi_Reg.n + 1;
+                        gSphereRegion.refi_Reg.region.resize(gSphereRegion.refi_Reg.n);
+                        gSphereRegion.refi_Reg.region[gSphereRegion.refi_Reg.n -1].name = name;
+                        gSphereRegion.refi_Reg.region[gSphereRegion.refi_Reg.n -1].mode = "inside";
+                        gSphereRegion.refi_Reg.region[gSphereRegion.refi_Reg.n -1].lv1 = 0;
+                        gSphereRegion.refi_Reg.region[gSphereRegion.refi_Reg.n -1].lv2 = 0;
+                        gSphereRegion.refi_Reg.region[gSphereRegion.refi_Reg.n -1].n = 0;
+
                         int n = gSphereRegion.sphere.size()+1;
                         gSphereRegion.sphere.resize(n);
                         gSphereRegion.sphere[n-1].name = sph.name;
@@ -1125,15 +1247,120 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     user.type = type.remove(";");
                     user.tag = tag.remove(";");
 
-                    user.name = lines[i+4].trimmed().remove(";").split(" ")[1];
+                    user.name = lines[i+4].trimmed().remove(";").split(" ",QString::SkipEmptyParts)[1];
+                    QString nameSur = lines[i+4].trimmed().remove(";").split(" ",QString::SkipEmptyParts)[1];
 
                     if(user.tag == "surface")
                     {
+                        //add surface
+                        gUserDefine.refi_Sur.n = gUserDefine.refi_Sur.n + 1;
+                        gUserDefine.refi_Sur.surfaces.resize(gUserDefine.refi_Sur.n);
+                        gUserDefine.refi_Sur.surfaces.last().lv1=0;
+                        gUserDefine.refi_Sur.surfaces.last().lv2=0;
+                        gUserDefine.refi_Sur.surfaces.last().name=nameSur;
+                        //add reg
+                        gUserDefine.refi_Reg.n=gUserDefine.refi_Reg.n+1;
+                        gUserDefine.refi_Reg.region.resize(gUserDefine.refi_Reg.n);
+                        gUserDefine.refi_Reg.region.last().mode = "inside";
+                        gUserDefine.refi_Reg.region.last().name=nameSur;
+                        gUserDefine.refi_Reg.region.last().lv1 = 0;
+                        gUserDefine.refi_Reg.region.last().lv2 = 0;
+                        gUserDefine.refi_Reg.region.last().n = 0;
+                        //feature
+                        gUserDefine.refi_Fea.n = gUserDefine.refi_Fea.n + 1;
+                        gUserDefine.refi_Fea.feature.resize(gUserDefine.refi_Fea.n);
+                        gUserDefine.refi_Fea.feature.last().name = nameSur;
+                        gUserDefine.refi_Fea.feature.last().angle = 150;
+                        gUserDefine.refi_Fea.feature.last().lv = 0;
+                        //add region
+                        //read file
+                        QString file_name_STL;
+                        QDir dircdUp(path);
+                        dircdUp.cdUp();
+                        file_name_STL = dircdUp.path() + QDir::separator()+ "constant"+QDir::separator()+"triSurface"+ QDir::separator()+user.name_file;
+                        QFile file(file_name_STL);
+                        QString file1;
+                        if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+                        {
+                             file1= file.readAll();
+                        }
+                        file.close();
+                        //chua co region nao
+                        gUserDefine.refi_Sur.surfaces.last().n=0;
+                        int index =0;
+                        QStringList lines = file1.split("\n",QString::SkipEmptyParts);
+                        for(int i=0; i< lines.length(); i++)
+                        {
+                            if(lines[i].left(5)=="solid")
+                            {
+                                QString name_re = lines[i].split(" ")[1];
+                                gUserDefine.refi_Sur.surfaces.last().regionSTLs.resize(index +1);
+                                gUserDefine.refi_Sur.surfaces.last().regionSTLs[index].name=name_re;
+                                gUserDefine.refi_Sur.surfaces.last().regionSTLs[index].lv1=0;
+                                gUserDefine.refi_Sur.surfaces.last().regionSTLs[index].lv2=0;
+                                index++;
+                            }
+                        }
+                        gUserDefine.refi_Sur.surfaces.last().n=index;
+
                         gUserDefine.user_Defines.append(user);
                         gUserDefine.n =  gUserDefine.user_Defines.size();
                     }
                     else if(user.tag == "cellZone")
                     {
+                        //add surface
+                        gUserDefineCellZone.refi_Sur.n = gUserDefineCellZone.refi_Sur.n + 1;
+                        gUserDefineCellZone.refi_Sur.surfaces.resize(gUserDefineCellZone.refi_Sur.n);
+                        gUserDefineCellZone.refi_Sur.surfaces.last().lv1=0;
+                        gUserDefineCellZone.refi_Sur.surfaces.last().lv2=0;
+                        gUserDefineCellZone.refi_Sur.surfaces.last().name=nameSur;
+                        //add reg
+                        gUserDefineCellZone.refi_Reg.n=gUserDefineCellZone.refi_Reg.n+1;
+                        gUserDefineCellZone.refi_Reg.region.resize(gUserDefineCellZone.refi_Reg.n);
+                        gUserDefineCellZone.refi_Reg.region.last().mode = "inside";
+                        gUserDefineCellZone.refi_Reg.region.last().name=nameSur;
+                        gUserDefineCellZone.refi_Reg.region.last().lv1 = 0;
+                        gUserDefineCellZone.refi_Reg.region.last().lv2 = 0;
+                        gUserDefineCellZone.refi_Reg.region.last().n = 0;
+                        //feature
+                        gUserDefineCellZone.refi_Fea.n = gUserDefineCellZone.refi_Fea.n + 1;
+                        gUserDefineCellZone.refi_Fea.feature.resize(gUserDefineCellZone.refi_Fea.n);
+                        gUserDefineCellZone.refi_Fea.feature.last().name = nameSur;
+                        gUserDefineCellZone.refi_Fea.feature.last().angle = 150;
+                        gUserDefineCellZone.refi_Fea.feature.last().lv = 0;
+                        //add region
+                        //read file
+                        QString file_name_STL;
+                        QDir dircdUp(path);
+                        dircdUp.cdUp();
+                        file_name_STL = dircdUp.path()+QDir::separator()
+                                                              + "constant"+QDir::separator()+"triSurface"
+                                                              + QDir::separator()+user.name_file;
+                        QFile file(file_name_STL);
+                        QString file1;
+                        if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+                        {
+                             file1= file.readAll();
+                        }
+                        file.close();
+                        //chua co region nao
+                        gUserDefineCellZone.refi_Sur.surfaces.last().n=0;
+                        int index =0;
+                        QStringList lines = file1.split("\n",QString::SkipEmptyParts);
+                        for(int i=0; i< lines.length(); i++)
+                        {
+                            if(lines[i].left(5)=="solid")
+                            {
+                                QString name_re = lines[i].split(" ")[1];
+                                gUserDefineCellZone.refi_Sur.surfaces.last().regionSTLs.resize(index +1);
+                                gUserDefineCellZone.refi_Sur.surfaces.last().regionSTLs[index].name=name_re;
+                                gUserDefineCellZone.refi_Sur.surfaces.last().regionSTLs[index].lv1=0;
+                                gUserDefineCellZone.refi_Sur.surfaces.last().regionSTLs[index].lv2=0;
+                                index++;
+                            }
+                        }
+                        gUserDefineCellZone.refi_Sur.surfaces.last().n=index;
+
                         gUserDefineCellZone.user_Defines.append(user);
                         gUserDefineCellZone.n =  gUserDefineCellZone.user_Defines.size();
                     }
