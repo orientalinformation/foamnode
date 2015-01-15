@@ -170,7 +170,8 @@ void MyThread::run()
                         }
                     }
                     QString temp1 = temp;
-                    temp = FilterLog(temp1);
+                    if(this->ThreadName() != "checkMesh")
+                        temp = FilterLog(temp1);
                     if(emitappend && temp != "NULL-NONE"){
                         emit changed(temp);
                     }
@@ -209,7 +210,8 @@ void MyThread::run()
                         }
                     }
                     QString temp1 = temp;
-                    temp = FilterLog(temp1);
+                    if(this->ThreadName() != "checkMesh")
+                        temp = FilterLog(temp1);
                     if(emitappend && temp != "NULL-NONE"){
                         emit changed(temp);
                     }
