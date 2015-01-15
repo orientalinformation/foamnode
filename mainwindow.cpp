@@ -6890,18 +6890,7 @@ void MainWindow::on_tb_MeshSurface_itemSelectionChanged()
 
 void MainWindow::on_actionClose_triggered()
 {
-//    on_actionSave_triggered();
-    if(ui->tb_boundary->rowCount() > 0){
-        this->isClose = true;
-        int nRow = ui->tb_boundary->rowCount();
-        for(int i =nRow -1 ; i >=0 ; i--){
-            ui->tb_boundary->removeRow(i);
-        }
-        ui->tb_boundary->clearSelection();
-        ui->tb_boundary->clear();
-        Remove_All_Face();
-        ui->tb_boundary->setRowCount(0);
-    }
+    ui->tb_boundary->clear();
     ui->layout_Mesh->removeWidget(mesh);
     listSurfaces.clear();
     listFaces.clear();
@@ -6916,7 +6905,7 @@ void MainWindow::on_actionClose_triggered()
 //    ui->cb_MeshVolumeMode->clear();
 //    ui->cb_VolumeType->clear();
 //    LoadControlItems();
-//    LoadLocationInMesh();
+    LoadLocationInMesh();
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
     ui->actionClose->setEnabled(false);
     ui->actionParaView->setDisabled(true);
