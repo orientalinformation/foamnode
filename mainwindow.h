@@ -100,6 +100,10 @@ private:
 
     void LoadColor();
 
+    QString ReadPathDmesh();
+    bool WriteDMeshFile(QString path, QString filename);
+    bool UpdateSettingFile(QString path);
+
     bool CheckAndSaveBoundingBoxInput();
     bool CheckAndSaveBoundingDistance();
     bool AddFaceToList(QString name, int type = 0);

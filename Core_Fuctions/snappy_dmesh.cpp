@@ -147,7 +147,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gBox.boxes[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableBox;\n";
-        str_File_New += "tag  surface;\n";
+        str_File_New += "tag surface;\n";
         str_File_New += "min ("+QString::number(gBox.boxes[i].min.x)+" "+QString::number(gBox.boxes[i].min.y)
                                                 +" "+QString::number(gBox.boxes[i].min.z)+");\n";
         str_File_New += "max ("+QString::number(gBox.boxes[i].max.x)+" "+QString::number(gBox.boxes[i].max.y)
@@ -159,7 +159,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gCylin.cylins[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableCylinder;\n";
-        str_File_New += "tag  surface;\n";
+        str_File_New += "tag surface;\n";
         str_File_New += "point1 ("+QString::number(gCylin.cylins[i].point1.x)+" "+QString::number(gCylin.cylins[i].point1.y)
                                                 +" "+QString::number(gCylin.cylins[i].point1.z)+");\n";
         str_File_New += "point2 ("+QString::number(gCylin.cylins[i].point2.x)+" "+QString::number(gCylin.cylins[i].point2.y)
@@ -172,7 +172,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gSphere.sphere[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableSphere;\n";
-        str_File_New += "tag  surface;\n";
+        str_File_New += "tag surface;\n";
         str_File_New += "centre ("+QString::number(gSphere.sphere[i].centre.x)+" "+QString::number(gSphere.sphere[i].centre.y)
                                                 +" "+QString::number(gSphere.sphere[i].centre.z)+");\n";
         str_File_New += "radius "+QString::number(gSphere.sphere[i].radius)+";\n";
@@ -183,7 +183,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gUserDefine.user_Defines[i].name_file + "\n";
         str_File_New += "{\n";
         str_File_New += "type triSurfaceMesh;\n";
-        str_File_New += "tag  surface;\n";
+        str_File_New += "tag surface;\n";
         str_File_New += "name "+gUserDefine.user_Defines[i].name+";\n";
         str_File_New += "}\n";
     }
@@ -192,7 +192,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gBoxCellZone.boxes[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableBox;\n";
-        str_File_New += "tag  cellZone;\n";
+        str_File_New += "tag cellZone;\n";
         str_File_New += "min ("+QString::number(gBoxCellZone.boxes[i].min.x)+" "+QString::number(gBoxCellZone.boxes[i].min.y)
                                                 +" "+QString::number(gBoxCellZone.boxes[i].min.z)+");\n";
         str_File_New += "max ("+QString::number(gBoxCellZone.boxes[i].max.x)+" "+QString::number(gBoxCellZone.boxes[i].max.y)
@@ -204,7 +204,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gCylinCellZone.cylins[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableCylinder;\n";
-        str_File_New += "tag  cellZone;\n";
+        str_File_New += "tag cellZone;\n";
         str_File_New += "point1 ("+QString::number(gCylinCellZone.cylins[i].point1.x)+" "+QString::number(gCylinCellZone.cylins[i].point1.y)
                                                 +" "+QString::number(gCylinCellZone.cylins[i].point1.z)+");\n";
         str_File_New += "point2 ("+QString::number(gCylinCellZone.cylins[i].point2.x)+" "+QString::number(gCylinCellZone.cylins[i].point2.y)
@@ -217,7 +217,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gSphereCellZone.sphere[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableSphere;\n";
-        str_File_New += "tag  cellZone;\n";
+        str_File_New += "tag cellZone;\n";
         str_File_New += "centre ("+QString::number(gSphereCellZone.sphere[i].centre.x)+" "+QString::number(gSphereCellZone.sphere[i].centre.y)
                                                 +" "+QString::number(gSphereCellZone.sphere[i].centre.z)+");\n";
         str_File_New += "radius "+QString::number(gSphereCellZone.sphere[i].radius)+";\n";
@@ -228,7 +228,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gUserDefineCellZone.user_Defines[i].name_file + "\n";
         str_File_New += "{\n";
         str_File_New += "type triSurfaceMesh;\n";
-        str_File_New += "tag  cellZone;\n";
+        str_File_New += "tag cellZone;\n";
         str_File_New += "name "+gUserDefineCellZone.user_Defines[i].name+";\n";
         str_File_New += "}\n";
     }
@@ -237,7 +237,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gBoxRegion.boxes[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableBox;\n";
-        str_File_New += "tag  volume;\n";
+        str_File_New += "tag volume;\n";
         str_File_New += "min ("+QString::number(gBoxRegion.boxes[i].min.x)+" "+QString::number(gBoxRegion.boxes[i].min.y)
                                                 +" "+QString::number(gBoxRegion.boxes[i].min.z)+");\n";
         str_File_New += "max ("+QString::number(gBoxRegion.boxes[i].max.x)+" "+QString::number(gBoxRegion.boxes[i].max.y)
@@ -249,7 +249,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gCylinRegion.cylins[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableCylinder;\n";
-        str_File_New += "tag  volume;\n";
+        str_File_New += "tag volume;\n";
         str_File_New += "point1 ("+QString::number(gCylinRegion.cylins[i].point1.x)+" "+QString::number(gCylinRegion.cylins[i].point1.y)
                                                 +" "+QString::number(gCylinRegion.cylins[i].point1.z)+");\n";
         str_File_New += "point2 ("+QString::number(gCylinRegion.cylins[i].point2.x)+" "+QString::number(gCylinRegion.cylins[i].point2.y)
@@ -262,7 +262,7 @@ QString Snappy_Dmesh::CreateGeometry()
         str_File_New += gSphereRegion.sphere[i].name + "\n";
         str_File_New += "{\n";
         str_File_New += "type searchableSphere;\n";
-        str_File_New += "tag  volume;\n";
+        str_File_New += "tag volume;\n";
         str_File_New += "centre ("+QString::number(gSphereRegion.sphere[i].centre.x)+" "+QString::number(gSphereRegion.sphere[i].centre.y)
                                                 +" "+QString::number(gSphereRegion.sphere[i].centre.z)+");\n";
         str_File_New += "radius "+QString::number(gSphereRegion.sphere[i].radius)+";\n";
@@ -726,10 +726,9 @@ QString Snappy_Dmesh::FormatSnappyFile(QString value)
     return lines.join("\n");
 }
 
-bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
+bool Snappy_Dmesh::ReadSTLFile(QString path, int type,bool isOpen)
 {
     //read file
-
     QString file1;
     QFile file(path);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -745,7 +744,8 @@ bool Snappy_Dmesh::ReadSTLFile(QString path, int type)
 
     //create STL
     QString name = QFileInfo(file).fileName();
-
+    if(isOpen)
+        name = QFileInfo(file).baseName().append(".stl");
     int size_sTL =  sTL.size()+1;
     sTL.resize(size_sTL);
     sTL[size_sTL -1].n =0;
@@ -970,6 +970,7 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
             {
 
                 QString type =  lines[i+2].trimmed().split(" ")[1];
+                QString tag =  lines[i+3].trimmed().split(" ",QString::SkipEmptyParts)[1];
                 if(type == "searchableBox;")
                 {
                     QString name =  lines[i].trimmed();
@@ -977,8 +978,9 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     GeomeBoxTypeDmesh box;
                     box.name = name;
                     box.type = type.remove(";");
+                    box.tag = tag.remove(";");
 
-                    QString min = lines[i+3].remove("min").trimmed().remove(";");
+                    QString min = lines[i+4].remove("min").trimmed().remove(";");
                     min = min.remove("(");
                     min = min.remove(")");
                     QStringList list1 = min.split(" ", QString::SkipEmptyParts);
@@ -986,7 +988,7 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     box.min.y = list1[1].trimmed().toFloat();
                     box.min.z = list1[2].trimmed().toFloat();
 
-                    QString max = lines[i+4].remove("max").trimmed().remove(";");
+                    QString max = lines[i+5].remove("max").trimmed().remove(";");
                     max = max.remove("(");
                     max = max.remove(")");
                     QStringList list2 = max.split(" ");
@@ -994,10 +996,29 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     box.max.y = list2[1].trimmed().toFloat();
                     box.max.z = list2[2].trimmed().toFloat();
 
-                    gBox.boxes.append(box);
-                    gBox.n =  gBox.boxes.size();
+                    if(box.tag == "surface")
+                    {
+                        gBox.boxes.append(box);
+                        gBox.n =  gBox.boxes.size();
+                    }
+                    else if(box.tag == "cellZone")
+                    {
+                        gBoxCellZone.boxes.append(box);
+                        gBoxCellZone.n =  gBoxCellZone.boxes.size();
+                    }
+                    else if (box.tag == "volume")
+                    {
+                        int n = gBoxRegion.boxes.size()+1;
+                        gBoxRegion.boxes.resize(n);
+                        gBoxRegion.boxes[n-1].name = box.name;
+                        gBoxRegion.boxes[n-1].min = box.min;
+                        gBoxRegion.boxes[n-1].max = box.max;
+                        gBoxRegion.boxes[n-1].type = box.type;
+                        gBoxRegion.boxes[n-1].tag = box.tag;
+                        gBoxRegion.n = n;
+                    }
 
-                    i = i + 6;
+                    i = i + 7;
                 }
                 else if(type == "searchableCylinder;")
                 {
@@ -1006,8 +1027,9 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     GeomeCylinTypeDmesh  cyl;
                     cyl.name = name;
                     cyl.type = type.remove(";");
+                    cyl.tag = tag.remove(";");
 
-                    QString min = lines[i+3].remove("point1").trimmed().remove(";");
+                    QString min = lines[i+4].remove("point1").trimmed().remove(";");
                     min = min.remove("(");
                     min = min.remove(")");
                     QStringList list1 = min.split(" ", QString::SkipEmptyParts);
@@ -1015,7 +1037,7 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     cyl.point1.y = list1[1].trimmed().toFloat();
                     cyl.point1.z = list1[2].trimmed().toFloat();
 
-                    QString max = lines[i+4].remove("point2").trimmed().remove(";");
+                    QString max = lines[i+5].remove("point2").trimmed().remove(";");
                     max = max.remove("(");
                     max = max.remove(")");
                     QStringList list2 = max.split(" ");
@@ -1023,12 +1045,32 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     cyl.point2.y = list2[1].trimmed().toFloat();
                     cyl.point2.z = list2[2].trimmed().toFloat();
 
-                    cyl.radius = lines[i+5].remove("radius").trimmed().remove(";").toFloat();
+                    cyl.radius = lines[i+6].remove("radius").trimmed().remove(";").toFloat();
 
-                    gCylin.cylins.append(cyl);
-                    gCylin.n =  gCylin.cylins.size();
+                    if(cyl.tag == "surface")
+                    {
+                        gCylin.cylins.append(cyl);
+                        gCylin.n =  gCylin.cylins.size();
+                    }
+                    else if(cyl.tag == "cellZone")
+                    {
+                        gCylinCellZone.cylins.append(cyl);
+                        gCylinCellZone.n =  gCylinCellZone.cylins.size();
+                    }
+                    else if (cyl.tag == "volume")
+                    {
+                        int n = gCylinRegion.cylins.size()+1;
+                        gCylinRegion.cylins.resize(n);
+                        gCylinRegion.cylins[n-1].name = cyl.name;
+                        gCylinRegion.cylins[n-1].point1 = cyl.point1;
+                        gCylinRegion.cylins[n-1].point2 = cyl.point2;
+                        gCylinRegion.cylins[n-1].type = cyl.type;
+                        gCylinRegion.cylins[n-1].tag = cyl.tag;
+                        gCylinRegion.cylins[n-1].radius = cyl.radius;
+                        gCylinRegion.n = n;
+                    }
 
-                    i = i + 7;
+                    i = i + 8;
                 }
                 else if(type == "searchableSphere;")
                 {
@@ -1037,8 +1079,9 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     GeomeSphereTypeDmesh  sph;
                     sph.name = name;
                     sph.type = type.remove(";");
+                    sph.tag = tag.remove(";");
 
-                    QString min = lines[i+3].remove("centre").trimmed().remove(";");
+                    QString min = lines[i+4].remove("centre").trimmed().remove(";");
                     min = min.remove("(");
                     min = min.remove(")");
                     QStringList list1 = min.split(" ", QString::SkipEmptyParts);
@@ -1046,27 +1089,57 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
                     sph.centre.y = list1[1].toFloat();
                     sph.centre.z = list1[2].toFloat();
 
-                    sph.radius = lines[i+4].trimmed().split(" ", QString::SkipEmptyParts)[1].remove(";").toFloat();
+                    sph.radius = lines[i+5].trimmed().split(" ", QString::SkipEmptyParts)[1].remove(";").toFloat();
 
-                    gSphere.sphere.append(sph);
-                    gSphere.n =  gSphere.sphere.size();
+                    if(sph.tag == "surface")
+                    {
+                        gSphere.sphere.append(sph);
+                        gSphere.n =  gSphere.sphere.size();
+                    }
+                    else if(sph.tag == "cellZone")
+                    {
+                        gSphereCellZone.sphere.append(sph);
+                        gSphereCellZone.n =  gSphereCellZone.sphere.size();
+                    }
+                    else if (sph.tag == "volume")
+                    {
+                        int n = gSphereRegion.sphere.size()+1;
+                        gSphereRegion.sphere.resize(n);
+                        gSphereRegion.sphere[n-1].name = sph.name;
+                        gSphereRegion.sphere[n-1].centre = sph.centre;
+                        gSphereRegion.sphere[n-1].type = sph.type;
+                        gSphereRegion.sphere[n-1].tag = sph.tag;
+                        gSphereRegion.sphere[n-1].radius = sph.radius;
+                        gSphereRegion.n = n;
+                    }
 
-                    i = i + 6;
+
+                    i = i + 7;
                 }
                 else if(type == "triSurfaceMesh;")
                 {
                     QString name =  lines[i].trimmed();
 
                     GeomeUserdefineTypeDmesh user;
-                    user.name_file= name;
+                    user.name_file  = name;
                     user.type = type.remove(";");
+                    user.tag = tag.remove(";");
 
-                    user.name = lines[i+3].trimmed().remove(";").split(" ")[1];
+                    user.name = lines[i+4].trimmed().remove(";").split(" ")[1];
 
-                    gUserDefine.user_Defines.append(user);
-                    gUserDefine.n =  gUserDefine.user_Defines.size();
+                    if(user.tag == "surface")
+                    {
+                        gUserDefine.user_Defines.append(user);
+                        gUserDefine.n =  gUserDefine.user_Defines.size();
+                    }
+                    else if(user.tag == "cellZone")
+                    {
+                        gUserDefineCellZone.user_Defines.append(user);
+                        gUserDefineCellZone.n =  gUserDefineCellZone.user_Defines.size();
+                    }
 
-                    i = i + 5;
+
+                    i = i + 6;
                 }
             }
 
@@ -1128,8 +1201,10 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
 
                     list_Surfaces.surfaces.append(resur);
                     list_Surfaces.n = list_Surfaces.surfaces.size();
-
-                    i = i+4;
+                    if(lines[i+3].contains("}"))
+                        i = i+4;
+                    else
+                        i = i + 7;
                 }
             }
         }
@@ -1363,4 +1438,18 @@ bool Snappy_Dmesh::Read_Snappy(QString path)
     }
 
     return true;
+}
+
+bool Snappy_Dmesh::ReadSnappy(QString path)
+{
+//    FoamFileNode *rootNode = new FoamFileNode(path);
+//    if(rootNote->hasChilds()){
+//        FoamFileNode geometryNode = rootNode->get("geometry");
+//        if(geometryNode.hasChilds()){
+//            foreach(FoamFileNode child,geometryNode.childs()){
+//                if(child.value())
+//            }
+//        }
+//    }
+    return false;
 }
