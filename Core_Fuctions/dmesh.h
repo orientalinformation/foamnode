@@ -31,6 +31,7 @@ public:
     float yAverage;
     float zAverage;
     bool isCtrlPress;
+    void ResetLocation();
 private:
 
     QVector<float> radiusCaculationMax;

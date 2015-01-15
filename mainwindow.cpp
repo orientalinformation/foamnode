@@ -168,6 +168,7 @@ void MainWindow::threadFinished()
 
 void MainWindow::LoadLocationInMesh()
 {
+    if(mesh->snappyd->locationInMesh.z == 0 && mesh->snappyd->locationInMesh.z == 0 && mesh->snappyd->locationInMesh.z == 0 )
     ui->txt_X_Location->setText(QString::number(mesh->snappyd->locationInMesh.x));
     ui->txt_Y_Location->setText(QString::number(mesh->snappyd->locationInMesh.y));
     ui->txt_Z_Location->setText(QString::number(mesh->snappyd->locationInMesh.z));
@@ -429,9 +430,9 @@ void MainWindow::on_btn_Generate_clicked()
         ui->btn_Boundary->hide();
         ui->frame_Generate->show();
 //        ui->btn_DeleteSurface->setEnabled(true);
-        ui->txt_X_Location->setText(QString::number(mesh->xAverage));
-        ui->txt_Y_Location->setText(QString::number(mesh->yAverage));
-        ui->txt_Z_Location->setText(QString::number(mesh->zAverage));
+        ui->txt_X_Location->setText(QString::number(mesh->snappyd->locationInMesh.x));
+        ui->txt_Y_Location->setText(QString::number(mesh->snappyd->locationInMesh.y));
+        ui->txt_Z_Location->setText(QString::number(mesh->snappyd->locationInMesh.z));
         Remove_All_Face();
     }
 }
@@ -6842,7 +6843,7 @@ void MainWindow::on_actionClose_triggered()
 //    ui->cb_MeshVolumeMode->clear();
 //    ui->cb_VolumeType->clear();
 //    LoadControlItems();
-    LoadLocationInMesh();
+//    LoadLocationInMesh();
     ui->tb_MeshRefineAroundSurface->horizontalHeader()->setStretchLastSection(true);
     ui->actionClose->setEnabled(false);
     ui->actionParaView->setDisabled(true);
@@ -6919,6 +6920,7 @@ void MainWindow::on_btn_GeoDefineNew_clicked()
         ui->btn_Boundary->setDisabled(false);
         ui->btn_Generate->setDisabled(false);
         ui->btn_Mesh->setDisabled(false);
+        mesh->ResetLocation();
     }
 }
 

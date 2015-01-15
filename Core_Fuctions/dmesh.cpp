@@ -207,6 +207,13 @@ QStringList DMesh::GetViewList()
     return this->viewList;
 }
 
+void DMesh::ResetLocation()
+{
+    snappyd->locationInMesh.x = xAverage;
+    snappyd->locationInMesh.y = yAverage;
+    snappyd->locationInMesh.z = zAverage;
+}
+
 void DMesh::initializeGL()
 {
     qglClearColor(QColor(82,87,110));
@@ -379,9 +386,6 @@ void DMesh::ShowHeighWidthGreen()
         xAverage = (x1+x2)/2;
         yAverage = (y1+y2)/2;
         zAverage = (z1+z2)/2;
-        snappyd->locationInMesh.x = xAverage;
-        snappyd->locationInMesh.y = yAverage;
-        snappyd->locationInMesh.z = zAverage;
 
     }
     else
